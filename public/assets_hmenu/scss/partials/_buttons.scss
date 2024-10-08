@@ -1,0 +1,10 @@
+.btn{
+	font-size: $font-size;
+	&.btn-default{
+		color: $grey-600;
+		background-color: $col-white;
+		border-color: $grey-300;
+		padding: 6px 15px;
+	}
+}
+.btn-toolbar>.btn-group{@extend .m-l-5;}

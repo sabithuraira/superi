@@ -16,9 +16,9 @@ class CreateKomponenTable extends Migration
         Schema::create('komponen', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string("no_komponen");
+            $table->string("no_komponen", 5);
             $table->string("nama_komponen");
-            $table->integer("parent_id")->nullable();
+            $table->string("parent_id", 5)->nullable();
             $table->integer("status_aktif");
 
             $table->integer('created_by');

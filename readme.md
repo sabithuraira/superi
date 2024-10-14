@@ -21,22 +21,25 @@ php artisan migrate
 php artisan db:seed --class=KomponenTabelSeeder
 ```
 
+* Klik menu upload & pilih file excel pdrb pada root
+
 
 ## Task
 Sabit:
-⋅⋅* Authentikasi SSO
-⋅⋅* Upload with auth
-⋅⋅* Level Access (page, approval, access upload just for satker)
-⋅⋅* Fenomena all features
+* Authentikasi SSO
+* Upload with auth
+* Level Access (page, approval, access upload just for satker)
+* Fenomena all features
 
 Bombom:
-⋅⋅* Tabel PDRB (Tabel 1.1 - 1.16)
-⋅⋅* Tabel History Putaran (Tabel 3.1 - 3.2)
-⋅⋅* Tabel Arah Revisi Kab/Kota (Tabel 301 - 310)
+* Tabel PDRB Ringkasan (Tabel 1.1 - 1.16)
+* Tabel PDRB Per kab/Kota (Tabel 3.1 - 3.10)
+* Tabel History Putaran (Tabel 3.1 - 3.2)
+* Tabel Arah Revisi Kab/Kota (Tabel 301 - 310)
 
 Kharis:
-⋅⋅* Tabel Per kab/Kota (Tabel 3.1 - 3.10)
-⋅⋅* Tabel Arah Revisi Total (Tabel 201 - 220)
+* Tabel PDRB Resume (Tabel 2.1 - 2.20)
+* Tabel Arah Revisi Total (Tabel 201 - 220)
 
 
 ## License

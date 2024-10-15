@@ -20,3 +20,6 @@ Route::get('/', function () {
 
 Route::get('upload/import', 'UploadController@upload');
 Route::post('upload/import', 'UploadController@import');
+
+Route::get('tabel/resume', 'ResumeController@index');
+Route::post('tabel/resume', 'ResumeController@get');

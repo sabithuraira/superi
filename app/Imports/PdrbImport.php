@@ -89,6 +89,15 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $new_model->c_8a     = $rows[31][$col_no];
             $new_model->c_8b     = $rows[32][$col_no];
             $new_model->c_pdrb     = $rows[33][$col_no];
+
+            Pdrb::where('tahun', $year)
+                ->where('q', $q)
+                ->where('adhb_or_adhk', $is_adhb)
+                ->where('kode_prov', '16')
+                ->where('kode_kab', '00')
+                ->where('revisi_ke', 1)
+                ->delete();
+
             $new_model->save();
         }
     }

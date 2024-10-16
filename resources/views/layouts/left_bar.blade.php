@@ -40,7 +40,7 @@
                     <a href="#Revisi" class="has-arrow"><i class="icon-calendar"></i>
                         <span>Arah Revisi</span></a>
                     <ul>
-                        <li class=""><a href="#">Total</a></li>
+                        <li class=""><a href="{{ url('revisi/total') }}">Total</a></li>
                         <li class=""><a href="#">Kab/Kota</a></li>
                     </ul>
                 </li>

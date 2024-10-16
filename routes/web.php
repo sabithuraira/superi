@@ -23,3 +23,6 @@ Route::post('upload/import', 'UploadController@import');
 
 Route::get('tabel/resume', 'ResumeController@index');
 Route::post('tabel/resume', 'ResumeController@get');
+
+Route::get('revisi/total', 'RevisiTotalController@index');
+Route::post('revisi/total', 'RevisiTotalController@get');

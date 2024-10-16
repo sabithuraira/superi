@@ -29,7 +29,7 @@
                         <span>Tabel PDRB</span></a>
                     <ul>
                         <li class=""><a href="#">Tabel Ringkasan</a></li>
-                        <li class=""><a href="#">Tabel Resume</a></li>
+                        <li class=""><a href="{{ url('tabel/resume') }}">Tabel Resume</a></li>
                         <li class=""><a href="#">Tabel Per Provinsi</a></li>
                         <li class=""><a href="#">Tabel History Putaran</a></li>
                     </ul>

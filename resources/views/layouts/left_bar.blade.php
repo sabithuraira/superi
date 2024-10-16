@@ -14,18 +14,18 @@
 
                 <li
                     class="{{ request()->is('upload*') ? 'active' : '' }}">
-                    <a href="#Upload" class="has-arrow"><i class="icon-calendar"></i>
+                    <a href="#Upload" class="has-arrow"><i class="icon-cloud-upload"></i>
                         <span>Upload</span></a>
                     <ul>
-                        <li class="{{ request()->is('upload/import*') ? 'active' : '' }}"><a
-                                href="{{ url('upload/import') }}">Upload</a></li>
+                        <li class="{{ request()->is('upload/import*') ? 'active' : '' }}"><a href="{{ url('upload/import') }}">Angka PDRB</a></li>
+                        <li class="{{ request()->is('upload/fenomena_import*') ? 'active' : '' }}"><a href="{{ url('upload/fenomena_import') }}">Fenomena</a></li>
                     </ul>
                 </li>
 
                 
                 <li
                     class="">
-                    <a href="#Tabel" class="has-arrow"><i class="icon-calendar"></i>
+                    <a href="#Tabel" class="has-arrow"><i class="fa fa-table"></i>
                         <span>Tabel PDRB</span></a>
                     <ul>
                         <li class=""><a href="#">Tabel Ringkasan</a></li>
@@ -37,7 +37,7 @@
                 
                 <li
                     class="">
-                    <a href="#Revisi" class="has-arrow"><i class="icon-calendar"></i>
+                    <a href="#Revisi" class="has-arrow"><i class="icon-directions"></i>
                         <span>Arah Revisi</span></a>
                     <ul>
                         <li class=""><a href="#">Total</a></li>
@@ -47,7 +47,7 @@
                 
                 <li
                     class="">
-                    <a href="#Fenomena" class="has-arrow"><i class="icon-calendar"></i>
+                    <a href="#Fenomena" class="has-arrow"><i class="fa fa-quote-right"></i>
                         <span>Fenomena</span></a>
                     <ul>
                         <li class=""><a href="#">Total</a></li>

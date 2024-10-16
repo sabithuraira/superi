@@ -20,3 +20,5 @@ Route::get('/', function () {
 
 Route::get('upload/import', 'UploadController@upload');
 Route::post('upload/import', 'UploadController@import');
+Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
+Route::post('upload/fenomena_import', 'UploadController@fenomena_import');

@@ -27,4 +27,10 @@ Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
 
 Route::get('tabel/resume', 'ResumeController@index');
 Route::post('tabel/resume', 'ResumeController@get');
+<<<<<<< HEAD
 >>>>>>> afb2b8133c8b6e738511b5689c10a935ae331612
+=======
+
+Route::get('revisi/total', 'RevisiTotalController@index');
+Route::post('revisi/total', 'RevisiTotalController@get');
+>>>>>>> origin/main

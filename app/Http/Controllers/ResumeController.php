@@ -138,7 +138,7 @@ class ResumeController extends Controller
         }
 
         $sql = substr($sql, 0, -2);
-        $sql .= ' FROM superi_pdrb';
+        $sql .= ' FROM superi_pdrb WHERE revisi_ke = 0';
         $sql .= ' GROUP BY CONCAT(kode_prov, kode_kab)';
 
         $pdrb = DB::select($sql);

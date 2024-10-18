@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Auth;
 class FenomenaImport implements ToCollection
 {
     use Importable;
+
+    private $wilayah;
+    private $tahun;
+    
+    public function __construct($wilayah, $tahun) {
+        $this->wilayah = $wilayah;
+        $this->tahun = $tahun;
+    }
     
     public function collection(Collection $rows){
         $this->importColumn($rows, "q-to-q");
@@ -18,23 +26,23 @@ class FenomenaImport implements ToCollection
     }
 
     function importColumn(Collection $rows, $type_pertumbuhan){
-        $year = $rows[2][2];
+        // $year = $rows[2][2];
         $q = str_replace("Q", "", $rows[3][2]);
 
-        $model = Fenomena::where('tahun', $year)
+        $model = Fenomena::where('tahun', $this->tahun)
             ->where('q', $q)
             ->where('kode_prov', '16')
-            ->where('kode_kab', '00')
+            ->where('kode_kab', $this->wilayah)
             ->where('pertumbuhan', $type_pertumbuhan)
             ->first();
 
         if($model==null){
             $model = new Fenomena;
-            $model->tahun = $year;
+            $model->tahun = $this->tahun;
             $model->pertumbuhan =  $type_pertumbuhan;
             $model->q = $q;
             $model->kode_prov   = '16';
-            $model->kode_kab   = '00';
+            $model->kode_kab   = $this->wilayah;
             $model->created_by = 1;
         }
         

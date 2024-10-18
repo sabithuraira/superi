@@ -17,9 +17,43 @@
           <div class="body">
                 <form method="post" action="{{url('upload/import')}}" enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group">
-                        <label>Pilih File:</label>
-                        <input type="file" class="form-control" name="excel_file">
+                    <div class="row clearfix">
+
+                        <div class="col-lg-4 col-md-12 left-box">
+                            <div class="form-group">
+                                <label>Kabupaten/Kota:</label>
+
+                                <div class="input-group">
+                                    <select class="form-control  form-control-sm" name="wilayah"  
+                                        value="{{ $wilayah }}">
+                                        @foreach (config('app.wilayah') as $key=>$value)
+                                            <option value="{{ $key }}">{{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-12 left-box">
+                            <div class="form-group">
+                                <label>Tahun:</label>
+
+                                <div class="input-group">
+                                <select class="form-control  form-control-sm" name="tahun" value="{{ $tahun }}">
+                                    @for ($i=date('Y');$i>=2023;$i--)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-12 right-box">
+                            <div class="form-group">
+                                <label>Pilih File:</label>
+                                <input type="file" class="form-control" name="excel_file">
+                            </div>
+                        </div>
                     </div>
 
                     <br>

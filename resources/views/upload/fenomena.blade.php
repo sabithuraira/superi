@@ -3,7 +3,7 @@
 @section('breadcrumb')
 <ul class="breadcrumb">
     <li class="breadcrumb-item"><a href="{{url('/')}}"><i class="icon-home"></i></a></li>                           
-    <li class="breadcrumb-item">Import Excel</li>
+    <li class="breadcrumb-item">Import Excel Fenomena</li>
 </ul>
 @endsection
 
@@ -12,10 +12,10 @@
   <div class="col-md-12">
       <div class="card">
           <div class="header">
-              <h2>Import Excel</h2>
+              <h2>Import Excel Fenomena</h2>
           </div>
           <div class="body">
-                <form method="post" action="{{url('upload/import')}}" enctype="multipart/form-data">
+                <form method="post" action="{{url('upload/fenomena_import')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="row clearfix">
 

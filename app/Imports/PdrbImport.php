@@ -11,11 +11,20 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class PdrbImport implements  WithMultipleSheets //ToCollection
 {
     use Importable;
+
+    private static $wilayah;
+    private static $tahun;
+
+    public function __construct($wilayah, $tahun) {
+        self::$wilayah = $wilayah;
+        self::$tahun = $tahun;
+    }
+
     public function sheets(): array
     {
         return [
-            0 => new AdhbSheetImport(),
-            1 => new AdhkSheetImport(),
+            0 => new AdhbSheetImport(self::$wilayah,  self::$tahun),
+            1 => new AdhkSheetImport(self::$wilayah,  self::$tahun),
         ];
     }
 
@@ -24,25 +33,25 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
         $split_header = explode("Q", $header_pdrb);
 
         if(count($split_header)==2 && is_numeric($split_header[0]) && is_numeric($split_header[1])){
-            $year = $split_header[0];
+            // $year = $split_header[0];
             $q = $split_header[1];
 
-            $model = Pdrb::where('tahun', $year)
+            $model = Pdrb::where('tahun', self::$tahun)
                 ->where('q', $q)
                 ->where('adhb_or_adhk', $is_adhb)
                 ->where('kode_prov', '16')
-                ->where('kode_kab', '00')
+                ->where('kode_kab', self::$wilayah)
                 ->first();
 
             $new_model = new Pdrb;
-            $new_model->tahun = $year;
+            $new_model->tahun =self::$tahun;
             $new_model->q = $q;
             $new_model->adhb_or_adhk = $is_adhb;
             $new_model->status_data = 1;
 
             ///TEMPORARY CODE, IT SHOULD COME FROM AUTH
             $new_model->kode_prov   = '16';
-            $new_model->kode_kab   = '00';
+            $new_model->kode_kab   = self::$wilayah;
             $new_model->created_by = 1;
             $new_model->updated_by = 1;
             /////////////////////
@@ -89,6 +98,7 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $new_model->c_8a     = $rows[31][$col_no];
             $new_model->c_8b     = $rows[32][$col_no];
             $new_model->c_pdrb     = $rows[33][$col_no];
+
             $new_model->save();
         }
     }
@@ -96,19 +106,35 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
 
 class AdhbSheetImport implements ToCollection
 {
+    public $wilayah;
+    public $tahun;
+
+    public function __construct($wilayah, $tahun) {
+        $this->wilayah = $wilayah;
+        $this->tahun = $tahun;
+    }
+
     public function collection(Collection $rows){
         for($i=1;$i<=4;++$i){
-            if(count($rows[2])>$i) (new PdrbImport())->importColumn($rows, $i, 1);
+            if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun))->importColumn($rows, $i, 1);
         }
     }
 }
 
 class AdhkSheetImport implements ToCollection
 {
+    public $wilayah;
+    public $tahun;
+
+    public function __construct($wilayah, $tahun) {
+        $this->wilayah = $wilayah;
+        $this->tahun = $tahun;
+    }
+
     public function collection(Collection $rows)
     {
         for($i=1;$i<=4;++$i){
-            if(count($rows[2])>$i) (new PdrbImport())->importColumn($rows, $i, 2);
+            if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun))->importColumn($rows, $i, 2);
         }
     }
 }

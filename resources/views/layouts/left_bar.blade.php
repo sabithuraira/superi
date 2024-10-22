@@ -3,17 +3,16 @@
         <div class="user-account">
             <div class="dropdown">
                 <span>Welcome,</span>
-                
+
             </div>
         </div>
 
         <nav id="left-sidebar-nav" class="sidebar-nav">
             <ul id="main-menu" class="metismenu">
 
-                
 
-                <li
-                    class="{{ request()->is('upload*') ? 'active' : '' }}">
+
+                <li class="{{ request()->is('upload*') ? 'active' : '' }}">
                     <a href="#Upload" class="has-arrow"><i class="icon-calendar"></i>
                         <span>Upload</span></a>
                     <ul>
@@ -22,21 +21,20 @@
                     </ul>
                 </li>
 
-                
-                <li
-                    class="">
+
+                <li class="{{ request()->is('pdrb_*') ? 'active' : '' }}">
                     <a href="#Tabel" class="has-arrow"><i class="icon-calendar"></i>
                         <span>Tabel PDRB</span></a>
                     <ul>
-                        <li class=""><a href="#">Tabel Ringkasan</a></li>
+                        <li class="{{ request()->is('pdrb_ringkasan*') ? 'active' : '' }}"><a
+                                href="{{ url('pdrb_ringkasan1/1.1') }}">Tabel Ringkasan</a></li>
                         <li class=""><a href="#">Tabel Resume</a></li>
                         <li class=""><a href="#">Tabel Per Provinsi</a></li>
                         <li class=""><a href="#">Tabel History Putaran</a></li>
                     </ul>
                 </li>
-                
-                <li
-                    class="">
+
+                <li class="">
                     <a href="#Revisi" class="has-arrow"><i class="icon-calendar"></i>
                         <span>Arah Revisi</span></a>
                     <ul>
@@ -44,9 +42,8 @@
                         <li class=""><a href="#">Kab/Kota</a></li>
                     </ul>
                 </li>
-                
-                <li
-                    class="">
+
+                <li class="">
                     <a href="#Fenomena" class="has-arrow"><i class="icon-calendar"></i>
                         <span>Fenomena</span></a>
                     <ul>

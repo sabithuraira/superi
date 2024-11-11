@@ -29,6 +29,21 @@ class UploadController extends Controller
         return redirect('upload/import')->with('success', 'Information has been added');
     }
 
+    public function pdrb(Request $request){
+        $datas=array();
+        $wilayah = '00';
+        $tahun = date('Y');
+
+        if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
+        if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
+
+        $model = new \App\Pdrb();
+        $datas = $model->getPdrb($wilayah, $tahun);
+
+        $komponen = \App\Komponen::where('status_aktif', 1)->get();
+        
+        return response()->json(['success'=>'1', 'datas'=>$datas, 'komponen' => $komponen]);
+    }
     
     // 
     public function fenomena_upload(){

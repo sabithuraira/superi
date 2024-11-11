@@ -23,6 +23,7 @@ Route::post('upload/import', 'UploadController@import');
 Route::post('upload/pdrb', 'UploadController@pdrb');
 Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
 Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
+Route::post('upload/fenomena', 'UploadController@fenomena');
 
 ////////////////////
 

@@ -232,8 +232,6 @@ var vm = new Vue({
                 self.datas = data.datas;
                 self.komponen = data.komponen;
 
-                console.log(self.datas)
-
                 $('#wait_progres').modal('hide');
             }).fail(function (msg) {
                 console.log(JSON.stringify(msg));

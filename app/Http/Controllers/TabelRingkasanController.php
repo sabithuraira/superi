@@ -30,7 +30,67 @@ class TabelRingkasanController extends Controller
             'id' => '1.4',
             'name' => 'Tabel 1.4. Pertumbuhan Ekonomi (Y-on-Y) Per Komponen/Sub Komponen 34 Provinsi - 2024Q3',
             'url' => 'pdrb_ringkasan3'
-        ]
+        ],
+        [
+            'id' => '1.5',
+            'name' => 'Tabel 1.5.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.6',
+            'name' => 'Tabel 1.6.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.7',
+            'name' => 'Tabel 1.7.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.8',
+            'name' => 'Tabel 1.8.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.9',
+            'name' => 'Tabel 1.9.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.10',
+            'name' => 'Tabel 1.10.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.11',
+            'name' => 'Tabel 1.11.',
+            'url' => 'pdrb_ringkasan4'
+        ],
+        [
+            'id' => '1.12',
+            'name' => 'Tabel 1.12.',
+            'url' => 'pdrb_ringkasan4'
+        ],
+        [
+            'id' => '1.13',
+            'name' => 'Tabel 1.13.',
+            'url' => 'pdrb_ringkasan5'
+        ],
+        [
+            'id' => '1.14',
+            'name' => 'Tabel 1.14.',
+            'url' => 'pdrb_ringkasan6'
+        ],
+        [
+            'id' => '1.15',
+            'name' => 'Tabel 1.15.',
+            'url' => 'pdrb_ringkasan3'
+        ],
+        [
+            'id' => '1.16',
+            'name' => 'Tabel 1.16.',
+            'url' => 'pdrb_ringkasan3'
+        ],
     ];
     public $list_quartil = [
         '2024Q1',
@@ -127,6 +187,7 @@ class TabelRingkasanController extends Controller
             }
         }
         $data = [];
+        // dd($periode_filter);
         foreach ($komponens as $komponen) {
             $row = [];
             $row = [
@@ -146,19 +207,61 @@ class TabelRingkasanController extends Controller
                 if (sizeof($arr_periode) > 1) {
                     // jika ada Q, misal 2024Q1
                     if ($id == '1.1') {
-                        $data_current = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->first();
-                        $data_prevyear = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->first();
-                        if ($arr_periode[1] == 1) {
-                            $data_prevquartile = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)->first();
+                        $data_current = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
+                        // dd($data_current);
+                        $data_prevyear = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
+                        if ($arr_periode[1] != 1) {
+                            $data_prevquartile = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)->orderBy('revisi_ke', 'desc')->first();
                         } else {
-                            $data_prevquartile = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', 4)->first();
+                            $data_prevquartile = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', 4)->orderBy('revisi_ke', 'desc')->first();
                         }
+                        // dd($arr_periode[1] - 1);
+                        // dd($periode);
+                        // dd($data_prevquartile);
                         $q = [];
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
                         }
-                        $data_cumulative = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0])->whereIn('q', $q)->get();
-                        $data_prevcum = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->whereIn('q', $q)->get();
+
+                        $jml_q_y =  Pdrb::where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->groupBy('q')
+                            ->get();
+
+                        $jml_q_y_1 =  Pdrb::where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->groupBy('q')
+                            ->get();
+
+
+                        $data_cumulative = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where(function ($query) use ($jml_q_y) {
+                                foreach ($jml_q_y as $q) {
+                                    $query->orWhere(function ($subquery) use ($q) {
+                                        $subquery->where('q', $q->q)
+                                            ->where('revisi_ke', $q->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+
+                        $data_prevcum = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where(function ($query) use ($jml_q_y_1) {
+                                foreach ($jml_q_y_1 as $q) {
+                                    $query->orWhere(function ($subquery) use ($q) {
+                                        $subquery->where('q', $q->q)
+                                            ->where('revisi_ke', $q->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+                        // dd($data_prevcum);
+                        // $data_cumulative = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0])->whereIn('q', $q)->get();
+                        // $data_prevcum = Pdrb::where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->whereIn('q', $q)->get();
                         // untuk trace data
                         // if ($data_current) {
                         //     $row[$periode . 'data_current'] = $data_current->$komponen;
@@ -177,19 +280,24 @@ class TabelRingkasanController extends Controller
                         // }
                         // Y-o-Y
                         if ($data_current && $data_prevyear) {
+
                             $row[$periode . 'yoy'] = ($data_prevyear->$komp_id - $data_current->$komp_id) / $data_prevyear->$komp_id;
                         } else {
                             $row[$periode . 'yoy'] = null;
                         }
                         // Q -t-Q
+                        // dd($data_prevquartile);
                         if ($data_current && $data_prevquartile) {
+
                             $row[$periode . 'qtq'] = ($data_prevquartile->$komp_id - $data_current->$komp_id) / $data_prevquartile->$komp_id;
                         } else {
                             $row[$periode . 'qtq'] = null;
                         }
                         // C-t-C
                         if ($data_cumulative && $data_prevcum) {
-                            $row[$periode . 'ctc'] = ($data_prevcum->sum($komp_id) - $data_cumulative->sum($komp_id)) / $data_prevcum->sum($komp_id);
+                            $row[$periode . 'ctc'] = $data_prevcum != 0
+                                ? ($data_prevcum->sum($komp_id) - $data_cumulative->sum($komp_id)) / $data_prevcum->sum($komp_id)
+                                : null;
                         } else {
                             $row[$periode . 'ctc'] = null;
                         }
@@ -207,7 +315,7 @@ class TabelRingkasanController extends Controller
                         // if ($data_prevyear) {
                         //     $row[$periode . 'data_prevyear'] = $data_prevyear->$komponen;
                         // }
-                        if ($data_current && $data_prevyear) {
+                        if ($data_current && $data_prevyear->sum($komp_id) != 0) {
                             $row[$periode . 'yoy'] = ($data_prevyear->sum($komp_id) - $data_current->sum($komp_id)) / $data_prevyear->sum($komp_id);
                             $row[$periode . 'qtq'] = ($data_prevyear->sum($komp_id) - $data_current->sum($komp_id)) / $data_prevyear->sum($komp_id);
                             $row[$periode . 'ctc'] = ($data_prevyear->sum($komp_id) - $data_current->sum($komp_id)) / $data_prevyear->sum($komp_id);
@@ -222,6 +330,7 @@ class TabelRingkasanController extends Controller
             }
             $data[] = $row;
         }
+        // dd($data);
         return view('pdrb_ringkasan.ringkasan1', compact('list_tabel', 'list_quartil', 'list_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
     }
 
@@ -273,8 +382,6 @@ class TabelRingkasanController extends Controller
                     ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->groupBy('q')
                     ->get();
-
-
 
                 $data_cum_y = Pdrb::select('kode_kab', DB::raw('sum(c_pdrb) as c_pdrb'))
                     ->where('kode_kab', $wilayah['id'])
@@ -452,5 +559,90 @@ class TabelRingkasanController extends Controller
             }
         }
         return view('pdrb_ringkasan.ringkasan3', compact('list_tabel', 'list_quartil', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+    }
+    public function ringkasan4(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_quartil = $this->list_quartil;
+        $list_komponen = $this->list_komponen;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
+        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_1a', 'c_1b', 'c_1c', 'c_1d', 'c_1e', 'c_1f', 'c_1g', 'c_2', 'c_3', 'c_3a', 'c_3b', 'c_4', 'c_4a', 'c_4b', 'c_5', 'c_6', 'c_6a', 'c_6b', 'c_7', 'c_7a', 'c_7b', 'c_8', 'c_8a', 'c_8b', 'c_pdrb'];
+        $komponens = [];
+        foreach ($komponen_filter as $komp_filter) {
+            foreach ($list_detail_komponen as $dtl_komp) {
+                if ($dtl_komp['id'] == $komp_filter) {
+                    $komponens[] = [
+                        'id' => $komp_filter,
+                        'name' => $dtl_komp['name'],
+                        'alias' => $dtl_komp['alias']
+                    ];
+                }
+            }
+        }
+        $data = [];
+
+        return view('pdrb_ringkasan.ringkasan4', compact('list_tabel', 'list_quartil', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+    }
+
+    public function ringkasan5(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_quartil = $this->list_quartil;
+        $list_komponen = $this->list_komponen;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
+        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_1a', 'c_1b', 'c_1c', 'c_1d', 'c_1e', 'c_1f', 'c_1g', 'c_2', 'c_3', 'c_3a', 'c_3b', 'c_4', 'c_4a', 'c_4b', 'c_5', 'c_6', 'c_6a', 'c_6b', 'c_7', 'c_7a', 'c_7b', 'c_8', 'c_8a', 'c_8b', 'c_pdrb'];
+        $komponens = [];
+        foreach ($komponen_filter as $komp_filter) {
+            foreach ($list_detail_komponen as $dtl_komp) {
+                if ($dtl_komp['id'] == $komp_filter) {
+                    $komponens[] = [
+                        'id' => $komp_filter,
+                        'name' => $dtl_komp['name'],
+                        'alias' => $dtl_komp['alias']
+                    ];
+                }
+            }
+        }
+        $data = [];
+
+
+        return view('pdrb_ringkasan.ringkasan5', compact('list_tabel', 'list_quartil', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+    }
+
+    public function ringkasan6(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_quartil = $this->list_quartil;
+        $list_komponen = $this->list_komponen;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
+        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_1a', 'c_1b', 'c_1c', 'c_1d', 'c_1e', 'c_1f', 'c_1g', 'c_2', 'c_3', 'c_3a', 'c_3b', 'c_4', 'c_4a', 'c_4b', 'c_5', 'c_6', 'c_6a', 'c_6b', 'c_7', 'c_7a', 'c_7b', 'c_8', 'c_8a', 'c_8b', 'c_pdrb'];
+        $komponens = [];
+        foreach ($komponen_filter as $komp_filter) {
+            foreach ($list_detail_komponen as $dtl_komp) {
+                if ($dtl_komp['id'] == $komp_filter) {
+                    $komponens[] = [
+                        'id' => $komp_filter,
+                        'name' => $dtl_komp['name'],
+                        'alias' => $dtl_komp['alias']
+                    ];
+                }
+            }
+        }
+        $data = [];
+
+
+        return view('pdrb_ringkasan.ringkasan6', compact('list_tabel', 'list_quartil', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
     }
 }

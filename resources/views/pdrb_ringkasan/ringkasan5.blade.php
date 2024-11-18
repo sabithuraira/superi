@@ -55,7 +55,7 @@
                     <div class="row">
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
-                                @if ($tabel['id'] === $tabel_filter)
+                                @if ($tabel['id'] == $tabel_filter)
                                     <p>{{ $tabel['name'] }}</p>
                                 @endif
                             @endforeach
@@ -68,24 +68,11 @@
                                     <thead>
                                         <tr class="text-center">
                                             <th>Kabupaten/Kota</th>
-                                            @foreach ($komponens as $komp)
-                                                <th>{{ $komp['alias'] }}</th>
-                                            @endforeach
+
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($data as $dt)
-                                            <tr>
-                                                <td>
-                                                    {{ $dt['wilayah']['alias'] }}
-                                                </td>
-                                                @foreach ($dt['kode'] as $key => $d)
-                                                    <td>
-                                                        {{ $dt['data'][$dt['kode'][$key]] }}
-                                                    </td>
-                                                @endforeach
-                                            </tr>
-                                        @endforeach
+
                                     </tbody>
                                 </table>
                             </div>

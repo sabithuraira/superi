@@ -26,7 +26,7 @@
                                             @foreach ($list_tabel as $key => $tbl)
                                                 <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}"
                                                     data-id="{{ $tbl['id'] }}"
-                                                    @if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                    @if ($tbl['id'] === $tabel_filter) selected @endif>
                                                     {{ $tbl['name'] }}
                                                 </option>
                                             @endforeach
@@ -43,10 +43,15 @@
                                             @endforeach
                                         </select>
                                     </div> --}}
-                                    <div class="form-group col-sm-12 col-md-2"
+                                    <div class="form-group col-sm-12 col-md-2 col-lg-1"
                                         @if (in_array($tabel_filter, ['1.3', '1.4'])) hidden @endif>
                                         <button class="btn btn-primary" type="button" href="#komponenModal"
                                             data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                    </div>
+                                    <div class="form-group col-sm-12 col-md-2 col-lg-1"
+                                        @if (in_array($tabel_filter, ['1.3', '1.4'])) hidden @endif>
+                                        <button class="btn btn-primary" type="button" href="#periodeModal"
+                                            data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                 </div>
                             </form>
@@ -55,7 +60,7 @@
                     <div class="row">
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
-                                @if ($tabel['id'] == $tabel_filter)
+                                @if ($tabel['id'] === $tabel_filter)
                                     <p>{{ $tabel['name'] }}</p>
                                 @endif
                             @endforeach
@@ -133,6 +138,63 @@
                                             </label>
                                         </div>
                                     @endforeach
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-success">OK</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="periodeModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="title" id="periodeModalLabel">Pilih Periode</h4>
+                            </div>
+                            <form method="GET" action="">
+                                <div class="modal-body mx-4">
+                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
+                                        @foreach ($list_tabel as $key => $tbl)
+                                            <option
+                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                {{ $tbl['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @for ($i = 2021; $i <= 2024; $i++)
+                                        <div class ="row">
+                                            @for ($q = 1; $q <= 4; $q++)
+                                                <div class="form-check col-2">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
+                                                        @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil == $i . 'Q' . $q)
+                                                    checked
+                                                    @endif @endforeach>
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $i . 'Q' . $q }}">
+                                                        {{ $i . 'Q' . $q }}
+                                                    </label>
+                                                </div>
+                                            @endfor
+                                            <div class="form-check col-2">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $i }}" name="periode_filter[]"
+                                                    id="{{ 'periode_filter_' . $i }}"
+                                                    @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil == $i)
+                                                    checked
+                                                    @endif @endforeach>
+                                                <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">
+                                                    {{ $i }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endfor
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

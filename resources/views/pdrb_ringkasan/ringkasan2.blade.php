@@ -33,18 +33,19 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.1', '1.2']))  @endif>
-                                        <select name="periode_filter" id="periode_filter"
-                                            class="form-control"@if (in_array($tabel_filter, ['1.1', '1.2'])) disabled @endif
+                                    <div class="form-group col-sm-12 col-md-2">
+                                        <select name="periode_filter" id="periode_filter" class="form-control"
                                             onchange="updateFormActionperiode()">
-                                            @foreach ($list_quartil as $key => $qtl)
+                                            @foreach ($list_periode as $key => $qtl)
                                                 <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
                                                     @if ($qtl == $periode_filter) selected @endif>
                                                     {{ $qtl }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-
+                                    <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
+                                        <button class="btn btn-success" type="button">Export Excel</button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -69,23 +70,28 @@
                                             <th colspan="2">Pertumbuhan QtQ</th>
                                             <th colspan="2">Pertumbuhan CtC</th>
                                             <th rowspan="2">Implisit YoY {{ $periode_filter }}</th>
-                                            <th rowspan="2">Share</th>
+                                            <th rowspan="2">Share terhadap provinsi</th>
                                         </tr>
                                         <tr>
+                                            @php
+                                                $parts = explode('Q', $periode_filter);
+                                                $tahun = isset($parts[0]) ? $parts[0] : null;
+                                                $quarter = isset($parts[1]) ? 'Q' . $parts[1] : null;
+                                            @endphp
                                             <th>
-                                                {{ explode('Q', $periode_filter)[0] - 1 . 'Q' . explode('Q', $periode_filter)[1] }}
+                                                {{ $tahun - 1 . $quarter }}
                                             </th>
                                             <th>
                                                 {{ $periode_filter }}
                                             </th>
                                             <th>
-                                                {{ explode('Q', $periode_filter)[0] - 1 . 'Q' . explode('Q', $periode_filter)[1] }}
+                                                {{ $tahun - 1 . $quarter }}
                                             </th>
                                             <th>
                                                 {{ $periode_filter }}
                                             </th>
                                             <th>
-                                                {{ explode('Q', $periode_filter)[0] - 1 . 'Q' . explode('Q', $periode_filter)[1] }}
+                                                {{ $tahun - 1 . $quarter }}
                                             </th>
                                             <th>
                                                 {{ $periode_filter }}
@@ -96,25 +102,25 @@
                                         @foreach ($data as $dt)
                                             <tr>
                                                 <td>
-                                                    [{{ $dt['wilayah']['id'] }}] {{ $dt['wilayah']['alias'] }}
+                                                    [{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 <td>
-                                                    {{ $dt['data']['yoy_prev'] }}
+                                                    {{ array_key_exists('yoy_prev', $dt) ? round($dt['yoy_prev'], 2) : 'N/A' }}
                                                 </td>
                                                 <td>
-                                                    {{ $dt['data']['yoy_current'] }}
+                                                    {{ array_key_exists('yoy_current', $dt) ? round($dt['yoy_current'], 2) : 'N/A' }}
                                                 </td>
                                                 <td>
-                                                    {{ $dt['data']['qtq_prev'] }}
+                                                    {{ array_key_exists('qtq_prev', $dt) ? round($dt['qtq_prev'], 2) : 'N/A' }}
                                                 </td>
                                                 <td>
-                                                    {{ $dt['data']['qtq_current'] }}
+                                                    {{ array_key_exists('qtq_current', $dt) ? round($dt['qtq_current'], 2) : 'N/A' }}
                                                 </td>
                                                 <td>
-                                                    {{ $dt['data']['ctc_prev'] }}
+                                                    {{ array_key_exists('ctc_prev', $dt) ? round($dt['ctc_prev'], 2) : 'N/A' }}
                                                 </td>
                                                 <td>
-                                                    {{ $dt['data']['ctc_current'] }}
+                                                    {{ array_key_exists('ctc_current', $dt) ? round($dt['ctc_current'], 2) : 'N/A' }}
                                                 </td>
                                                 <td></td>
                                                 <td></td>

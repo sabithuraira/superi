@@ -32,22 +32,30 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.1', '1.2']))  @endif>
-                                        <select name="periode_filter" id="periode_filter"
-                                            class="form-control"@if (in_array($tabel_filter, ['1.1', '1.2'])) disabled @endif
+                                    <div class="form-group col-sm-12 col-md-2">
+                                        <select name="wilayah_filter" id="wilayah_filter" class="form-control"
+                                            onchange="updateFormActionWilayah()">
+                                            @foreach ($list_wilayah as $wil)
+                                                <option value="{{ $wil['id'] }}" data-id="{{ $wil['id'] }}"
+                                                    @if ($wil == $wilayah_filter) selected @endif>
+                                                    {{ $wil['id'] }} - {{ $wil['alias'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-12 col-md-2">
+                                        <select name="periode_filter" id="periode_filter" class="form-control"
                                             onchange="updateFormActionperiode()">
-                                            @foreach ($list_quartil as $key => $qtl)
+                                            @foreach ($list_periode as $key => $qtl)
                                                 <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
                                                     @if ($qtl == $periode_filter) selected @endif>
                                                     {{ $qtl }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.3', '1.4']))  @endif>
-                                        <button class="btn btn-primary" type="button" href="#komponenModal"
-                                            data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                    <div class="form-group col-sm-6 col-md-2 ">
+                                        <button class="btn btn-success" type="button">Export Excel</button>
                                     </div>
+
                                 </div>
                             </form>
                         </div>
@@ -67,55 +75,42 @@
                                 <table class="table">
                                     <thead>
                                         <tr class="text-center">
-                                            <th>Kabupaten/Kota</th>
-
+                                            <th>Komponen</th>
+                                            <th>Pertumbuhan YoY</th>
+                                            <th>Pertumbuhan QtQ</th>
+                                            <th>Pertumbuhan CtC</th>
+                                            <th>Implisit YoY</th>
+                                            <th>Implisit QtQ</th>
+                                            <th>Implisit CtC</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach ($data as $dt)
+                                            <tr class="text-right">
+                                                <td class="text-left">{{ $dt['name'] }}</td>
+                                                <td>
+                                                    {{ array_key_exists('yoy', $dt) ? round($dt['yoy'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('qtq', $dt) ? round($dt['qtq'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('ctc', $dt) ? round($dt['ctc'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_yoy', $dt) ? round($dt['implisit_yoy'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_qtq', $dt) ? round($dt['implisit_qtq'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_ctc', $dt) ? round($dt['implisit_ctc'], 2) : 'N/A' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal fade" id="komponenModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="title" id="komponenModalLabel">Pilih Komponen</h4>
-                            </div>
-                            <form method="GET" action="">
-                                <div class="modal-body">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
-                                        @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
-                                                {{ $tbl['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @foreach ($list_detail_komponen as $i => $kmp)
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['id'] }}"
-                                                name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
-                                                @foreach ($komponen_filter as $kom_fil)
-                                                    @if ($kom_fil == $kmp['id'])
-                                                    checked
-                                                    @endif @endforeach>
-                                            <label class="form-check-label" for="{{ 'komponen_filter' . $i }}">
-                                                {{ $kmp['name'] }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-success">OK</button>
-                                </div>
-
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -144,10 +139,32 @@
                 .selectedIndex];
             var url = tabel_option.getAttribute('data-url');
             var data_id = tabel_option.getAttribute('data-id');
+            var periode_option = document.getElementById('periode_filter').options[document.getElementById(
+                'periode_filter').selectedIndex];
+            var periode = periode_option.getAttribute('data-periode')
+            var wilayah_option = document.getElementById(
+                'wilayah_filter').options[document.getElementById('wilayah_filter').selectedIndex];
+            var wilayah = wilayah_option.getAttribute('data-id');
+            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' +
+                periode + '?wilayah_filter=' + wilayah;
+            console.log(form.action)
+            form.submit();
+        }
+
+        function updateFormActionWilayah() {
+            var form = document.getElementById('form_filter');
+            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
+                .selectedIndex];
+            var url = tabel_option.getAttribute('data-url');
+            var data_id = tabel_option.getAttribute('data-id');
             var periode_option = document.getElementById('periode_filter').options[document.getElementById('periode_filter')
                 .selectedIndex];
-            var periode = periode_option.getAttribute('data-periode')
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' + periode;
+            var periode = periode_option.getAttribute('data-periode');
+            var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
+                .selectedIndex];
+            var wilayah = wilayah_option.getAttribute('data-id');
+            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' + periode +
+                '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
         }

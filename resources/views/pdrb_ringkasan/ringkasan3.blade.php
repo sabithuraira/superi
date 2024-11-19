@@ -33,20 +33,22 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.1', '1.2']))  @endif>
-                                        <select name="periode_filter" id="periode_filter"
-                                            class="form-control"@if (in_array($tabel_filter, ['1.1', '1.2'])) disabled @endif
+                                    <div class="form-group col-sm-12 col-md-2">
+                                        <select name="periode_filter" id="periode_filter" class="form-control"
                                             onchange="updateFormActionperiode()">
-                                            @foreach ($list_quartil as $key => $qtl)
+                                            @foreach ($list_periode as $key => $qtl)
                                                 <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
                                                     @if ($qtl == $periode_filter) selected @endif>
                                                     {{ $qtl }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.3', '1.4']))  @endif>
+                                    <div class="form-group col-sm-12 col-md-2">
                                         <button class="btn btn-primary" type="button" href="#komponenModal"
                                             data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
+                                        <button class="btn btn-success" type="button">Export Excel</button>
                                     </div>
                                 </div>
                             </form>
@@ -77,11 +79,11 @@
                                         @foreach ($data as $dt)
                                             <tr>
                                                 <td>
-                                                    {{ $dt['wilayah']['alias'] }}
+                                                    [{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
-                                                @foreach ($dt['kode'] as $key => $d)
+                                                @foreach ($komponens as $key => $komp)
                                                     <td>
-                                                        {{ $dt['data'][$dt['kode'][$key]] }}
+                                                        {{ array_key_exists($komp['id'], $dt) ? round($dt[$komp['id']], 2) : 'N/A' }}
                                                     </td>
                                                 @endforeach
                                             </tr>

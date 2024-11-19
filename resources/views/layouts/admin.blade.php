@@ -57,6 +57,18 @@
 
                 @yield('content')
 
+                
+                <div class="modal hide" id="wait_progres" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="text-center"><img src="{!! asset('lucid/assets/images/loading.gif') !!}" width="200" height="200" alt="Loading..."></div>
+                                <h4 class="text-center">Please wait...</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

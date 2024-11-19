@@ -32,21 +32,28 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.1', '1.2']))  @endif>
-                                        <select name="periode_filter" id="periode_filter"
-                                            class="form-control"@if (in_array($tabel_filter, ['1.1', '1.2'])) disabled @endif
+                                    <div class="form-group col-sm-12 col-md-2">
+                                        <select name="wilayah_filter" id="wilayah_filter" class="form-control"
+                                            onchange="updateFormActionWilayah()">
+                                            @foreach ($list_wilayah as $wil)
+                                                <option value="{{ $wil['id'] }}" data-id="{{ $wil['id'] }}"
+                                                    @if ($wil == $wilayah_filter) selected @endif>
+                                                    {{ $wil['id'] }} - {{ $wil['alias'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-sm-12 col-md-2">
+                                        <select name="periode_filter" id="periode_filter" class="form-control"
                                             onchange="updateFormActionperiode()">
-                                            @foreach ($list_quartil as $key => $qtl)
+                                            @foreach ($list_periode as $key => $qtl)
                                                 <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
                                                     @if ($qtl == $periode_filter) selected @endif>
                                                     {{ $qtl }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.3', '1.4']))  @endif>
-                                        <button class="btn btn-primary" type="button" href="#komponenModal"
-                                            data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                    <div class="form-group col-sm-6 col-md-2 ">
+                                        <button class="btn btn-success" type="button">Export Excel</button>
                                     </div>
                                 </div>
                             </form>
@@ -67,58 +74,81 @@
                                 <table class="table">
                                     <thead>
                                         <tr class="text-center">
-                                            <th>Kabupaten/Kota</th>
+                                            <th rowspan="2">Komponen</th>
+                                            <th colspan="2">Pertumbuhan YoY</th>
+                                            <th colspan="2">Pertumbuhan QtQ</th>
+                                            <th colspan="2">Pertumbuhan CtC</th>
+                                            <th colspan="2">Implisit YoY</th>
+                                            <th colspan="2">Implisit QtQ</th>
+                                            <th colspan="2">Implisit CtC</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Rilis</td>
+                                            <td>Revisi</td>
+                                            <td>Rilis</td>
+                                            <td>Revisi</td>
+                                            <td>Rilis</td>
+                                            <td>Revisi</td>
+                                            <td>Rilis</td>
+                                            <td>Revisi</td>
+                                            <td>Rilis</td>
+                                            <td>Revisi</td>
+                                            <td>Rilis</td>
+                                            <td>Revisi</td>
 
                                         </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach ($data as $dt)
+                                            <tr class="text-right">
+                                                <td class="text-left">
+                                                    {{ $dt['name'] }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('yoy_rilis', $dt) ? round($dt['yoy_rilis'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('yoy_revisi', $dt) ? round($dt['yoy_revisi'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('qtq_rilis', $dt) ? round($dt['qtq_rilis'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('qtq_revisi', $dt) ? round($dt['qtq_revisi'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('ctc_rilis', $dt) ? round($dt['ctc_rilis'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('ctc_revisi', $dt) ? round($dt['ctc_revisi'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_yoy_rilis', $dt) ? round($dt['implisit_yoy_rilis'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_yoy_revisi', $dt) ? round($dt['implisit_yoy_revisi'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_qtq_rilis', $dt) ? round($dt['implisit_qtq_rilis'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_qtq_revisi', $dt) ? round($dt['implisit_qtq_revisi'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_ctc_rilis', $dt) ? round($dt['implisit_ctc_rilis'], 2) : 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    {{ array_key_exists('implisit_ctc_revisi', $dt) ? round($dt['implisit_ctc_revisi'], 2) : 'N/A' }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <div class="modal fade" id="komponenModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="title" id="komponenModalLabel">Pilih Komponen</h4>
-                            </div>
-                            <form method="GET" action="">
-                                <div class="modal-body">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
-                                        @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
-                                                {{ $tbl['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @foreach ($list_detail_komponen as $i => $kmp)
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['id'] }}"
-                                                name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
-                                                @foreach ($komponen_filter as $kom_fil)
-                                                    @if ($kom_fil == $kmp['id'])
-                                                    checked
-                                                    @endif @endforeach>
-                                            <label class="form-check-label" for="{{ 'komponen_filter' . $i }}">
-                                                {{ $kmp['name'] }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-success">OK</button>
-                                </div>
 
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

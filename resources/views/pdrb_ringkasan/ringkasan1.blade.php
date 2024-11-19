@@ -32,26 +32,16 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    {{-- <div class="form-group col-sm-12 col-md-2"
-                                        @if (in_array($tabel_filter, ['1.1', '1.2'])) hidden @endif>
-                                        <select name="komponen_filter" id="komponen_filter"
-                                            class="form-control"@if (in_array($tabel_filter, ['1.1', '1.2'])) disabled @endif
-                                            onchange="this.form.submit()">
-                                            @foreach ($list_quartil as $key => $qtl)
-                                                <option value="{{ $key }}">{{ $qtl }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div> --}}
-                                    <div class="form-group col-sm-12 col-md-2 col-lg-1"
-                                        @if (in_array($tabel_filter, ['1.3', '1.4'])) hidden @endif>
+                                    <div class="form-group col-sm-6 col-md-2 col-lg-2 d-grid gap-2 mx-auto">
                                         <button class="btn btn-primary" type="button" href="#komponenModal"
                                             data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
                                     </div>
-                                    <div class="form-group col-sm-12 col-md-2 col-lg-1"
-                                        @if (in_array($tabel_filter, ['1.3', '1.4'])) hidden @endif>
+                                    <div class="form-group col-sm-6 col-md-2 col-lg-2 d-grid gap-2 mx-auto">
                                         <button class="btn btn-primary" type="button" href="#periodeModal"
                                             data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
+                                        <button class="btn btn-success" type="button">Export Excel</button>
                                     </div>
                                 </div>
                             </form>
@@ -125,7 +115,7 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @foreach ($list_komponen as $i => $kmp)
+                                    @foreach ($list_group_komponen as $i => $kmp)
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="{{ $kmp['column'] }}"
                                                 name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"

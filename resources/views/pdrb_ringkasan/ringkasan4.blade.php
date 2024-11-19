@@ -22,7 +22,7 @@
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
                                         <select name="tabel_filter" id="tabel_filter" class="form-control"
-                                            onchange="updateFormAction()">
+                                            onchange="updateFormAction(this)">
                                             @foreach ($list_tabel as $key => $tbl)
                                                 <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}"
                                                     data-id="{{ $tbl['id'] }}"
@@ -33,20 +33,16 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.1', '1.2']))  @endif>
-                                        <select name="periode_filter" id="periode_filter"
-                                            class="form-control"@if (in_array($tabel_filter, ['1.1', '1.2'])) disabled @endif
-                                            onchange="updateFormActionperiode()">
-                                            @foreach ($list_quartil as $key => $qtl)
-                                                <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
-                                                    @if ($qtl == $periode_filter) selected @endif>
-                                                    {{ $qtl }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-sm-12 col-md-2" @if (in_array($tabel_filter, ['1.3', '1.4']))  @endif>
+                                    <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
                                         <button class="btn btn-primary" type="button" href="#komponenModal"
                                             data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
+                                        <button class="btn btn-primary" type="button" href="#periodeModal"
+                                            data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
+                                    </div>
+                                    <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
+                                        <button class="btn btn-success" type="button">Export Excel</button>
                                     </div>
                                 </div>
                             </form>
@@ -63,16 +59,43 @@
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive">
-                                <table class="table">
+                            <div class="table-responsive ">
+                                <table class="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
-                                            <th>Kabupaten/Kota</th>
+                                            <th rowspan="3">Komponen</th>
+                                            @foreach ($periode_filter as $periode)
+                                                <th colspan="2">{{ $periode }}</th>
+                                            @endforeach
 
                                         </tr>
+                                        <tr class="text-center">
+                                            @foreach ($periode_filter as $periode)
+                                                <th colspan="2">Diskrepansi</th>
+                                            @endforeach
+                                        </tr>
+                                        <tr class="text-center">
+                                            @foreach ($periode_filter as $periode)
+                                                <th colspan="">ADHB</th>
+                                                <th colspan="">ADHK</th>
+                                            @endforeach
+                                        </tr>
+
                                     </thead>
                                     <tbody>
-
+                                        @foreach ($data as $dt)
+                                            <tr>
+                                                <td>{{ $dt['komponen_name'] }}</td>
+                                                @foreach ($periode_filter as $periode)
+                                                    <td>
+                                                        {{ array_key_exists($periode . 'adhb', $dt) ? round($dt[$periode . 'adhb'], 2) : 'N/A' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ array_key_exists($periode . 'adhk', $dt) ? round($dt[$periode . 'adhk'], 2) : 'N/A' }}
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -96,12 +119,12 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @foreach ($list_detail_komponen as $i => $kmp)
+                                    @foreach ($list_group_komponen as $i => $kmp)
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['id'] }}"
+                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['column'] }}"
                                                 name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
                                                 @foreach ($komponen_filter as $kom_fil)
-                                                    @if ($kom_fil == $kmp['id'])
+                                                    @if ($kom_fil == $kmp['column'])
                                                     checked
                                                     @endif @endforeach>
                                             <label class="form-check-label" for="{{ 'komponen_filter' . $i }}">
@@ -119,6 +142,63 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal fade" id="periodeModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="title" id="periodeModalLabel">Pilih Periode</h4>
+                            </div>
+                            <form method="GET" action="">
+                                <div class="modal-body mx-4">
+                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
+                                        @foreach ($list_tabel as $key => $tbl)
+                                            <option
+                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                {{ $tbl['name'] }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @for ($i = 2021; $i <= 2024; $i++)
+                                        <div class ="row">
+                                            @for ($q = 1; $q <= 4; $q++)
+                                                <div class="form-check col-2">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
+                                                        @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil == $i . 'Q' . $q)
+                                                    checked
+                                                    @endif @endforeach>
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $i . 'Q' . $q }}">
+                                                        {{ $i . 'Q' . $q }}
+                                                    </label>
+                                                </div>
+                                            @endfor
+                                            <div class="form-check col-2">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $i }}" name="periode_filter[]"
+                                                    id="{{ 'periode_filter_' . $i }}"
+                                                    @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil == $i)
+                                                    checked
+                                                    @endif @endforeach>
+                                                <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">
+                                                    {{ $i }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endfor
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-success">OK</button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -126,29 +206,12 @@
 
 @section('scripts')
     <script>
-        function updateFormAction() {
+        function updateFormAction(selectElement) {
             var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var url = tabel_option.getAttribute('data-url');
-            var data_id = tabel_option.getAttribute('data-id');
-            document.getElementById("periode_filter").disabled = true;
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            var url = selectedOption.getAttribute('data-url');
+            var data_id = selectedOption.getAttribute('data-id');
             form.action = window.origin + '/superi/public/' + url + '/' + data_id;
-            console.log(form.action)
-            form.submit();
-        }
-
-        function updateFormActionperiode() {
-            var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var url = tabel_option.getAttribute('data-url');
-            var data_id = tabel_option.getAttribute('data-id');
-            var periode_option = document.getElementById('periode_filter').options[document.getElementById('periode_filter')
-                .selectedIndex];
-            var periode = periode_option.getAttribute('data-periode')
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' + periode;
-            console.log(form.action)
             form.submit();
         }
     </script>

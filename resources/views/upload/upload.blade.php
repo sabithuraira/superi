@@ -68,7 +68,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="adhb">
-                        <table class="table-bordered m-b-0" style="min-width:100%">
+                        <table class="table table-bordered m-b-0" style="min-width:100%">
                             <tr class="text-center">
                                 <th>Komponen</th>
                                 <th>@{{ form_data.tahun }}Q1</th>
@@ -115,8 +115,8 @@
                         </table>
                     </div>
 
-                    <div class="tab-pane show active" id="adhk">
-                        <table class="table-bordered m-b-0" style="min-width:100%">
+                    <div class="tab-pane" id="adhk">
+                        <table class="table table-bordered m-b-0" style="min-width:100%">
                             <tr class="text-center">
                                 <th>Komponen</th>
                                 <th>@{{ form_data.tahun }}Q1</th>
@@ -187,20 +187,8 @@ var vm = new Vue({
             tahun: {!! json_encode($tahun) !!}
         },
         datas: [],
-        komponen: []
+        komponen: [],
     },
-    // computed: {
-    //     headerOnDetail: function () {
-    //         var result = 'Detail Barang ';
-    //         if(this.form_current_jenis==1) result += "Masuk "
-    //         else result += "Keluar "
-
-    //         result += this.months[this.month] + " " + this.year;
-    //         result += " (" + this.current_nama_barang + ")"
-
-    //         return result
-    //     }
-    // },
     watch: {
         form_data: {
             handler(val){
@@ -213,8 +201,6 @@ var vm = new Vue({
         setDatas: function(event){
             var self = this;
             $('#wait_progres').modal('show');
-
-            console.log("haai")
 
             $.ajaxSetup({
                 headers: { 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content') }

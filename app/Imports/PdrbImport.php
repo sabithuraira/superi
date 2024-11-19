@@ -77,27 +77,27 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $new_model->c_2     = $rows[16][$col_no];
 
             $new_model->c_3     = $rows[17][$col_no];
-            $new_model->c_3a     = $rows[18][$col_no];
-            $new_model->c_3b     = $rows[19][$col_no];
+            $new_model->c_3a     = 0;
+            $new_model->c_3b     = 0;
 
-            $new_model->c_4     = $rows[20][$col_no];
-            $new_model->c_4a     = $rows[21][$col_no];
-            $new_model->c_4b     = $rows[22][$col_no];
+            $new_model->c_4     = $rows[18][$col_no];
+            $new_model->c_4a     = $rows[19][$col_no];
+            $new_model->c_4b     = $rows[20][$col_no];
 
-            $new_model->c_5     = $rows[23][$col_no];
+            $new_model->c_5     = $rows[21][$col_no];
 
-            $new_model->c_6     = $rows[24][$col_no];
-            $new_model->c_6a     = $rows[25][$col_no];
-            $new_model->c_6b     = $rows[26][$col_no];
+            $new_model->c_6     = $rows[22][$col_no];
+            $new_model->c_6a     = 0;
+            $new_model->c_6b     = 0;
 
-            $new_model->c_7     = $rows[27][$col_no];
-            $new_model->c_7a     = $rows[28][$col_no];
-            $new_model->c_7b     = $rows[29][$col_no];
+            $new_model->c_7     = $rows[23][$col_no];
+            $new_model->c_7a     = 0;
+            $new_model->c_7b     = 0;
 
-            $new_model->c_8     = $rows[30][$col_no];
-            $new_model->c_8a     = $rows[31][$col_no];
-            $new_model->c_8b     = $rows[32][$col_no];
-            $new_model->c_pdrb     = $rows[33][$col_no];
+            $new_model->c_8     = 0;
+            $new_model->c_8a     = 0;
+            $new_model->c_8b     = 0;
+            $new_model->c_pdrb     = $rows[24][$col_no];
 
             $new_model->save();
         }

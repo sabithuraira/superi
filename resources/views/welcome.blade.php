@@ -221,29 +221,6 @@
           <!-- /.widget -->
         </div>
         <!-- /column -->
-        <div class="col-md-4 col-lg-3">
-          <div class="widget">
-            <h4 class="widget-title text-white mb-3">Get in Touch</h4>
-            <address class="pe-xl-15 pe-xxl-17">Moonshine St. 14/05 Light City, London, United Kingdom</address>
-            <a href="mailto:#">info@email.com</a><br /> 00 (123) 456 78 90
-          </div>
-          <!-- /.widget -->
-        </div>
-        <!-- /column -->
-        <div class="col-md-4 col-lg-3">
-          <div class="widget">
-            <h4 class="widget-title text-white mb-3">Learn More</h4>
-            <ul class="list-unstyled  mb-0">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Our Story</a></li>
-              <li><a href="#">Projects</a></li>
-              <li><a href="#">Terms of Use</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-            </ul>
-          </div>
-          <!-- /.widget -->
-        </div>
-        <!-- /column -->
       </div>
       <!--/.row -->
     </div>

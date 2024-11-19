@@ -30,6 +30,7 @@ Sabit:
 * Upload with auth
 * Level Access (page, approval, access upload just for satker)
 * Fenomena all features
+* Beranda
 
 Bombom:
 * Tabel PDRB Ringkasan (Tabel 1.1 - 1.16)

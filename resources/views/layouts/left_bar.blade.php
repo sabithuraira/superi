@@ -1,15 +1,11 @@
 <div id="left-sidebar" class="sidebar">
-    <div class="sidebar-scroll">
-        <div class="user-account">
-            <div class="dropdown">
-                <span>Welcome,</span>
-
-            </div>
-        </div>
 
         <nav id="left-sidebar-nav" class="sidebar-nav">
             <ul id="main-menu" class="metismenu">
-
+                <li class="{{ request()->is('beranda*') ? 'active' : '' }}">
+                    <a href="#Dashboard"><i class="icon-home"></i>
+                        <span>Beranda</span></a>
+                </li>
 
                 <li class="{{ request()->is('upload*') ? 'active' : '' }}">
                     <a href="#Upload" class="has-arrow"><i class="icon-cloud-upload"></i>

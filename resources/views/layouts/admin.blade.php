@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ env('APP_NAME', 'MUSI') }}</title>
+    <title>{{ env('APP_NAME', 'SUPERI') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
@@ -57,7 +57,6 @@
 
                 @yield('content')
 
-                
                 <div class="modal hide" id="wait_progres" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">

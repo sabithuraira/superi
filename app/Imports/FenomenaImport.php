@@ -69,27 +69,27 @@ class FenomenaImport implements ToCollection
         $model->fenomena_c_2     = $rows[($start_from + 3 * 13)][9];
 
         $model->fenomena_c_3     = $rows[($start_from + 3 * 14)][9];
-        $model->fenomena_c_3a     = $rows[($start_from + 3 * 15)][9];
-        $model->fenomena_c_3b     = $rows[($start_from + 3 * 16)][9];
+        $model->fenomena_c_3a     = "";
+        $model->fenomena_c_3b     = "";
 
-        $model->fenomena_c_4     = $rows[($start_from + 3 * 17)][9];
-        $model->fenomena_c_4a     = $rows[($start_from + 3 * 18)][9];
-        $model->fenomena_c_4b     = $rows[($start_from + 3 * 19)][9];
+        $model->fenomena_c_4     = $rows[($start_from + 3 * 15)][9];
+        $model->fenomena_c_4a     = $rows[($start_from + 3 * 16)][9];
+        $model->fenomena_c_4b     = $rows[($start_from + 3 * 17)][9];
 
-        $model->fenomena_c_5     = $rows[($start_from + 3 * 20)][9];
+        $model->fenomena_c_5     = $rows[($start_from + 3 * 18)][9];
 
-        $model->fenomena_c_6     = $rows[($start_from + 3 * 21)][9];
-        $model->fenomena_c_6a     = $rows[($start_from + 3 * 22)][9];
-        $model->fenomena_c_6b     = $rows[($start_from + 3 * 23)][9];
+        $model->fenomena_c_6     = $rows[($start_from + 3 * 19)][9];
+        $model->fenomena_c_6a     = "";
+        $model->fenomena_c_6b     = "";
 
-        $model->fenomena_c_7     = $rows[($start_from + 3 * 24)][9];
-        $model->fenomena_c_7a     = $rows[($start_from + 3 * 25)][9];
-        $model->fenomena_c_7b     = $rows[($start_from + 3 * 26)][9];
+        $model->fenomena_c_7     = $rows[($start_from + 3 * 20)][9];
+        $model->fenomena_c_7a     = "";
+        $model->fenomena_c_7b     = "";
 
-        $model->fenomena_c_8     = $rows[($start_from + 3 * 27)][9];
-        $model->fenomena_c_8a     = $rows[($start_from + 3 * 28)][9];
-        $model->fenomena_c_8b     = $rows[($start_from + 3 * 29)][9];
-        $model->fenomena_c_pdrb     = $rows[($start_from + 3 * 30)][9];
+        $model->fenomena_c_8     = "";
+        $model->fenomena_c_8a     = "";
+        $model->fenomena_c_8b     = "";
+        $model->fenomena_c_pdrb     = $rows[($start_from + 3 * 21)][9];
         $model->save();
     }
 }

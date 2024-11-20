@@ -15,7 +15,7 @@ class ResumeController extends Controller
                     ->orderBy('no_komponen')
                     ->get();
 
-        $periode = DB::select('SELECT DISTINCT CONCAT(tahun, "Q", q) AS periode FROM superi_pdrb');
+        $periode = DB::select('SELECT DISTINCT CONCAT(tahun, "Q", q) AS periode FROM superi_pdrb_rev_view');
 
         return view('resume.index', compact('komponen', 'periode'));
     }
@@ -48,7 +48,7 @@ class ResumeController extends Controller
                 }
             } elseif ($tabel == 'Tabel 2.3') {
                 foreach ($periode as $p) {
-                    $pembagi_prov = DB::select('SELECT SUM(IF(CONCAT(tahun, "Q", q) = "' . $p . '" AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $pembagi_prov = DB::select('SELECT SUM(IF(CONCAT(tahun, "Q", q) = "' . $p . '" AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                     $sql .= 'SUM(IF(CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov .' * 100 AS `' . $p . '`, ';
                 }
             } elseif ($tabel == 'Tabel 2.4') {
@@ -126,10 +126,10 @@ class ResumeController extends Controller
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
                     if ($q == '1') {
-                        $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                        $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                         $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                     } else {
-                        $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                        $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                         $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                     }
                 }
@@ -137,14 +137,14 @@ class ResumeController extends Controller
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
-                    $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                     $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                 }
             } elseif ($tabel == 'Tabel 2.16') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
-                    $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                     $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                 }
             } elseif ($tabel == 'Tabel 2.17') {
@@ -172,7 +172,7 @@ class ResumeController extends Controller
             }
 
             $sql = substr($sql, 0, -2);
-            $sql .= ' FROM superi_pdrb WHERE revisi_ke = 0';
+            $sql .= ' FROM superi_pdrb_rev_view';
             $sql .= ' GROUP BY CONCAT(kode_prov, kode_kab)';
 
             $pdrb_c = DB::select($sql);

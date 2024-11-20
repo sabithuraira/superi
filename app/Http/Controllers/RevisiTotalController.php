@@ -20,80 +20,66 @@ class RevisiTotalController extends Controller
         $kd_kab = $request->input('kd_kab');
         $periode = explode(',', $request->input('periode'));
 
-        $c_all = [
-            'c_pdrb' => 'PDRB',
-            'c_1' => '1. Pengeluaran Konsumsi Rumah Tangga (1.a. s/d 1.l.)',
-            'c_1a' => '1.a. Makanan dan Minuman Non Beralkohol',
-            'c_1b' => '1.b. Minuman Beralkohol dan Rokok',
-            'c_1c' => '1.c. Pakaian',
-            'c_1d' => '1.d. Perumahan, Air, Listrik, Gas dan Bahan Bakar Lainnya',
-            'c_1e' => '1.e. Perabot, Peralatan rumahtangga dan Pemeliharaan Rutin Rumah',
-            'c_1f' => '1.f. Kesehatan',
-            'c_1g' => '1.g. Transportasi/Angkutan',
-            'c_1h' => '1.h. Komunikasi',
-            'c_1i' => '1.i. Rekreasi dan Budaya',
-            'c_1j' => '1.j. Pendidikan',
-            'c_1k' => '1.k. Penginapan dan Hotel',
-            'c_1l' => '1.l. Barang Pribadi dan Jasa Perorangan',
-            'c_2' => '2. Pengeluaran Konsumsi LNPRT',
-            'c_3' => '3. Pengeluaran Konsumsi Pemerintah (3.a. + 3.b.)',
-            'c_3a' => '3.a. Konsumsi Kolektif',
-            'c_3b' => '3.b. Konsumsi Individu',
-            'c_4' => '4. Pembentukan Modal Tetap Bruto (4.a. + 4.b.)',
-            'c_4a' => '4.a. Bangunan',
-            'c_4b' => '4.b. Non Bangunan',
-            'c_5' => '5. Perubahan Inventori',
-            'c_6' => '6. Ekspor Luar Negeri (6.a. + 6.b.)',
-            'c_6a' => '6.a. Barang',
-            'c_6b' => '6.b. Jasa',
-            'c_7' => '7. Impor Luar Negeri (7.a. + 7.b.)',
-            'c_7a' => '7.a. Barang',
-            'c_7b' => '7.b. Jasa',
-            'c_8' => '8. Net Ekspor Antar Daerah (8.a. - 8.b.)',
-            'c_8a' => '8.a. Ekspor',
-            'c_8b' => '8.b. Impor'
-        ];
+        $komponen = DB::table('komponen')
+                    ->where('status_aktif', '=', 1)
+                    ->orderBy('no_komponen')
+                    ->get();
+
+        $c_all = [['no_komponen' => 'c_pdrb', 'nama_komponen' => 'Total PDRB']];
+
+        foreach ($komponen as $k) {
+            $c = 'c_' . str_replace('.', '', $k->no_komponen);
+            $c_desc = $k->nama_komponen;
+            array_push($c_all, ['no_komponen' => $c, 'nama_komponen' => $c_desc]);
+        }
 
         $pdrb = [];
 
-        foreach ($c_all as $c => $c_desc) {
+        foreach ($c_all as $c_item) {
+            $c = $c_item['no_komponen'];
+            $c_desc = $c_item['nama_komponen'];
+
             $sql = 'SELECT "' . $c_desc . '" AS `Komponen`, ';
 
-            if ($tabel == '2.1') {
+            if ($tabel == 'Tabel 2.1') {
                 foreach ($periode as $p) {
                     $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS `Rilis_' . $p . '`, ';
                     $sql .= 'SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.2') {
+            } elseif ($tabel == 'Tabel 2.2') {
                 foreach ($periode as $p) {
                     $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, ' . $c . ', 0)) AS `Rilis_' . $p . '`, ';
                     $sql .= 'SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, ' . $c . ', 0)) AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.3') {
-                return response()->json([['Data' => 'Tidak Tersedia']]);
-            } elseif ($tabel == '2.4') {
-                return response()->json([['Data' => 'Tidak Tersedia']]);
-            } elseif ($tabel == '2.5') {
+            } elseif ($tabel == 'Tabel 2.3') {
+                foreach ($periode as $p) {
+                    $pembagi_prov = DB::select('SELECT SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov .' * 100 AS `Rilis_' . $p . '`, ';
+                    $pembagi_prov_rev = DB::select('SELECT SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $sql .= 'SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov_rev .' * 100 AS `Revisi_' . $p . '`, ';
+                    $sql .= '"Arah" AS `Arah_' . $p . '`, ';
+                }
+            } elseif ($tabel == 'Tabel 2.4') {
                 foreach ($periode as $p) {
                     $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
                     $sql .= 'SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.6') {
+            } elseif ($tabel == 'Tabel 2.5') {
                 foreach ($periode as $p) {
                     $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, ' . $c . ', 0)) / SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
                     $sql .= 'SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, ' . $c . ', 0)) / SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.7') {
+            } elseif ($tabel == 'Tabel 2.6') {
                 foreach ($periode as $p) {
                     $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, ' . $c . ', 0)) * 100 AS `Rilis_' . $p . '`, ';
                     $sql .= 'SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / SUM(IF(revisi_ke = 1 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 2, ' . $c . ', 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.8') {
+            } elseif ($tabel == 'Tabel 2.7') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -101,7 +87,7 @@ class RevisiTotalController extends Controller
                     $sql .= 'SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 1, ' . $c . ', 0)) / SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.9') {
+            } elseif ($tabel == 'Tabel 2.8') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -115,7 +101,7 @@ class RevisiTotalController extends Controller
                         $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                     }
                 }
-            } elseif ($tabel == '2.10') {
+            } elseif ($tabel == 'Tabel 2.9') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -123,7 +109,7 @@ class RevisiTotalController extends Controller
                     $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.11') {
+            } elseif ($tabel == 'Tabel 2.10') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -131,7 +117,7 @@ class RevisiTotalController extends Controller
                     $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.12') {
+            } elseif ($tabel == 'Tabel 2.11') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -153,7 +139,7 @@ class RevisiTotalController extends Controller
                         $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                     }
                 }
-            } elseif ($tabel == '2.13') {
+            } elseif ($tabel == 'Tabel 2.12') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -165,7 +151,7 @@ class RevisiTotalController extends Controller
                     $sql .= '(' . $implicit_rev . ' - ' . $implicit_before_rev . ') / ' . $implicit_before_rev . ' * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.14') {
+            } elseif ($tabel == 'Tabel 2.13') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
@@ -177,40 +163,72 @@ class RevisiTotalController extends Controller
                     $sql .= '(' . $implicit_rev . ' - ' . $implicit_before_rev . ') / ' . $implicit_before_rev . ' * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.15') {
-                return response()->json([['Data' => 'Tidak Tersedia']]);
-            } elseif ($tabel == '2.16') {
-                return response()->json([['Data' => 'Tidak Tersedia']]);
-            } elseif ($tabel == '2.17') {
-                return response()->json([['Data' => 'Tidak Tersedia']]);
-            } elseif ($tabel == '2.18') {
+            } elseif ($tabel == 'Tabel 2.14') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
                     if ($q == '1') {
-                        $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
-                        $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                        $pembagi_prov = DB::select('SELECT SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                        $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `Rilis_' . $p . '`, ';
+                        $pembagi_prov_rev = DB::select('SELECT SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                        $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov_rev . ' * 100 AS `Revisi_' . $p . '`, ';
                         $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                     } else {
-                        $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
-                        $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                        $pembagi_prov = DB::select('SELECT SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                        $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `Rilis_' . $p . '`, ';
+                        $pembagi_prov_rev = DB::select('SELECT SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                        $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov_rev . ' * 100 AS `Revisi_' . $p . '`, ';
                         $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                     }
                 }
-            } elseif ($tabel == '2.19') {
+            } elseif ($tabel == 'Tabel 2.15') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
-                    $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
-                    $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                    $pembagi_prov = DB::select('SELECT SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `Rilis_' . $p . '`, ';
+                    $pembagi_prov_rev = DB::select('SELECT SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov_rev . ' * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
-            } elseif ($tabel == '2.20') {
+            } elseif ($tabel == 'Tabel 2.16') {
                 foreach ($periode as $p) {
                     $tahun = substr($p, 0, 4);
                     $q = substr($p, 5, 1);
-                    $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
-                    $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                    $pembagi_prov = DB::select('SELECT SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `Rilis_' . $p . '`, ';
+                    $pembagi_prov_rev = DB::select('SELECT SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb')[0]->prov;
+                    $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov_rev . ' * 100 AS `Revisi_' . $p . '`, ';
+                    $sql .= '"Arah" AS `Arah_' . $p . '`, ';
+                }
+            } elseif ($tabel == 'Tabel 2.17') {
+                foreach ($periode as $p) {
+                    $tahun = substr($p, 0, 4);
+                    $q = substr($p, 5, 1);
+                    if ($q == '1') {
+                        $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
+                        $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                        $sql .= '"Arah" AS `Arah_' . $p . '`, ';
+                    } else {
+                        $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
+                        $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                        $sql .= '"Arah" AS `Arah_' . $p . '`, ';
+                    }
+                }
+            } elseif ($tabel == 'Tabel 2.18') {
+                foreach ($periode as $p) {
+                    $tahun = substr($p, 0, 4);
+                    $q = substr($p, 5, 1);
+                    $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
+                    $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
+                    $sql .= '"Arah" AS `Arah_' . $p . '`, ';
+                }
+            } elseif ($tabel == 'Tabel 2.19') {
+                foreach ($periode as $p) {
+                    $tahun = substr($p, 0, 4);
+                    $q = substr($p, 5, 1);
+                    $sql .= '(SUM(IF(revisi_ke = 0 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 0 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Rilis_' . $p . '`, ';
+                    $sql .= '(SUM(IF(revisi_ke = 1 AND tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(revisi_ke = 1 AND tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `Revisi_' . $p . '`, ';
                     $sql .= '"Arah" AS `Arah_' . $p . '`, ';
                 }
             }
@@ -230,11 +248,11 @@ class RevisiTotalController extends Controller
                     $rilis_key = 'Rilis_' . $periode_pdrb;
                     $revisi_key = 'Revisi_' . $periode_pdrb;
                     if ($pdrb_item->$revisi_key > $pdrb_item->$rilis_key) {
-                        $pdrb_value = 'Naik';
+                        $pdrb_value = '<div class="text-success">▲</div>';
                     } elseif ($pdrb_item->$revisi_key < $pdrb_item->$rilis_key) {
-                        $pdrb_value = 'Turun';
+                        $pdrb_value = '<div class="text-danger">▼</div>';
                     } else {
-                        $pdrb_value = 'Tetap';
+                        $pdrb_value = '<div class="text-warning">═</div>';
                     }
                 }
             }

@@ -141,24 +141,24 @@ class TabelRingkasanController extends Controller
     ];
 
     public $list_wilayah = [
-        ['id' => '00', 'alias' => 'Sumsel', 'name' => 'Sumatera Selatan'],
-        ['id' => '01', 'alias' => 'OKU', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '02', 'alias' => 'OKI', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '03', 'alias' => 'Muara Enim', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '04', 'alias' => 'Lahat', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '05', 'alias' => 'Musi Rawas', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '06', 'alias' => 'Muba', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '07', 'alias' => 'Banyu Asin', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '08', 'alias' => 'OKUS', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '09', 'alias' => 'OKUT', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '10', 'alias' => 'Ogan Ilir', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '11', 'alias' => 'Empat Lawang', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '12', 'alias' => 'PALI', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '13', 'alias' => 'Muratara', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '71', 'alias' => 'Palembang', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '72', 'alias' => 'Prabumulih', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '73', 'alias' => 'Pagar Alam', 'name' => 'Ogan Komering Ulu'],
-        ['id' => '74', 'alias' => 'Lubuk Linggau', 'name' => 'Ogan Komering Ulu'],
+        ['id' => '00', 'alias' => 'Sumsel',         'name' => 'Sumatera Selatan'],
+        ['id' => '01', 'alias' => 'OKU',            'name' => 'Ogan Komering Ulu'],
+        ['id' => '02', 'alias' => 'OKI',            'name' => 'Ogan Komering Ilir'],
+        ['id' => '03', 'alias' => 'Muara Enim',     'name' => 'Muara Enim'],
+        ['id' => '04', 'alias' => 'Lahat',          'name' => 'Lahat'],
+        ['id' => '05', 'alias' => 'Musi Rawas',     'name' => 'Musi Rawas'],
+        ['id' => '06', 'alias' => 'Muba',           'name' => 'Musi Banyuasin'],
+        ['id' => '07', 'alias' => 'Banyu Asin',     'name' => 'Banyuasin'],
+        ['id' => '08', 'alias' => 'OKUS',           'name' => 'Ogan Komering Ulu Selatan'],
+        ['id' => '09', 'alias' => 'OKUT',           'name' => 'Ogan Komering Ulu Timur'],
+        ['id' => '10', 'alias' => 'Ogan Ilir',      'name' => 'Ogan Ilir'],
+        ['id' => '11', 'alias' => 'Empat Lawang',   'name' => 'Empat Lawang'],
+        ['id' => '12', 'alias' => 'PALI',           'name' => 'PALI'],
+        ['id' => '13', 'alias' => 'Muratara',       'name' => 'Musi Rawas Utara'],
+        ['id' => '71', 'alias' => 'Palembang',      'name' => 'Palembang'],
+        ['id' => '72', 'alias' => 'Prabumulih',     'name' => 'Prabumulih'],
+        ['id' => '73', 'alias' => 'Pagar Alam',     'name' => 'Pagar Alam'],
+        ['id' => '74', 'alias' => 'Lubuk Linggau',  'name' => 'Lubuk Linggau'],
     ];
 
     public function ringkasan1(Request $request, $id)
@@ -229,6 +229,7 @@ class TabelRingkasanController extends Controller
                             ->groupBy('q')
                             ->get();
 
+
                         $q = [];
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
@@ -237,7 +238,6 @@ class TabelRingkasanController extends Controller
                         $data_cumulative = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
                             ->where('kode_kab', '00')->where('adhb_or_adhk', 1)
                             ->where('tahun', $arr_periode[0])->wherein('q', $q)
-
                             ->where(function ($query) use ($jml_q_y) {
                                 foreach ($jml_q_y as $jml_q) {
                                     $query->orWhere(function ($subquery) use ($jml_q) {

@@ -55,14 +55,17 @@
                             </div>
                         </div>
                     </div>
-
-                    <br>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <div class="row clearfix">
+                        <div class="col-lg-6">
+                            <button name="action" class="btn btn-success float-left" type="submit" value="2"><i class="fa fa-file-excel-o"></i>&nbsp; Export Excel</button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-primary float-right" name="action" value="1">Simpan</button>
+                        </div>
+                    </div>
                 </form>
 
-                <br/>
-
-                <ul class="nav nav-tabs">
+                <ul class="nav nav-tabs mt-2">
                     <li class="nav-item"><a class="nav-link active show" data-toggle="tab" href="#adhb">ADHB</a></li>
                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#adhk">ADHK</a></li>
                 </ul>
@@ -112,6 +115,19 @@
                                 </tr>
                             </template>
                             
+                            <td><b>PDRB</b></td>
+                                    
+                            <td v-if="datas['adhb'][0]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhb'][0]['c_pdrb'] }}</td>
+                            
+                            <td v-if="datas['adhb'][1]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhb'][1]['c_pdrb'] }}</td>
+                            
+                            <td v-if="datas['adhb'][2]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhb'][2]['c_pdrb'] }}</td>
+                            
+                            <td v-if="datas['adhb'][3]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhb'][3]['c_pdrb'] }}</td>
                         </table>
                     </div>
 
@@ -160,6 +176,20 @@
                                 </tr>
                             </template>
                             
+                             
+                            <td><b>PDRB</b></td>
+                                    
+                            <td v-if="datas['adhk'][0]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhk'][0]['c_pdrb'] }}</td>
+                            
+                            <td v-if="datas['adhk'][1]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhk'][1]['c_pdrb'] }}</td>
+                            
+                            <td v-if="datas['adhk'][2]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhk'][2]['c_pdrb'] }}</td>
+                            
+                            <td v-if="datas['adhk'][3]==null"></td>
+                            <td class="text-right" v-else>@{{ datas['adhk'][3]['c_pdrb'] }}</td>
                         </table>
                     </div>
                 </div>

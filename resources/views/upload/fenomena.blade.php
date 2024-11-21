@@ -68,13 +68,19 @@
                         </div>
                     </div>
 
-                    <br>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <div class="row clearfix">
+                        <div class="col-lg-6">
+                            <button name="action" class="btn btn-success float-left" type="submit" value="2"><i class="fa fa-file-excel-o"></i>&nbsp; Export Excel</button>
+                        </div>
+                        <div class="col-lg-6">
+                            <button type="submit" class="btn btn-primary float-right" name="action" value="1">Simpan</button>
+                        </div>
+                    </div>
                 </form>
 
                 <br/>
                 
-                <table class="table-bordered m-b-0" style="min-width:100%">
+                <table id="my_table" class="table-bordered m-b-0" style="min-width:100%">
                     <tr class="text-center">
                         <th>Komponen</th>
                         <th>Pertumbuhah</th>
@@ -125,6 +131,25 @@
                         </template>
                     </template>
                     
+                    <tr>
+                        <td rowspan="3"><b>PDRB</b></td>
+                        
+                        <td>q-to-q</td>
+                        <td v-if="datas['q-to-q'][form_data.triwulan-1]==null"></td>
+                        <td v-else>@{{ datas['q-to-q'][form_data.triwulan-1]['fenomena_c_pdrb'] }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>y-o-y</td>
+                        <td v-if="datas['y-o-y'][form_data.triwulan-1]==null"></td>
+                        <td v-else>@{{ datas['y-o-y'][form_data.triwulan-1]['fenomena_c_pdrb'] }}</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>c-to-c</td>
+                        <td v-if="datas['c-to-c'][form_data.triwulan-1]==null"></td>
+                        <td v-else>@{{ datas['c-to-c'][form_data.triwulan-1]['fenomena_c_pdrb'] }}</td>
+                    </tr>
                 </table>
           </div>
       </div>
@@ -191,6 +216,7 @@ var vm = new Vue({
                 $('#wait_progres').modal('hide');
             });
         },
+        
     }
 });
 

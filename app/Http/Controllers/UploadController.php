@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PdrbImport;
 use App\Imports\FenomenaImport;
+use App\Exports\PdrbExport;
+use App\Exports\FenomenaExport;
 
 class UploadController extends Controller
 {
@@ -25,8 +27,14 @@ class UploadController extends Controller
         if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
         if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
 
-        Excel::import(new PdrbImport($wilayah, $tahun), $request->file('excel_file'));
-        return redirect('upload/import')->with('success', 'Information has been added');
+        if($request->get('action')==1){
+            Excel::import(new PdrbImport($wilayah, $tahun), $request->file('excel_file'));
+            return redirect('upload/import')->with('success', 'Data berhasil disimpan');
+        }
+        else{
+            $str_date = date('Y-m-d h:i:s');
+            return Excel::download(new PdrbExport($wilayah, $tahun), "pdrb_".$str_date.".xlsx");
+        }
     }
 
     public function pdrb(Request $request){
@@ -57,12 +65,21 @@ class UploadController extends Controller
     public function fenomena_import(Request $request){
         $wilayah = '00';
         $tahun = date('Y');
+        $triwulan = 1;
 
         if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
         if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
+        if (strlen($request->get('triwulan')) > 0) $triwulan = $request->get('triwulan');
 
-        Excel::import(new FenomenaImport($wilayah, $tahun), $request->file('excel_file'));
-        return redirect('upload/fenomena_import')->with('success', 'Information has been added');
+
+        if($request->get('action')==1){
+            Excel::import(new FenomenaImport($wilayah, $tahun, $triwulan), $request->file('excel_file'));
+            return redirect('upload/fenomena_import')->with('success', 'Data berhasil disimpan');
+        }
+        else{
+            $str_date = date('Y-m-d h:i:s');
+            return Excel::download(new FenomenaExport($wilayah, $tahun, $triwulan), "fenomena_".$str_date.".xlsx");
+        }
     }
 
     public function fenomena(Request $request){

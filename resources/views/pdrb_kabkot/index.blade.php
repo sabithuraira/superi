@@ -172,7 +172,7 @@
                                                         value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
                                                         id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
                                                         @foreach ($periode_filter as $per_fil)
-                                                    @if ($per_fil == $i . 'Q' . $q)
+                                                    @if ($per_fil === $i . 'Q' . $q)
                                                     checked
                                                     @endif @endforeach>
                                                     <label class="form-check-label"
@@ -186,7 +186,7 @@
                                                     value="{{ $i }}" name="periode_filter[]"
                                                     id="{{ 'periode_filter_' . $i }}"
                                                     @foreach ($periode_filter as $per_fil)
-                                                    @if ($per_fil == $i)
+                                                    @if ($per_fil === (string) $i)
                                                     checked
                                                     @endif @endforeach>
                                                 <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">

@@ -34,15 +34,15 @@
                                     </div>
 
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-primary" type="button" href="#komponenModal"
+                                        <button class="btn btn-primary w-100" type="button" href="#komponenModal"
                                             data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-primary" type="button" href="#periodeModal"
+                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal"
                                             data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success" type="button">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button">Export Excel</button>
                                     </div>
                                 </div>
                             </form>
@@ -166,7 +166,7 @@
                                                         value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
                                                         id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
                                                         @foreach ($periode_filter as $per_fil)
-                                                    @if ($per_fil == $i . 'Q' . $q)
+                                                    @if ($per_fil === $i . 'Q' . $q)
                                                     checked
                                                     @endif @endforeach>
                                                     <label class="form-check-label"
@@ -180,7 +180,7 @@
                                                     value="{{ $i }}" name="periode_filter[]"
                                                     id="{{ 'periode_filter_' . $i }}"
                                                     @foreach ($periode_filter as $per_fil)
-                                                    @if ($per_fil == $i)
+                                                    @if ($per_fil === (string) $i)
                                                     checked
                                                     @endif @endforeach>
                                                 <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">

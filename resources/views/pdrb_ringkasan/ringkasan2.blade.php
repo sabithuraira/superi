@@ -44,7 +44,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success" type="button">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button">Export Excel</button>
                                     </div>
                                 </div>
                             </form>

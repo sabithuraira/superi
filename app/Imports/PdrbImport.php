@@ -58,7 +58,6 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
 
             if($model==null) $new_model->revisi_ke = 0;
             else $new_model->revisi_ke = 1;
-
             
             $new_model->c_1a     = $rows[4][$col_no];
             $new_model->c_1b     = $rows[5][$col_no];
@@ -99,7 +98,12 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $new_model->c_8b     = 0;
             $new_model->c_pdrb     = $rows[24][$col_no];
 
-            $new_model->save();
+            try {
+                $new_model->save();
+            } catch (\Exception $e) {
+              
+                return $e->getMessage();
+            }
         }
     }
 }

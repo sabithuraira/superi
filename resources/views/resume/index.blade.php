@@ -59,16 +59,16 @@
                                 </select>
                             </div>
                             <div class="col-6 mb-2">
-                                <button class="btn btn-primary w-100 " type="button" href="#kabkot_modal" data-toggle="modal" data-target="#kabkot_modal" onclick="modal_clicked_kab()">Pilih Kabupaten/Kota</button>
+                                <button class="btn btn-primary w-100" type="button" href="#kabkot_modal" data-toggle="modal" data-target="#kabkot_modal" onclick="modal_clicked_kab()">Pilih Kabupaten/Kota</button>
                             </div>
                             <div class="col-6 mb-2">
-                                <button class="btn btn-primary w-100 " type="button" href="#periode_modal" data-toggle="modal" data-target="#periode_modal" onclick="modal_clicked_periode()">Pilih Periode</button>
+                                <button class="btn btn-primary w-100" type="button" href="#periode_modal" data-toggle="modal" data-target="#periode_modal" onclick="modal_clicked_periode()">Pilih Periode</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="table-responsive">
-                            <h5 id="table_title" class="fw-bold text-center mt-2"></h5>
+                            <h5 id="table_title" class="text-center mt-2"></h5>
                             <div id="table-container">
                                 <table class="table table-bordered">
                                     <thead>
@@ -210,14 +210,12 @@
         kab.forEach(e => {
             modal_history_kab[e] = document.getElementById("kabkot_filter_" + e).checked;
         });
-        console.log(modal_history_kab);
     }
     function modal_clicked_periode() {
         modal_history_periode = {};
         @foreach($periode as $periode_item)
         modal_history_periode["{{ $periode_item->periode }}"] = document.getElementById("periode_filter_{{ $periode_item->periode }}").checked;
         @endforeach
-        console.log(modal_history_periode);
     }
     function modal_cancel_kab() {
         var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];

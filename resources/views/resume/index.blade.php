@@ -54,15 +54,15 @@
                                 <select name="komponen_filter" id="komponen_filter" class="form-control" onchange="lihat()">
                                     <option value="c_pdrb" selected>Semua Komponen PDRB</option>
                                     @foreach($komponen as $komponen_item)
-                                    <option value="{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}" selected>{{ $komponen_item->no_komponen . ' ' . $komponen_item->nama_komponen }}</option>
+                                    <option value="{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}">{{ $komponen_item->no_komponen . ' ' . $komponen_item->nama_komponen }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-6 mb-2">
-                                <button class="btn btn-primary w-100 " type="button" href="#kabkot_modal" data-toggle="modal" data-target="#kabkot_modal">Pilih Kabupaten/Kota</button>
+                                <button class="btn btn-primary w-100 " type="button" href="#kabkot_modal" data-toggle="modal" data-target="#kabkot_modal" onclick="modal_clicked_kab()">Pilih Kabupaten/Kota</button>
                             </div>
                             <div class="col-6 mb-2">
-                                <button class="btn btn-primary w-100 " type="button" href="#periode_modal" data-toggle="modal" data-target="#periode_modal">Pilih Periode</button>
+                                <button class="btn btn-primary w-100 " type="button" href="#periode_modal" data-toggle="modal" data-target="#periode_modal" onclick="modal_clicked_periode()">Pilih Periode</button>
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="kabkot_modal" tabindex="-1" role="dialog">
+<div class="modal fade" id="kabkot_modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -168,12 +168,13 @@
                 <button type="button" class="btn btn-primary btn-sm" onclick="check_all_kab(false)">Kosongkan Semua</button>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="modal_cancel_kab()">Cancel</button>
                 <button type="button" class="btn btn-success" data-dismiss="modal" onclick="lihat()">OK</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="periode_modal" tabindex="-1" role="dialog">
+<div class="modal fade" id="periode_modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -191,6 +192,7 @@
                 <button type="button" class="btn btn-primary btn-sm" onclick="check_all_periode(false)">Kosongkan Semua</button>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="modal_cancel_periode()">Cancel</button>
                 <button type="button" class="btn btn-success" data-dismiss="modal" onclick="lihat()">OK</button>
             </div>
         </div>
@@ -200,6 +202,36 @@
 
 @section('scripts')
 <script>
+    var modal_history_kab = {};
+    var modal_history_periode = {};
+    function modal_clicked_kab() {
+        modal_history_kab = {};
+        var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
+        kab.forEach(e => {
+            modal_history_kab[e] = document.getElementById("kabkot_filter_" + e).checked;
+        });
+        console.log(modal_history_kab);
+    }
+    function modal_clicked_periode() {
+        modal_history_periode = {};
+        @foreach($periode as $periode_item)
+        modal_history_periode["{{ $periode_item->periode }}"] = document.getElementById("periode_filter_{{ $periode_item->periode }}").checked;
+        @endforeach
+        console.log(modal_history_periode);
+    }
+    function modal_cancel_kab() {
+        var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
+        kab.forEach(e => {
+            document.getElementById("kabkot_filter_" + e).checked = modal_history_kab[e];
+        });
+        modal_history_kab = {};
+    }
+    function modal_cancel_periode() {
+        @foreach($periode as $periode_item)
+        document.getElementById("periode_filter_{{ $periode_item->periode }}").checked = modal_history_periode["{{ $periode_item->periode }}"];
+        @endforeach
+        modal_history_periode = {};
+    }
     function check_all_kab(checked) {
         var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
         kab.forEach(e => {

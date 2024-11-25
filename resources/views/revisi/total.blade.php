@@ -52,24 +52,9 @@
                             <div class="col-4 mb-2">
                                 <label for="kab_filter" class="label">Kabupaten/Kota</label>
                                 <select name="kab_filter" id="kab_filter" class="form-control" onchange="lihat()">
-                                    <option value="1600" selected>Prov. Sumatera Selatan</option>
-                                    <option value="1601">Kab. Ogan Komering Ulu</option>
-                                    <option value="1602">Kab. Ogan Komering Ilir</option>
-                                    <option value="1603">Kab. Muara Enim</option>
-                                    <option value="1604">Kab. Lahat</option>
-                                    <option value="1605">Kab. Musi Rawas</option>
-                                    <option value="1606">Kab. Musi Banyuasin</option>
-                                    <option value="1607">Kab. Banyuasin</option>
-                                    <option value="1608">Kab. Ogan Komering Ulu Seletan</option>
-                                    <option value="1609">Kab. Ogan Komering Ulu Timur</option>
-                                    <option value="1610">Kab. Ogan Ilir</option>
-                                    <option value="1611">Kab. Empat Lawang</option>
-                                    <option value="1612">Kab. Penukal Abab Lematang Ilir</option>
-                                    <option value="1613">Kab. Musi Rawas Utara</option>
-                                    <option value="1671">Kota Palembang</option>
-                                    <option value="1672">Kota Prabumulih</option>
-                                    <option value="1673">Kota Pagar Alam</option>
-                                    <option value="1674">Kota Lubuklinggau</option>
+                                    @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
+                                    <option value="{{ '16' . $kd_kab }}">{{ $nm_kab }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-4 mb-2">

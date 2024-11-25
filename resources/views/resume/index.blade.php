@@ -91,78 +91,12 @@
                 <h4 class="title" id="kabkot_modal_label">Pilih Kabupaten/Kota</h4>
             </div>
             <div class="modal-body">
+                @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1600" name="kabkot_filter_1600" id="kabkot_filter_1600" checked>
-                    <label class="form-check-label" for="kabkot_filter_1600">Prov. Sumatera Selatan</label>
+                    <input class="form-check-input" type="checkbox" value="{{ '16' . $kd_kab }}" name="kabkot_filter_{{ '16' . $kd_kab }}" id="kabkot_filter_{{ '16' . $kd_kab }}" checked>
+                    <label class="form-check-label" for="kabkot_filter_{{ '16' . $kd_kab }}">{{ $nm_kab }}</label>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1601" name="kabkot_filter_1601" id="kabkot_filter_1601" checked>
-                    <label class="form-check-label" for="kabkot_filter_1601">Kab. Ogan Komering Ulu</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1602" name="kabkot_filter_1602" id="kabkot_filter_1602" checked>
-                    <label class="form-check-label" for="kabkot_filter_1602">Kab. Ogan Komering Ilir</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1603" name="kabkot_filter_1603" id="kabkot_filter_1603" checked>
-                    <label class="form-check-label" for="kabkot_filter_1603">Kab. Muara Enim</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1604" name="kabkot_filter_1604" id="kabkot_filter_1604" checked>
-                    <label class="form-check-label" for="kabkot_filter_1604">Kab. Lahat</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1605" name="kabkot_filter_1605" id="kabkot_filter_1605" checked>
-                    <label class="form-check-label" for="kabkot_filter_1605">Kab. Musi Rawas</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1606" name="kabkot_filter_1606" id="kabkot_filter_1606" checked>
-                    <label class="form-check-label" for="kabkot_filter_1606">Kab. Musi Banyuasin</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1607" name="kabkot_filter_1607" id="kabkot_filter_1607" checked>
-                    <label class="form-check-label" for="kabkot_filter_1607">Kab. Banyuasin</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1608" name="kabkot_filter_1608" id="kabkot_filter_1608" checked>
-                    <label class="form-check-label" for="kabkot_filter_1608">Kab. Ogan Komering Ulu Seletan</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1609" name="kabkot_filter_1609" id="kabkot_filter_1609" checked>
-                    <label class="form-check-label" for="kabkot_filter_1609">Kab. Ogan Komering Ulu Timur</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1610" name="kabkot_filter_1610" id="kabkot_filter_1610" checked>
-                    <label class="form-check-label" for="kabkot_filter_1610">Kab. Ogan Ilir</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1611" name="kabkot_filter_1611" id="kabkot_filter_1611" checked>
-                    <label class="form-check-label" for="kabkot_filter_1611">Kab. Empat Lawang</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1612" name="kabkot_filter_1612" id="kabkot_filter_1612" checked>
-                    <label class="form-check-label" for="kabkot_filter_1612">Kab. Penukal Abab Lematang Ilir</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1613" name="kabkot_filter_1613" id="kabkot_filter_1613" checked>
-                    <label class="form-check-label" for="kabkot_filter_1613">Kab. Musi Rawas Utara</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1671" name="kabkot_filter_1671" id="kabkot_filter_1671" checked>
-                    <label class="form-check-label" for="kabkot_filter_1671">Kota Palembang</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1672" name="kabkot_filter_1672" id="kabkot_filter_1672" checked>
-                    <label class="form-check-label" for="kabkot_filter_1672">Kota Prabumulih</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1673" name="kabkot_filter_1673" id="kabkot_filter_1673" checked>
-                    <label class="form-check-label" for="kabkot_filter_1673">Kota Pagar Alam</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="1674" name="kabkot_filter_1674" id="kabkot_filter_1674" checked>
-                    <label class="form-check-label" for="kabkot_filter_1674">Kota Lubuklinggau</label>
-                </div>
+                @endforeach
                 <br>
                 <button type="button" class="btn btn-primary btn-sm" onclick="check_all_kab(true)">Pilih Semua</button>
                 <button type="button" class="btn btn-primary btn-sm" onclick="check_all_kab(false)">Kosongkan Semua</button>
@@ -204,9 +138,14 @@
 <script>
     var modal_history_kab = {};
     var modal_history_periode = {};
+
+    var kab = [];
+    @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
+    kab.push("16{{ $kd_kab }}");
+    @endforeach
+
     function modal_clicked_kab() {
         modal_history_kab = {};
-        var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
         kab.forEach(e => {
             modal_history_kab[e] = document.getElementById("kabkot_filter_" + e).checked;
         });
@@ -218,7 +157,6 @@
         @endforeach
     }
     function modal_cancel_kab() {
-        var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
         kab.forEach(e => {
             document.getElementById("kabkot_filter_" + e).checked = modal_history_kab[e];
         });
@@ -231,7 +169,6 @@
         modal_history_periode = {};
     }
     function check_all_kab(checked) {
-        var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
         kab.forEach(e => {
             document.getElementById("kabkot_filter_" + e).checked = checked;
         });
@@ -248,7 +185,6 @@
         var komponen = document.getElementById("komponen_filter").value;
 
         var kd_kab = [];
-        var kab = ["1600", "1601", "1602", "1603", "1604", "1605", "1606", "1607", "1608", "1609", "1610", "1611", "1612", "1613", "1671", "1672", "1673", "1674"];
         kab.forEach(e => {
             kab_check = document.getElementById("kabkot_filter_" + e);
             if (kab_check.checked) kd_kab.push(e);

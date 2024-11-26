@@ -25,9 +25,9 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="row mb-2">
-                            <div class="col-12 mb-2">
+                            <div class="col-6 mb-2">
                                 <label for="tabel_filter" class="label">Tabel</label>
-                                <select name="tabel_filter" id="tabel_filter" class="form-control">
+                                <select name="tabel_filter" id="tabel_filter" class="form-control" onchange="lihat()">
                                     <option value="Tabel 2.1">Tabel 2.1. PDRB ADHB</option>
                                     <option value="Tabel 2.2">Tabel 2.2. PDRB ADHK</option>
                                     <option value="Tabel 2.3">Tabel 2.3. Distribusi Terhadap Provinsi</option>
@@ -49,58 +49,30 @@
                                     <option value="Tabel 2.19">Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C)</option>
                                 </select>
                             </div>
-                            <div class="col-4 mb-2">
-                                <label>Komponen</label>
-                                <select name="komponen_filter" id="komponen_filter" class="multiselect multiselect-custom" multiple="multiple">
+                            <div class="col-6 mb-2">
+                                <label for="komponen_filter" class="label">Komponen</label>
+                                <select name="komponen_filter" id="komponen_filter" class="form-control" onchange="lihat()">
                                     <option value="c_pdrb" selected>Semua Komponen PDRB</option>
                                     @foreach($komponen as $komponen_item)
-                                    <option value="{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}" selected>{{ $komponen_item->no_komponen . ' ' . $komponen_item->nama_komponen }}</option>
+                                    <option value="{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}">{{ $komponen_item->no_komponen . ' ' . $komponen_item->nama_komponen }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-4 mb-2">
-                                <label>Kab/Kot</label>
-                                <select name="kab_filter" id="kab_filter" class="multiselect multiselect-custom" multiple="multiple">
-                                    <option value="1600" selected>Prov. Sumatera Selatan</option>
-                                    <option value="1601">Kab. Ogan Komering Ulu</option>
-                                    <option value="1602">Kab. Ogan Komering Ilir</option>
-                                    <option value="1603">Kab. Muara Enim</option>
-                                    <option value="1604">Kab. Lahat</option>
-                                    <option value="1605">Kab. Musi Rawas</option>
-                                    <option value="1606">Kab. Musi Banyuasin</option>
-                                    <option value="1607">Kab. Banyuasin</option>
-                                    <option value="1608">Kab. Ogan Komering Ulu Seletan</option>
-                                    <option value="1609">Kab. Ogan Komering Ulu Timur</option>
-                                    <option value="1610">Kab. Ogan Ilir</option>
-                                    <option value="1611">Kab. Empat Lawang</option>
-                                    <option value="1612">Kab. Penukal Abab Lematang Ilir</option>
-                                    <option value="1613">Kab. Musi Rawas Utara</option>
-                                    <option value="1671">Kota Palembang</option>
-                                    <option value="1672">Kota Prabumulih</option>
-                                    <option value="1673">Kota Pagar Alam</option>
-                                    <option value="1674">Kota Lubuklinggau</option>
-                                </select>
+                            <div class="col-6 mb-2">
+                                <button class="btn btn-primary w-100" type="button" href="#kabkot_modal" data-toggle="modal" data-target="#kabkot_modal" onclick="modal_clicked_kab()">Pilih Kabupaten/Kota</button>
                             </div>
-                            <div class="col-4 mb-2">
-                                <label>Periode</label>
-                                <select name="periode_filter" id="periode_filter" class="multiselect multiselect-custom" multiple="multiple">
-                                    @foreach($periode as $periode_item)
-                                    <option value="{{ $periode_item->periode }}" selected>{{ $periode_item->periode }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-12 align-self-end">
-                                <button onclick="cari()" class="btn btn-primary btn-block">Cari</button>
+                            <div class="col-6 mb-2">
+                                <button class="btn btn-primary w-100" type="button" href="#periode_modal" data-toggle="modal" data-target="#periode_modal" onclick="modal_clicked_periode()">Pilih Periode</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="table-responsive">
-                            <p id="table_title" class="mt-2"></p>
+                            <h5 id="table_title" class="text-center mt-2"></h5>
                             <div id="table-container">
                                 <table class="table table-bordered">
                                     <thead>
-                                        <tr id="table_column"></tr>
+                                        <tr id="table_column" class="text-center"></tr>
                                     </thead>
                                     <tbody id="table_data"></tbody>
                                 </table>
@@ -112,24 +84,123 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="kabkot_modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="title" id="kabkot_modal_label">Pilih Kabupaten/Kota</h4>
+            </div>
+            <div class="modal-body">
+                @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{ '16' . $kd_kab }}" name="kabkot_filter_{{ '16' . $kd_kab }}" id="kabkot_filter_{{ '16' . $kd_kab }}" checked>
+                    <label class="form-check-label" for="kabkot_filter_{{ '16' . $kd_kab }}">{{ $nm_kab }}</label>
+                </div>
+                @endforeach
+                <br>
+                <button type="button" class="btn btn-primary btn-sm" onclick="check_all_kab(true)">Pilih Semua</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="check_all_kab(false)">Kosongkan Semua</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="modal_cancel_kab()">Cancel</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" onclick="lihat()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="periode_modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="title" id="periode_modal_label">Pilih Periode</h4>
+            </div>
+            <div class="modal-body">
+                @foreach($periode as $periode_item)
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="{{ $periode_item->periode }}" name="periode_filter_{{ $periode_item->periode }}" id="periode_filter_{{ $periode_item->periode }}" checked>
+                        <label class="form-check-label" for="periode_filter_{{ $periode_item->periode }}">{{ $periode_item->periode }}</label>
+                    </div>
+                @endforeach
+                <br>
+                <button type="button" class="btn btn-primary btn-sm" onclick="check_all_periode(true)">Pilih Semua</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="check_all_periode(false)">Kosongkan Semua</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="modal_cancel_periode()">Cancel</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" onclick="lihat()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
 <script>
-    $("#komponen_filter, #kab_filter, #periode_filter").multiselect({
-        maxHeight: 300
-    });
-    function cari() {
+    var modal_history_kab = {};
+    var modal_history_periode = {};
+
+    var kab = [];
+    @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
+    kab.push("16{{ $kd_kab }}");
+    @endforeach
+
+    function modal_clicked_kab() {
+        modal_history_kab = {};
+        kab.forEach(e => {
+            modal_history_kab[e] = document.getElementById("kabkot_filter_" + e).checked;
+        });
+    }
+    function modal_clicked_periode() {
+        modal_history_periode = {};
+        @foreach($periode as $periode_item)
+        modal_history_periode["{{ $periode_item->periode }}"] = document.getElementById("periode_filter_{{ $periode_item->periode }}").checked;
+        @endforeach
+    }
+    function modal_cancel_kab() {
+        kab.forEach(e => {
+            document.getElementById("kabkot_filter_" + e).checked = modal_history_kab[e];
+        });
+        modal_history_kab = {};
+    }
+    function modal_cancel_periode() {
+        @foreach($periode as $periode_item)
+        document.getElementById("periode_filter_{{ $periode_item->periode }}").checked = modal_history_periode["{{ $periode_item->periode }}"];
+        @endforeach
+        modal_history_periode = {};
+    }
+    function check_all_kab(checked) {
+        kab.forEach(e => {
+            document.getElementById("kabkot_filter_" + e).checked = checked;
+        });
+    }
+    function check_all_periode(checked) {
+        @foreach($periode as $periode_item)
+        document.getElementById("periode_filter_{{ $periode_item->periode }}").checked = checked;
+        @endforeach
+    }
+    function lihat() {
         var url = "{{ url("/tabel/resume") }}";
+
         var tabel = document.getElementById("tabel_filter").value;
-        var komponen = Array.from(document.getElementById("komponen_filter").selectedOptions).map(({ value }) => value);
-        var kd_kab = Array.from(document.getElementById("kab_filter").selectedOptions).map(({ value }) => value);
-        var periode = Array.from(document.getElementById("periode_filter").selectedOptions).map(({ value }) => value);
+        var komponen = document.getElementById("komponen_filter").value;
+
+        var kd_kab = [];
+        kab.forEach(e => {
+            kab_check = document.getElementById("kabkot_filter_" + e);
+            if (kab_check.checked) kd_kab.push(e);
+        });
+
+        var periode = [];
+        @foreach($periode as $periode_item)
+        periode_check = document.getElementById("periode_filter_{{ $periode_item->periode }}");
+        if (periode_check.checked) periode.push("{{ $periode_item->periode }}");
+        @endforeach
+
         fetch(url, {
             method: "post",
             body: JSON.stringify({
                 tabel: tabel,
-                komponen: komponen.toString(),
+                komponen: komponen,
                 kd_kab: kd_kab.toString(),
                 periode: periode.toString()
             }),
@@ -146,7 +217,7 @@
             for (const col in json[0]) {
                 var table_column = document.getElementById("table_column");
                 var cell = table_column.insertCell(-1);
-                cell.innerHTML = col == "kd_kab" ? "Kabupaten/Kota" : col;
+                cell.outerHTML = "<th>" + (col == "kd_kab" ? "Kabupaten/Kota" : col) + "</th>";
             }
             for (const i in json) {
                 var table_data = document.getElementById("table_data");
@@ -158,6 +229,7 @@
             }
         });
     }
+    lihat();
     function exportToExcel() {
         var location = 'data:application/vnd.ms-excel;base64,';
         var excelTemplate = '<html> ' +

@@ -19,7 +19,7 @@
             </li>
 
 
-            <li class="{{ request()->is('pdrb_*') ? 'active' : '' }}">
+            <li class="{{ request()->is('pdrb_*') || request()->is('tabel/resume') ? 'active' : '' }}">
                 <a href="#Tabel" class="has-arrow"><i class="icon-calendar"></i>
                     <span>Tabel PDRB</span></a>
                 <ul>
@@ -27,7 +27,9 @@
                         <a href="{{ url('pdrb_ringkasan1/1.1') }}">Tabel Ringkasan
                         </a>
                     </li>
-                    <li class=""><a href="{{ url('tabel/resume') }}">Tabel Resume</a></li>
+                    <li class="{{ request()->is('tabel/resume') ? 'active' : '' }}">
+                        <a href="{{ url('tabel/resume') }}">Tabel Resume</a>
+                    </li>
 
                     <li class="{{ request()->is('pdrb_kabkot*') ? 'active' : '' }}">
                         <a href="{{ url('pdrb_kabkot/3.1') }}">
@@ -38,11 +40,11 @@
                 </ul>
             </li>
 
-            <li class="">
+            <li class="{{ request()->is('revisi/*') ? 'active' : '' }}">
                 <a href="#Revisi" class="has-arrow"><i class="icon-directions"></i>
                     <span>Arah Revisi</span></a>
                 <ul>
-                    <li class=""><a href="{{ url('revisi/total') }}">Total</a></li>
+                    <li class="{{ request()->is('revisi/total') ? 'active' : '' }}"><a href="{{ url('revisi/total') }}">Total</a></li>
                     <li class=""><a href="#">Kab/Kota</a></li>
                 </ul>
             </li>

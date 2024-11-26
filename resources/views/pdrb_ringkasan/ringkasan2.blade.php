@@ -105,25 +105,27 @@
                                                     [{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('yoy_prev', $dt) ? round($dt['yoy_prev'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('yoy_prev', $dt) && $dt['yoy_prev'] ? round($dt['yoy_prev'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('yoy_current', $dt) ? round($dt['yoy_current'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('yoy_current', $dt) && $dt['yoy_current'] ? round($dt['yoy_current'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('qtq_prev', $dt) ? round($dt['qtq_prev'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('qtq_prev', $dt) && $dt['qtq_prev'] ? round($dt['qtq_prev'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('qtq_current', $dt) ? round($dt['qtq_current'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('qtq_current', $dt) && $dt['qtq_current'] ? round($dt['qtq_current'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('ctc_prev', $dt) ? round($dt['ctc_prev'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('ctc_prev', $dt) && $dt['ctc_prev'] ? round($dt['ctc_prev'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('ctc_current', $dt) ? round($dt['ctc_current'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('ctc_current', $dt) && $dt['ctc_current'] ? round($dt['ctc_current'], 2) : '' }}
                                                 </td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>{{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? round($dt['implisit_yoy'], 2) : '' }}
+                                                </td>
+                                                <td>{{ array_key_exists('share_prov', $dt) && $dt['share_prov'] ? round($dt['share_prov'], 2) : '' }}
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

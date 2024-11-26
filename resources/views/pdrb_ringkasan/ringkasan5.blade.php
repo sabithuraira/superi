@@ -37,7 +37,7 @@
                                             onchange="updateFormActionWilayah()">
                                             @foreach ($list_wilayah as $wil)
                                                 <option value="{{ $wil['id'] }}" data-id="{{ $wil['id'] }}"
-                                                    @if ($wil == $wilayah_filter) selected @endif>
+                                                    @if ($wil['id'] == $wilayah_filter) selected @endif>
                                                     {{ $wil['id'] }} - {{ $wil['alias'] }}</option>
                                             @endforeach
                                         </select>
@@ -89,22 +89,22 @@
                                             <tr class="text-right">
                                                 <td class="text-left">{{ $dt['name'] }}</td>
                                                 <td>
-                                                    {{ array_key_exists('yoy', $dt) ? round($dt['yoy'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('yoy', $dt) && $dt['yoy'] ? round($dt['yoy'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('qtq', $dt) ? round($dt['qtq'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('qtq', $dt) && $dt['qtq'] ? round($dt['qtq'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('ctc', $dt) ? round($dt['ctc'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('ctc', $dt) && $dt['ctc'] ? round($dt['ctc'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_yoy', $dt) ? round($dt['implisit_yoy'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? round($dt['implisit_yoy'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_qtq', $dt) ? round($dt['implisit_qtq'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_qtq', $dt) && $dt['implisit_qtq'] ? round($dt['implisit_qtq'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_ctc', $dt) ? round($dt['implisit_ctc'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_ctc', $dt) && $dt['implisit_ctc'] ? round($dt['implisit_ctc'], 2) : '' }}
                                                 </td>
                                             </tr>
                                         @endforeach

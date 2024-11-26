@@ -83,7 +83,7 @@
                                                 </td>
                                                 @foreach ($komponens as $key => $komp)
                                                     <td>
-                                                        {{ array_key_exists($komp['id'], $dt) ? round($dt[$komp['id']], 2) : 'N/A' }}
+                                                        {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']] ? round($dt[$komp['id']], 2) : '' }}
                                                     </td>
                                                 @endforeach
                                             </tr>

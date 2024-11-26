@@ -81,13 +81,13 @@
                                                 <td>{{ $dt['komponen_name'] }}</td>
                                                 @foreach ($periode_filter as $periode)
                                                     <td>
-                                                        {{ array_key_exists($periode . 'qtq', $dt) ? round($dt[$periode . 'qtq'], 2) : 'N/A' }}
+                                                        {{ array_key_exists($periode . 'qtq', $dt) && $dt[$periode . 'qtq'] ? round($dt[$periode . 'qtq'], 2) : '' }}
                                                     </td>
                                                     <td>
-                                                        {{ array_key_exists($periode . 'yoy', $dt) ? round($dt[$periode . 'yoy'], 2) : 'N/A' }}
+                                                        {{ array_key_exists($periode . 'yoy', $dt) && $dt[$periode . 'qtq'] ? round($dt[$periode . 'yoy'], 2) : '' }}
                                                     </td>
                                                     <td>
-                                                        {{ array_key_exists($periode . 'ctc', $dt) ? round($dt[$periode . 'ctc'], 2) : 'N/A' }}
+                                                        {{ array_key_exists($periode . 'ctc', $dt) && $dt[$periode . 'qtq'] ? round($dt[$periode . 'ctc'], 2) : '' }}
                                                     </td>
                                                 @endforeach
                                             </tr>

@@ -10,6 +10,13 @@ use SebastianBergmann\CodeUnitReverseLookup\Wizard;
 
 class TabelRingkasanController extends Controller
 {
+    public $list_wilayah;
+
+    public function __construct()
+    {
+        $this->list_wilayah = config("app.wilayah");
+    }
+
     public $list_tabel = [
         [
             'id' => '1.1',
@@ -93,6 +100,21 @@ class TabelRingkasanController extends Controller
         ],
     ];
     public $list_periode = [
+        '2021Q1',
+        '2021Q2',
+        '2021Q3',
+        '2021Q4',
+        '2021',
+        '2022Q1',
+        '2022Q2',
+        '2022Q3',
+        '2022Q4',
+        '2022',
+        '2023Q1',
+        '2023Q2',
+        '2023Q3',
+        '2023Q4',
+        '2023',
         '2024Q1',
         '2024Q2',
         '2024Q3',
@@ -140,26 +162,26 @@ class TabelRingkasanController extends Controller
         ['id' => 'c_8b',  'alias' => '8b. M AP',            'name' =>  '  8.b. Impor Antar Daerah']
     ];
 
-    public $list_wilayah = [
-        ['id' => '00', 'alias' => 'Sumsel',         'name' => 'Sumatera Selatan'],
-        ['id' => '01', 'alias' => 'OKU',            'name' => 'Ogan Komering Ulu'],
-        ['id' => '02', 'alias' => 'OKI',            'name' => 'Ogan Komering Ilir'],
-        ['id' => '03', 'alias' => 'Muara Enim',     'name' => 'Muara Enim'],
-        ['id' => '04', 'alias' => 'Lahat',          'name' => 'Lahat'],
-        ['id' => '05', 'alias' => 'Musi Rawas',     'name' => 'Musi Rawas'],
-        ['id' => '06', 'alias' => 'Muba',           'name' => 'Musi Banyuasin'],
-        ['id' => '07', 'alias' => 'Banyu Asin',     'name' => 'Banyuasin'],
-        ['id' => '08', 'alias' => 'OKUS',           'name' => 'Ogan Komering Ulu Selatan'],
-        ['id' => '09', 'alias' => 'OKUT',           'name' => 'Ogan Komering Ulu Timur'],
-        ['id' => '10', 'alias' => 'Ogan Ilir',      'name' => 'Ogan Ilir'],
-        ['id' => '11', 'alias' => 'Empat Lawang',   'name' => 'Empat Lawang'],
-        ['id' => '12', 'alias' => 'PALI',           'name' => 'PALI'],
-        ['id' => '13', 'alias' => 'Muratara',       'name' => 'Musi Rawas Utara'],
-        ['id' => '71', 'alias' => 'Palembang',      'name' => 'Palembang'],
-        ['id' => '72', 'alias' => 'Prabumulih',     'name' => 'Prabumulih'],
-        ['id' => '73', 'alias' => 'Pagar Alam',     'name' => 'Pagar Alam'],
-        ['id' => '74', 'alias' => 'Lubuk Linggau',  'name' => 'Lubuk Linggau'],
-    ];
+    // public $list_wilayah = [
+    //     ['id' => '00', 'alias' => 'Sumsel',         'name' => 'Sumatera Selatan'],
+    //     ['id' => '01', 'alias' => 'OKU',            'name' => 'Ogan Komering Ulu'],
+    //     ['id' => '02', 'alias' => 'OKI',            'name' => 'Ogan Komering Ilir'],
+    //     ['id' => '03', 'alias' => 'Muara Enim',     'name' => 'Muara Enim'],
+    //     ['id' => '04', 'alias' => 'Lahat',          'name' => 'Lahat'],
+    //     ['id' => '05', 'alias' => 'Musi Rawas',     'name' => 'Musi Rawas'],
+    //     ['id' => '06', 'alias' => 'Muba',           'name' => 'Musi Banyuasin'],
+    //     ['id' => '07', 'alias' => 'Banyu Asin',     'name' => 'Banyuasin'],
+    //     ['id' => '08', 'alias' => 'OKUS',           'name' => 'Ogan Komering Ulu Selatan'],
+    //     ['id' => '09', 'alias' => 'OKUT',           'name' => 'Ogan Komering Ulu Timur'],
+    //     ['id' => '10', 'alias' => 'Ogan Ilir',      'name' => 'Ogan Ilir'],
+    //     ['id' => '11', 'alias' => 'Empat Lawang',   'name' => 'Empat Lawang'],
+    //     ['id' => '12', 'alias' => 'PALI',           'name' => 'PALI'],
+    //     ['id' => '13', 'alias' => 'Muratara',       'name' => 'Musi Rawas Utara'],
+    //     ['id' => '71', 'alias' => 'Palembang',      'name' => 'Palembang'],
+    //     ['id' => '72', 'alias' => 'Prabumulih',     'name' => 'Prabumulih'],
+    //     ['id' => '73', 'alias' => 'Pagar Alam',     'name' => 'Pagar Alam'],
+    //     ['id' => '74', 'alias' => 'Lubuk Linggau',  'name' => 'Lubuk Linggau'],
+    // ];
 
     public function ringkasan1(Request $request, $id)
     {
@@ -168,8 +190,8 @@ class TabelRingkasanController extends Controller
         $list_group_komponen = $this->list_group_komponen;
         $list_detail_komponen = $this->list_detail_komponen;
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_pdrb', 'c_1, c_1a, c_1b, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b'];
+        $periode_filter = $request->periode_filter ? $request->periode_filter : ['2024Q1', '2024Q2', '2024Q3', '2024Q4', '2024'];
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_pdrb', 'c_1, c_1a, c_1b,c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b'];
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
@@ -187,6 +209,7 @@ class TabelRingkasanController extends Controller
             }
         }
         $data = [];
+
         foreach ($komponens as $komponen) {
             $row = [];
             $row = [
@@ -194,35 +217,186 @@ class TabelRingkasanController extends Controller
                 'komponen_name' => $komponen['name'],
             ];
             $komp_id = $komponen['id'];
-            // perulangan periode 2024Q1, 2024Q2, 2024Q3 dst
+            // $isFirstIteration = true;
             foreach ($periode_filter as $periode) {
+                // if ($isFirstIteration) {
+                //     $isFirstIteration = false;
+                //     continue;
+                // }
                 $arr_periode = explode("Q", $periode);
                 if ($id == '1.1') {
                     if (sizeof($arr_periode) > 1) {
-                        $data_current = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();
-                        $data_prevyear = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();
-                        if ($arr_periode[1] != 1) {
-                            $data_prevquartile = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                                ->where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();
-                        } else {
-                            $data_prevquartile = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                                ->where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', 4)->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();
-                        }
-
-                        $jml_q_y =  Pdrb::where('kode_kab', '00')
+                        $rev_kab =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
                             ->where('tahun', $arr_periode[0])
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                            ->where('adhb_or_adhk', 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab')
+                            ->get();
+
+                        $rev_kab_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab')
+                            ->get();
+
+                        $data_kab_y = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab) {
+                                foreach ($rev_kab as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })
+                            ->groupBy('kode_prov')
+                            ->get();
+
+                        $data_kab_y_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_1) {
+                                foreach ($rev_kab_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })
+                            ->groupBy('kode_prov')
+                            ->get();
+
+                        $data_prov_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->orderBy('revisi_ke', 'desc')
+                            ->first();
+
+                        $data_prov_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->orderBy('revisi_ke', 'desc')
+                            ->first();
+
+                        if ($arr_periode[1] != 1) {
+                            $data_prov_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                                ->where('kode_kab', '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->orderBy('revisi_ke', 'desc')
+                                ->first();
+
+                            $rev_kab_q_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                                ->where('kode_kab', "!=",  '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->groupBy('kode_kab')
+                                ->get();
+
+                            $data_kab_q_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                                ->where('kode_kab', "!=", '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->where(function ($query) use ($rev_kab_q_1) {
+                                    foreach ($rev_kab_q_1 as $rev) {
+                                        $query->orWhere(function ($subquery) use ($rev) {
+                                            $subquery->where('kode_kab', $rev->kode_kab)
+                                                ->where('revisi_ke', $rev->max_revisi);
+                                        });
+                                    }
+                                })
+                                ->groupBy('kode_prov')
+                                ->get();
+                        } else {
+                            $data_prov_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                                ->where('kode_kab', '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->orderBy('revisi_ke', 'desc')
+                                ->first();
+
+                            $rev_kab_q_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                                ->where('kode_kab', "!=",  '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->groupBy('kode_kab')
+                                ->get();
+
+                            $data_kab_q_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                                ->where('kode_kab', "!=", '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->where(function ($query) use ($rev_kab_q_1) {
+                                    foreach ($rev_kab_q_1 as $rev) {
+                                        $query->orWhere(function ($subquery) use ($rev) {
+                                            $subquery->where('kode_kab', $rev->kode_kab)
+                                                ->where('revisi_ke', $rev->max_revisi);
+                                        });
+                                    }
+                                })
+                                ->groupBy('kode_prov')
+                                ->get();
+                        }
+                        $rev_prov_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
 
-                        $jml_q_y_1 =  Pdrb::where('kode_kab', '00')
+                        $rev_prov_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
                             ->where('tahun', $arr_periode[0] - 1)
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                            ->where('adhb_or_adhk', 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->groupBy('q')
+                            ->get();
+
+                        $rev_kab =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+
+                        $rev_kab_1 =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
                             ->get();
 
 
@@ -230,74 +404,187 @@ class TabelRingkasanController extends Controller
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
                         }
-
-                        $data_cumulative = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0])->wherein('q', $q)
-                            ->where(function ($query) use ($jml_q_y) {
-                                foreach ($jml_q_y as $jml_q) {
-                                    $query->orWhere(function ($subquery) use ($jml_q) {
-                                        $subquery->where('q', $jml_q->q)
-                                            ->where('revisi_ke', $jml_q->max_revisi);
-                                    });
-                                }
-                            })->groupBy('kode_kab')->first();
-
-
-                        $data_prevcum = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
-                            ->where(function ($query) use ($jml_q_y_1) {
-                                foreach ($jml_q_y_1 as $jml_q) {
-                                    $query->orWhere(function ($subquery) use ($jml_q) {
-                                        $subquery->where('q', $jml_q->q)
-                                            ->where('revisi_ke', $jml_q->max_revisi);
-                                    });
-                                }
-                            })->groupBy('kode_kab')->first();
-
-                        // dd(null / 12);
-                        $row[$periode . 'yoy'] = (
-                            $data_current
-                            && $data_prevyear
-                            && isset($data_prevyear->$komp_id)
-                            && $data_prevyear->$komp_id != 0
-                        ) ?
-                            ($data_prevyear->$komp_id - $data_current->$komp_id) / $data_prevyear->$komp_id : null;
-
-                        $row[$periode . 'qtq'] = (
-                            $data_current &&
-                            $data_prevquartile &&
-                            isset($data_prevquartile->$komp_id) &&
-                            $data_prevquartile->$komp_id != 0) ?
-                            ($data_prevquartile->$komp_id - $data_current->$komp_id) / $data_prevquartile->$komp_id : null;
-
-                        $row[$periode . 'ctc'] = (
-                            $data_cumulative &&
-                            $data_prevcum &&
-                            isset($data_prevcum->$komp_id) &&
-                            $data_prevcum->$komp_id != 0)
-                            ? ($data_prevcum->sum($komp_id) - $data_cumulative->sum($komp_id)) / $data_prevcum->sum($komp_id)
-                            : null;
-                    } else {
-                        $jml_q_y =  Pdrb::where('kode_kab', '00')
+                        $data_kab_c = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
                             ->where('tahun', $arr_periode[0])
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                            ->where('adhb_or_adhk', 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab) {
+                                foreach ($rev_kab as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+
+                        $data_kab_c_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_1) {
+                                foreach ($rev_kab_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+
+                        $data_prov_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_y) {
+                                foreach ($rev_prov_y as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+
+
+                        $data_prov_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_y_1) {
+                                foreach ($rev_prov_y_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+
+                        // dd($data_prov_c->$komp_id - $data_prov_c_1->$komp_id);
+
+                        $row[$periode . 'yoy_kab'] = (
+                            $data_kab_y
+                            && $data_kab_y_1
+                            && isset($data_kab_y_1->$komp_id)
+                            && $data_kab_y_1->$komp_id != 0) ?
+                            ($data_kab_y->$komp_id - $data_kab_y_1->$komp_id) / $data_kab_y_1->$komp_id * 100 : null;
+
+                        $row[$periode . 'yoy_prov'] = (
+                            $data_prov_y
+                            && $data_prov_y_1
+                            && isset($data_prov_y_1->$komp_id)
+                            && $data_prov_y_1->$komp_id != 0) ?
+                            ($data_prov_y->$komp_id - $data_prov_y_1->$komp_id) / $data_prov_y_1->$komp_id * 100 : null;
+
+                        $row[$periode . 'qtq_kab'] = (
+                            $data_kab_y &&
+                            $data_kab_q_1 &&
+                            isset($data_kab_q_1->$komp_id) &&
+                            $data_kab_q_1->$komp_id != 0) ?
+                            ($data_kab_y->$komp_id - $data_kab_q_1->$komp_id) / $data_kab_q_1->$komp_id * 100 : null;
+
+                        $row[$periode . 'qtq_prov'] = (
+                            $data_prov_y &&
+                            $data_prov_q_1 &&
+                            isset($data_prov_q_1->$komp_id) &&
+                            $data_prov_q_1->$komp_id != 0) ?
+                            ($data_prov_y->$komp_id - $data_prov_q_1->$komp_id) / $data_prov_q_1->$komp_id * 100 : null;
+
+                        $row[$periode . 'ctc_kab'] = (
+                            $data_kab_c &&
+                            $data_kab_c_1 &&
+                            isset($data_kab_c_1->$komp_id) &&
+                            $data_kab_c_1->$komp_id != 0)
+
+                            ? ($data_kab_c_1->$komp_id - $data_kab_c_1->$komp_id) / $data_kab_c_1->$komp_id * 100 : null;
+                        $row[$periode . 'ctc_prov'] = (
+                            $data_prov_c &&
+                            $data_prov_c_1 &&
+                            isset($data_prov_c_1->$komp_id) &&
+                            $data_prov_c_1->$komp_id != 0)
+                            ? ($data_prov_c->$komp_id - $data_prov_c_1->$komp_id) / $data_prov_c_1->$komp_id * 100 : null;
+                    } else {
+                        $rev_kab =  Pdrb::selectRaw('kode_kab,q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+
+                        $rev_kab_1 =  Pdrb::selectRaw('kode_kab,q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+
+                        $data_kab_y = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab) {
+                                foreach ($rev_kab as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })
+                            ->groupBy('kode_prov')
+                            ->get();
+
+                        $data_kab_y_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_1) {
+                                foreach ($rev_kab_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })
+                            ->groupBy('kode_prov')
+                            ->get();
+
+
+                        $rev_prov_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
 
-                        $jml_q_y_1 =  Pdrb::where('kode_kab', '00')
+                        $rev_prov_y_1 =  Pdrb::where('kode_kab', '00')
                             ->where('tahun', $arr_periode[0] - 1)
                             ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                            ->where('adhb_or_adhk', 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
 
-                        $data_current = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0])
-                            ->where(function ($query) use ($jml_q_y) {
-                                foreach ($jml_q_y as $q) {
+                        $data_prov_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_y) {
+                                foreach ($rev_prov_y as $q) {
                                     $query->orWhere(function ($subquery) use ($q) {
                                         $subquery->where('q', $q->q)
                                             ->where('revisi_ke', $q->max_revisi);
@@ -305,10 +592,13 @@ class TabelRingkasanController extends Controller
                                 }
                             })->groupBy('kode_kab')->first();
 
-                        $data_prevyear = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 1)
-                            ->where(function ($query) use ($jml_q_y_1) {
-                                foreach ($jml_q_y_1 as $q) {
+                        $data_prov_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_y_1) {
+                                foreach ($rev_prov_y_1 as $q) {
                                     $query->orWhere(function ($subquery) use ($q) {
                                         $subquery->where('q', $q->q)
                                             ->where('revisi_ke', $q->max_revisi);
@@ -318,71 +608,362 @@ class TabelRingkasanController extends Controller
 
 
                         if (
-                            $data_current
-                            && $data_prevyear
-                            && isset($data_prevyear->$komp_id)
-                            && $data_prevyear->$komp_id != 0
+                            $data_kab_y
+                            && $data_kab_y_1
+                            && isset($data_kab_y_1->$komp_id)
+                            && $data_kab_y_1->$komp_id != 0
                         ) {
-                            $row[$periode . 'yoy'] = ($data_prevyear->sum($komp_id) - $data_current->sum($komp_id)) / $data_prevyear->sum($komp_id);
-                            $row[$periode . 'qtq'] = ($data_prevyear->sum($komp_id) - $data_current->sum($komp_id)) / $data_prevyear->sum($komp_id);
-                            $row[$periode . 'ctc'] = ($data_prevyear->sum($komp_id) - $data_current->sum($komp_id)) / $data_prevyear->sum($komp_id);
+                            $row[$periode . 'yoy_kab'] =  ($data_kab_y->$komp_id - $data_kab_y_1->$komp_id) / $data_kab_y_1->$komp_id * 100;
+                            $row[$periode . 'qtq_kab'] =  ($data_kab_y->$komp_id - $data_kab_y_1->$komp_id) / $data_kab_y_1->$komp_id * 100;
+                            $row[$periode . 'ctc_kab'] =  ($data_kab_y->$komp_id - $data_kab_y_1->$komp_id) / $data_kab_y_1->$komp_id * 100;
                         } else {
-                            $row[$periode . 'yoy'] = null;
-                            $row[$periode . 'qtq'] = null;
-                            $row[$periode . 'ctc'] = null;
+                            $row[$periode . 'yoy_kab'] = null;
+                            $row[$periode . 'qtq_kab'] = null;
+                            $row[$periode . 'ctc_kab'] = null;
+                        }
+
+                        if (
+                            $data_prov_y
+                            && $data_prov_y_1
+                            && isset($data_prov_y_1->$komp_id)
+                            && $data_prov_y_1->$komp_id != 0
+                        ) {
+                            $row[$periode . 'yoy_prov'] =  ($data_prov_y->$komp_id - $data_prov_y_1->$komp_id) / $data_prov_y_1->$komp_id * 100;
+                            $row[$periode . 'qtq_prov'] =  ($data_prov_y->$komp_id - $data_prov_y_1->$komp_id) / $data_prov_y_1->$komp_id * 100;
+                            $row[$periode . 'ctc_prov'] =  ($data_prov_y->$komp_id - $data_prov_y_1->$komp_id) / $data_prov_y_1->$komp_id * 100;
+                        } else {
+                            $row[$periode . 'yoy_prov'] = null;
+                            $row[$periode . 'qtq_prov'] = null;
+                            $row[$periode . 'ctc_prov'] = null;
                         }
                     }
                 } else if ($id == '1.2') {
                     if (sizeof($arr_periode) > 1) {
-                        $data_hb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();;
-                        $data_hk_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)->orderBy('revisi_ke', 'desc')->first();;
+                        $rev_kab_hb =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab')
+                            ->get();
 
-                        $data_hb_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();;
+                        $rev_kab_hk =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab')
+                            ->get();
 
-                        $data_hk_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)->orderBy('revisi_ke', 'desc')->first();;
+                        $rev_kab_hb_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab')
+                            ->get();
 
+                        $rev_kab_hk_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab')
+                            ->get();
+
+                        $data_kab_hb_y = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hb) {
+                                foreach ($rev_kab_hb as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+
+                        $data_kab_hk_y = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hk) {
+                                foreach ($rev_kab_hk as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+
+                        $data_kab_hb_y_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hb_1) {
+                                foreach ($rev_kab_hb_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+                        $data_kab_hk_y_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hk_1) {
+                                foreach ($rev_kab_hk_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+
+                        $data_prov_hb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->orderBy('revisi_ke', 'desc')
+                            ->first();
+
+
+                        $data_prov_hk_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->orderBy('revisi_ke', 'desc')
+                            ->first();
+                        $data_prov_hb_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->orderBy('revisi_ke', 'desc')
+                            ->first();
+
+                        $data_prov_hk_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', $arr_periode[1])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->orderBy('revisi_ke', 'desc')
+                            ->first();
 
 
                         if ($arr_periode[1] != 1) {
                             // q2-q4
-                            $data_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                                ->where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();;
-                            $data_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                                ->where('kode_kab', '00')->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 2)->orderBy('revisi_ke', 'desc')->first();;
+                            $rev_kab_hb_q_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                                ->where('kode_kab', "!=",  '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 1)
+                                ->where('status_data', 1)
+                                ->groupBy('kode_kab')
+                                ->get();
+
+                            $data_kab_hb_q_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                                ->where('kode_kab', "!=", '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 1)
+                                ->where('status_data', 1)
+                                ->where(function ($query) use ($rev_kab_hb_q_1) {
+                                    foreach ($rev_kab_hb_q_1 as $rev) {
+                                        $query->orWhere(function ($subquery) use ($rev) {
+                                            $subquery->where('kode_kab', $rev->kode_kab)
+                                                ->where('revisi_ke', $rev->max_revisi);
+                                        });
+                                    }
+                                })->groupBy('kode_prov')->get();
+
+                            $rev_kab_hk_q_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                                ->where('kode_kab', "!=",  '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->groupBy('kode_kab')
+                                ->get();
+
+                            $data_kab_hk_q_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                                ->where('kode_kab', "!=", '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->where(function ($query) use ($rev_kab_hk_q_1) {
+                                    foreach ($rev_kab_hk_q_1 as $rev) {
+                                        $query->orWhere(function ($subquery) use ($rev) {
+                                            $subquery->where('kode_kab', $rev->kode_kab)
+                                                ->where('revisi_ke', $rev->max_revisi);
+                                        });
+                                    }
+                                })->groupBy('kode_prov')->get();
+
+                            $data_prov_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                                ->where('kode_kab', '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 1)
+                                ->where('status_data', 1)
+                                ->orderBy('revisi_ke', 'desc')
+                                ->first();
+
+                            $data_prov_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                                ->where('kode_kab', '00')
+                                ->where('tahun', $arr_periode[0])
+                                ->where('q', $arr_periode[1] - 1)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->orderBy('revisi_ke', 'desc')
+                                ->first();
                         } else {
-                            $data_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                                ->where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', 4)->where('adhb_or_adhk', 1)->orderBy('revisi_ke', 'desc')->first();
-                            $data_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                                ->where('kode_kab', '00')->where('tahun', $arr_periode[0] - 1)->where('q', 4)->where('adhb_or_adhk', 2)->orderBy('revisi_ke', 'desc')->first();
+                            $rev_kab_hb_q_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                                ->where('kode_kab', "!=",  '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 1)
+                                ->where('status_data', 1)
+                                ->groupBy('kode_kab')
+                                ->get();
+
+                            $data_kab_hb_q_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                                ->where('kode_kab', "!=", '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 1)
+                                ->where('status_data', 1)
+                                ->where(function ($query) use ($rev_kab_hb_q_1) {
+                                    foreach ($rev_kab_hb_q_1 as $rev) {
+                                        $query->orWhere(function ($subquery) use ($rev) {
+                                            $subquery->where('kode_kab', $rev->kode_kab)
+                                                ->where('revisi_ke', $rev->max_revisi);
+                                        });
+                                    }
+                                })->groupBy('kode_prov')->get();
+
+                            $rev_kab_hk_q_1 =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
+                                ->where('kode_kab', "!=",  '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->groupBy('kode_kab')
+                                ->get();
+
+                            $data_kab_hk_q_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                                ->where('kode_kab', "!=", '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->where(function ($query) use ($rev_kab_hk_q_1) {
+                                    foreach ($rev_kab_hk_q_1 as $rev) {
+                                        $query->orWhere(function ($subquery) use ($rev) {
+                                            $subquery->where('kode_kab', $rev->kode_kab)
+                                                ->where('revisi_ke', $rev->max_revisi);
+                                        });
+                                    }
+                                })->groupBy('kode_prov')->get();
+                            $data_prov_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                                ->where('kode_kab', '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 1)
+                                ->where('status_data', 1)
+                                ->orderBy('revisi_ke', 'desc')
+                                ->first();
+                            $data_prov_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                                ->where('kode_kab', '00')
+                                ->where('tahun', $arr_periode[0] - 1)
+                                ->where('q', 4)
+                                ->where('adhb_or_adhk', 2)
+                                ->where('status_data', 1)
+                                ->orderBy('revisi_ke', 'desc')
+                                ->first();
                         }
 
-                        $jml_hb_q_y =  Pdrb::where('kode_kab', '00')
+                        $rev_kab_hb_c =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
                             ->where('tahun', $arr_periode[0])
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                             ->where('adhb_or_adhk', 1)
-                            ->groupBy('q')
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
                             ->get();
-                        $jml_hk_q_y =  Pdrb::where('kode_kab', '00')
+
+                        $rev_kab_hk =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
                             ->where('tahun', $arr_periode[0])
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                             ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+
+                        $rev_kab_hb_1 =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+                        $rev_kab_hk_1 =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', "!=",  '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+
+                        $jml_prov_hb_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
 
-                        $jml_hb_q_y_1 =  Pdrb::where('kode_kab', '00')
-                            ->where('tahun', $arr_periode[0] - 1)
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                            ->where('adhb_or_adhk', 1)
+                        $jml_prov_hk_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
-                        $jml_hk_q_y_1 =  Pdrb::where('kode_kab', '00')
+
+                        $jml_prov_hb_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
                             ->where('tahun', $arr_periode[0] - 1)
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->groupBy('q')
+                            ->get();
+
+                        $jml_prov_hk_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
                             ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
 
@@ -390,12 +971,75 @@ class TabelRingkasanController extends Controller
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
                         }
+                        $data_kab_hb_c = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('adhb_or_adhk', 1)
+                            ->where('tahun', $arr_periode[0])
+                            ->wherein('q', $q)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hb) {
+                                foreach ($rev_kab_hb as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+                        $data_kab_hk_c = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hk) {
+                                foreach ($rev_kab_hk as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+                        $data_kab_hb_c_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hb_1) {
+                                foreach ($rev_kab_hb_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
+                        $data_kab_hk_c_1 = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', "!=", '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hk_1) {
+                                foreach ($rev_kab_hk_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('kode_kab', $rev->kode_kab)
+                                            ->where('q', $rev->q)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_prov')->get();
 
-                        $data_hb_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0])->wherein('q', $q)
-                            ->where(function ($query) use ($jml_hk_q_y) {
-                                foreach ($jml_hk_q_y as $jml_q) {
+                        $data_prov_hb_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($jml_prov_hb_q_y) {
+                                foreach ($jml_prov_hb_q_y as $jml_q) {
                                     $query->orWhere(function ($subquery) use ($jml_q) {
                                         $subquery->where('q', $jml_q->q)
                                             ->where('revisi_ke', $jml_q->max_revisi);
@@ -403,11 +1047,14 @@ class TabelRingkasanController extends Controller
                                 }
                             })->groupBy('kode_kab')->first();
 
-                        $data_hk_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 2)
-                            ->where('tahun', $arr_periode[0])->wherein('q', $q)
-                            ->where(function ($query) use ($jml_hb_q_y) {
-                                foreach ($jml_hb_q_y as $jml_q) {
+                        $data_prov_hk_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($jml_prov_hk_q_y) {
+                                foreach ($jml_prov_hk_q_y as $jml_q) {
                                     $query->orWhere(function ($subquery) use ($jml_q) {
                                         $subquery->where('q', $jml_q->q)
                                             ->where('revisi_ke', $jml_q->max_revisi);
@@ -416,22 +1063,14 @@ class TabelRingkasanController extends Controller
                             })->groupBy('kode_kab')->first();
 
 
-                        $data_hb_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
-                            ->where(function ($query) use ($jml_hb_q_y_1) {
-                                foreach ($jml_hb_q_y_1 as $jml_q) {
-                                    $query->orWhere(function ($subquery) use ($jml_q) {
-                                        $subquery->where('q', $jml_q->q)
-                                            ->where('revisi_ke', $jml_q->max_revisi);
-                                    });
-                                }
-                            })->groupBy('kode_kab')->first();
-                        $data_hk_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
-                            ->where(function ($query) use ($jml_hk_q_y_1) {
-                                foreach ($jml_hk_q_y_1 as $jml_q) {
+                        $data_prov_hb_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($jml_prov_hb_q_y_1) {
+                                foreach ($jml_prov_hb_q_y_1 as $jml_q) {
                                     $query->orWhere(function ($subquery) use ($jml_q) {
                                         $subquery->where('q', $jml_q->q)
                                             ->where('revisi_ke', $jml_q->max_revisi);
@@ -439,51 +1078,174 @@ class TabelRingkasanController extends Controller
                                 }
                             })->groupBy('kode_kab')->first();
 
+                        $data_prov_hk_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->wherein('q', $q)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($jml_prov_hk_q_y_1) {
+                                foreach ($jml_prov_hk_q_y_1 as $jml_q) {
+                                    $query->orWhere(function ($subquery) use ($jml_q) {
+                                        $subquery->where('q', $jml_q->q)
+                                            ->where('revisi_ke', $jml_q->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
 
+                        $implisit_kab_y     = $data_kab_hb_y && $data_kab_hk_y && isset($data_kab_hk_y->$komp_id) && $data_kab_hk_y->$komp_id != 0 ? $data_kab_hb_y->$komp_id / $data_kab_hk_y->$komp_id * 100 : null;
+                        $implisit_kab_y_1   = $data_kab_hb_y_1 && $data_kab_hk_y_1 && isset($data_kab_hk_y_1->$komp_id) && $data_kab_hk_y_1->$komp_id != 0 ? $data_kab_hb_y_1->$komp_id / $data_kab_hk_y_1->$komp_id * 100 : null;
+                        $implisit_prov_y    = $data_prov_hb_y && $data_prov_hk_y && isset($data_prov_hk_y->$komp_id) && $data_prov_hk_y->$komp_id != 0 ? $data_prov_hb_y->$komp_id / $data_prov_hk_y->$komp_id * 100 : null;
+                        $implisit_prov_y_1  = $data_prov_hb_y_1 && $data_prov_hk_y_1 && isset($data_prov_hk_y_1->$komp_id) && $data_prov_hk_y_1->$komp_id != 0 ? $data_prov_hb_y_1->$komp_id / $data_prov_hk_y_1->$komp_id * 100 : null;
+                        $implisit_kab_q_1   = $data_kab_hb_q_1 && $data_kab_hk_q_1 && isset($data_kab_hk_q_1->$komp_id) && $data_kab_hk_q_1->$komp_id != 0 ? $data_kab_hb_q_1->$komp_id / $data_kab_hk_q_1->$komp_id * 100 : null;
+                        $implisit_prov_q_1  = $data_prov_hb_q_1 && $data_prov_hk_q_1 && isset($data_prov_hk_q_1->$komp_id) && $data_prov_hk_q_1->$komp_id != 0 ? $data_prov_hb_q_1->$komp_id / $data_prov_hk_q_1->$komp_id * 100 : null;
+                        $implisit_kab_c     = $data_kab_hb_c && $data_kab_hk_c && isset($data_kab_hk_c->$komp_id) && $data_kab_hk_c->$komp_id != 0 ? $data_kab_hb_c->$komp_id / $data_kab_hk_c->$komp_id * 100 : null;
+                        $implisit_kab_c_1   = $data_kab_hb_c_1 && $data_kab_hk_c_1 && isset($data_kab_hk_c_1->$komp_id) && $data_kab_hk_c_1->$komp_id != 0 ? $data_kab_hb_c_1->$komp_id / $data_kab_hk_c_1->$komp_id * 100 : null;
+                        $implisit_prov_c    = $data_prov_hb_c && $data_prov_hk_c && isset($data_prov_hk_c->$komp_id) && $data_prov_hk_c->$komp_id != 0 ? $data_prov_hb_c->$komp_id / $data_prov_hk_c->$komp_id * 100 : null;
+                        $implisit_prov_c_1  = $data_prov_hb_c_1 && $data_prov_hk_c_1 && isset($data_prov_hk_c_1->$komp_id) && $data_prov_hk_c_1->$komp_id != 0 ? $data_prov_hb_c_1->$komp_id / $data_prov_hk_c_1->$komp_id * 100 : null;
 
-                        $row[$periode . 'yoy'] = ($data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1 && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0 && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0) ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100) - ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100)) / ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100) : null;
-                        $row[$periode . 'qtq'] = ($data_hb_y && $data_hk_y && $data_hb_q_1 && $data_hk_q_1 && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0 && isset($data_hb_q_1->$komp_id) && $data_hb_q_1->$komp_id != 0 && isset($data_hk_q_1->$komp_id) && $data_hk_q_1->$komp_id != 0) ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100) - ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100)) / ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100) : null;
-                        $row[$periode . 'ctc'] = ($data_hb_c && $data_hk_c && $data_hb_c_1 && $data_hk_c_1 && isset($data_hk_c->$komp_id) && $data_hk_c->$komp_id != 0 && isset($data_hb_c_1->$komp_id) && $data_hb_c_1->$komp_id != 0 && isset($data_hk_c_1->$komp_id) && $data_hk_c_1->$komp_id != 0) ? (($data_hb_c->$komp_id / $data_hk_c->$komp_id * 100) - ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100)) / ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100) : null;
+                        $row[$periode . 'yoy_kab']  = ($implisit_kab_y && $implisit_kab_y_1 && $implisit_kab_y_1 != 0)      ? ($implisit_kab_y - $implisit_kab_y_1) / $implisit_kab_y_1 * 100 : null;
+                        $row[$periode . 'yoy_prov'] = ($implisit_prov_y && $implisit_prov_y_1 && $implisit_prov_y_1 != 0)   ? ($implisit_prov_y - $implisit_prov_y_1) / $implisit_prov_y_1 * 100 : null;
+                        $row[$periode . 'qtq_kab']  = ($implisit_kab_y && $implisit_kab_q_1 && $implisit_kab_q_1 != 0)      ? ($implisit_kab_y - $implisit_kab_q_1) / $implisit_kab_q_1 * 100 : null;
+                        $row[$periode . 'qtq_prov'] = ($implisit_prov_y && $implisit_prov_q_1 && $implisit_prov_q_1 != 0)   ? ($implisit_prov_y - $implisit_prov_q_1)  / $implisit_prov_q_1 * 100 : null;
+                        $row[$periode . 'ctc_kab']  = ($implisit_kab_c && $implisit_kab_c_1 && $implisit_kab_c_1 != 0)      ? ($implisit_kab_c - $implisit_kab_c_1) / $implisit_kab_c_1 * 100 : null;
+                        $row[$periode . 'ctc_prov'] = ($implisit_prov_c && $implisit_prov_c_1 && $implisit_prov_c_1 != 0)   ? ($implisit_prov_c - $implisit_prov_c_1)  / $implisit_prov_c_1 * 100 : null;
                     } else {
-                        $jml_hb_q_y =  Pdrb::where('kode_kab', '00')
+                        $rev_kab_hb_y =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '!=', '00')
                             ->where('tahun', $arr_periode[0])
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                             ->where('adhb_or_adhk', 1)
-                            ->groupBy('q')
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
                             ->get();
-                        $jml_hk_q_y =  Pdrb::where('kode_kab', '00')
+                        $rev_kab_hk_y =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '!=', '00')
                             ->where('tahun', $arr_periode[0])
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                             ->where('adhb_or_adhk', 2)
-                            ->groupBy('q')
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
                             ->get();
-
-                        $jml_hb_q_y_1 =  Pdrb::where('kode_kab', '00')
+                        $rev_kab_hb_y_1 =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '!=', '00')
                             ->where('tahun', $arr_periode[0] - 1)
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                             ->where('adhb_or_adhk', 1)
-                            ->groupBy('q')
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
                             ->get();
-                        $jml_hk_q_y_1 =  Pdrb::where('kode_kab', '00')
+                        $rev_kab_hk_y_1 =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '!=', '00')
                             ->where('tahun', $arr_periode[0] - 1)
-                            ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                             ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('kode_kab', 'q')
+                            ->get();
+
+                        $rev_prov_hb_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
                             ->groupBy('q')
                             ->get();
-                        $data_hb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0])
-                            ->where(function ($query) use ($jml_hb_q_y) {
-                                foreach ($jml_hb_q_y as $q) {
+                        $rev_prov_hk_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('q')
+                            ->get();
+                        $rev_prov_hb_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->groupBy('q')
+                            ->get();
+                        $rev_prov_hk_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->groupBy('q')
+                            ->get();
+
+                        $data_kab_hb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '!=', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hb_y) {
+                                foreach ($rev_kab_hb_y as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('q', $rev->q)
+                                            ->where('kode_kab', $rev->max_revisi)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+                        $data_kab_hk_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '!=', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hk_y) {
+                                foreach ($rev_kab_hk_y as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('q', $rev->q)
+                                            ->where('kode_kab', $rev->max_revisi)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+                        $data_kab_hb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '!=', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hb_y_1) {
+                                foreach ($rev_kab_hb_y_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('q', $rev->q)
+                                            ->where('kode_kab', $rev->max_revisi)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+                        $data_kab_hk_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '!=', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_kab_hk_y_1) {
+                                foreach ($rev_kab_hk_y_1 as $rev) {
+                                    $query->orWhere(function ($subquery) use ($rev) {
+                                        $subquery->where('q', $rev->q)
+                                            ->where('kode_kab', $rev->max_revisi)
+                                            ->where('revisi_ke', $rev->max_revisi);
+                                    });
+                                }
+                            })->groupBy('kode_kab')->first();
+
+                        $data_prov_hb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_hb_y) {
+                                foreach ($rev_prov_hb_y as $q) {
                                     $query->orWhere(function ($subquery) use ($q) {
                                         $subquery->where('q', $q->q)
                                             ->where('revisi_ke', $q->max_revisi);
                                     });
                                 }
                             })->groupBy('kode_kab')->first();
-                        $data_hk_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 2)->where('tahun', $arr_periode[0])
-                            ->where(function ($query) use ($jml_hk_q_y) {
-                                foreach ($jml_hk_q_y as $q) {
+                        $data_prov_hk_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0])
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_hk_y) {
+                                foreach ($rev_prov_hk_y as $q) {
                                     $query->orWhere(function ($subquery) use ($q) {
                                         $subquery->where('q', $q->q)
                                             ->where('revisi_ke', $q->max_revisi);
@@ -492,46 +1254,44 @@ class TabelRingkasanController extends Controller
                             })->groupBy('kode_kab')->first();
 
 
-                        $data_hb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 1)
-                            ->where(function ($query) use ($jml_hb_q_y_1) {
-                                foreach ($jml_hb_q_y_1 as $q) {
+                        $data_prov_hb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_hb_y_1) {
+                                foreach ($rev_prov_hb_y_1 as $q) {
                                     $query->orWhere(function ($subquery) use ($q) {
                                         $subquery->where('q', $q->q)
                                             ->where('revisi_ke', $q->max_revisi);
                                     });
                                 }
                             })->groupBy('kode_kab')->first();
-                        $data_hk_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                            ->where('kode_kab', '00')->where('adhb_or_adhk', 2)->where('tahun', $arr_periode[0] - 1)
-                            ->where(function ($query) use ($jml_hk_q_y_1) {
-                                foreach ($jml_hk_q_y_1 as $q) {
+                        $data_prov_hk_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                            ->where('kode_kab', '00')
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
+                            ->where(function ($query) use ($rev_prov_hk_y_1) {
+                                foreach ($rev_prov_hk_y_1 as $q) {
                                     $query->orWhere(function ($subquery) use ($q) {
                                         $subquery->where('q', $q->q)
                                             ->where('revisi_ke', $q->max_revisi);
                                     });
                                 }
                             })->groupBy('kode_kab')->first();
-                        // dd($data_hb_y->$komp_id / $data_hk_y->$komp_id);
-                        if (
-                            $data_hb_y
-                            && $data_hk_y
-                            && $data_hb_y_1
-                            && $data_hk_y_1
-                            && isset($data_hk_y->$komp_id)
-                            && $data_hk_y->$komp_id != 0
-                            && isset($data_hb_y_1->$komp_id)
-                            && $data_hb_y_1->$komp_id != 0
-                            && isset($data_hk_y_1->$komp_id)
-                            && $data_hk_y_1->$komp_id != 0
-                        ) {
-                            $row[$periode . 'yoy'] = (($data_hb_y->sum($komp_id) / $data_hk_y->sum($komp_id) * 100) - ($data_hb_y_1->sum($komp_id) / $data_hk_y_1->sum($komp_id) * 100)) / ($data_hb_y_1->sum($komp_id) / $data_hb_y_1->sum($komp_id) * 100);
-                            $row[$periode . 'qtq'] = (($data_hb_y->sum($komp_id) / $data_hk_y->sum($komp_id) * 100) - ($data_hb_y_1->sum($komp_id) / $data_hk_y_1->sum($komp_id) * 100)) / ($data_hb_y_1->sum($komp_id) / $data_hb_y_1->sum($komp_id) * 100);
-                            $row[$periode . 'ctc'] = (($data_hb_y->sum($komp_id) / $data_hk_y->sum($komp_id) * 100) - ($data_hb_y_1->sum($komp_id) / $data_hk_y_1->sum($komp_id) * 100)) / ($data_hb_y_1->sum($komp_id) / $data_hb_y_1->sum($komp_id) * 100);
-                            $row[$periode . 'yoy'] = null;
-                            $row[$periode . 'qtq'] = null;
-                            $row[$periode . 'ctc'] = null;
-                        }
+
+                        $implisit_kab_y     = $data_kab_hb_y && $data_kab_hk_y && isset($data_kab_hk_y->$komp_id) && $data_kab_hk_y->$komp_id != 0 ? $data_kab_hb_y->$komp_id / $data_kab_hk_y->$komp_id * 100 : null;
+                        $implisit_kab_y_1   = $data_kab_hb_y_1 && $data_kab_hk_y_1 && isset($data_kab_hk_y_1->$komp_id) && $data_kab_hk_y_1->$komp_id != 0 ? $data_kab_hb_y_1->$komp_id / $data_kab_hk_y_1->$komp_id * 100 : null;
+                        $implisit_prov_y    = $data_prov_hb_y && $data_prov_hk_y && isset($data_prov_hk_y->$komp_id) && $data_prov_hk_y->$komp_id != 0 ? $data_prov_hb_y->$komp_id / $data_prov_hk_y->$komp_id * 100 : null;
+                        $implisit_prov_y_1  = $data_prov_hb_y_1 && $data_prov_hk_y_1 && isset($data_prov_hk_y_1->$komp_id) && $data_prov_hk_y_1->$komp_id != 0 ? $data_prov_hb_y_1->$komp_id / $data_prov_hk_y_1->$komp_id * 100 : null;
+
+                        $row[$periode . 'yoy_kab'] = ($implisit_kab_y && $implisit_kab_y_1 && $implisit_kab_y_1 != 0) ? ($implisit_kab_y - $implisit_kab_y_1) / $implisit_kab_y_1 * 100 : null;
+                        $row[$periode . 'yoy_prov'] = ($implisit_prov_y && $implisit_prov_y_1 && $implisit_prov_y_1 != 0) ? ($implisit_prov_y - $implisit_prov_y_1) / $implisit_prov_y_1 * 100 : null;
+                        $row[$periode . 'qtq_kab'] = ($implisit_kab_y && $implisit_kab_y_1 && $implisit_kab_y_1 != 0) ? ($implisit_kab_y - $implisit_kab_y_1) / $implisit_kab_y_1 * 100 : null;
+                        $row[$periode . 'qtq_prov'] = ($implisit_prov_y && $implisit_prov_y_1 && $implisit_prov_y_1 != 0) ? ($implisit_prov_y - $implisit_prov_y_1)  / $implisit_prov_y_1 * 100 : null;
+                        $row[$periode . 'ctc_kab'] = ($implisit_kab_y && $implisit_kab_y_1 && $implisit_kab_y_1 != 0) ? ($implisit_kab_y - $implisit_kab_y_1) / $implisit_kab_y_1 * 100 : null;
+                        $row[$periode . 'ctc_prov'] = ($implisit_prov_y && $implisit_prov_y_1 && $implisit_prov_y_1 != 0) ? ($implisit_prov_y - $implisit_prov_y_1)  / $implisit_prov_y_1 * 100 : null;
                     }
                 }
             }
@@ -549,25 +1309,68 @@ class TabelRingkasanController extends Controller
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.3';
         $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
         $data = [];
-        foreach ($list_wilayah as $wilayah) {
+        foreach ($list_wilayah as $wil_id => $wilayah) {
             $row = [];
             $row = [
-                'id' => $wilayah['id'],
-                'name' => $wilayah['name'],
-                'alias' => $wilayah['alias']
+                'id' => $wil_id,
+                'name' => $wilayah,
+                'alias' => $wilayah
             ];
             $arr_periode = explode("Q", $periode_filter);
             if (sizeof($arr_periode) > 1) {
-                $data_y = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
-                $data_y_1 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
-                $data_y_2 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 2)->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
+                $data_y = Pdrb::where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+                $data_y_1 = Pdrb::where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+                $data_y_2 = Pdrb::where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 2)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
 
-                if ($arr_periode[1] == 1) {
-                    $data_q_1 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)->orderBy('revisi_ke', 'desc')->first();
-                    $data_q_2 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1] - 1)->orderBy('revisi_ke', 'desc')->first();
+                if ($arr_periode[1] != 1) {
+                    $data_q_1 = Pdrb::where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
+                        ->orderBy('revisi_ke', 'desc')
+                        ->first();
+                    $data_q_2 = Pdrb::where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
+                        ->orderBy('revisi_ke', 'desc')
+                        ->first();
                 } else {
-                    $data_q_1 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 1)->where('q', 4)->orderBy('revisi_ke', 'desc')->first();
-                    $data_q_2 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 2)->where('q', 4)->orderBy('revisi_ke', 'desc')->first();
+                    $data_q_1 = Pdrb::where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
+                        ->orderBy('revisi_ke', 'desc')
+                        ->first();
+
+                    $data_q_2 = Pdrb::where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0] - 2)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
+                        ->orderBy('revisi_ke', 'desc')
+                        ->first();
                 }
 
                 $q = [];
@@ -575,28 +1378,36 @@ class TabelRingkasanController extends Controller
                     $q[] = $i;
                 }
 
-                $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                    ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_q_y_1 =  Pdrb::where('kode_kab', $wilayah['id'])
-                    ->where('tahun', $arr_periode[0] - 1)->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_q_y_2 =  Pdrb::where('kode_kab', $wilayah['id'])
-                    ->where('tahun', $arr_periode[0] - 2)->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_y_2 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 2)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
                 $data_cum_y = Pdrb::select('kode_kab', DB::raw('sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0])
                     ->where('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y) {
                         foreach ($jml_q_y as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -607,9 +1418,11 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
                 $data_cum_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0] - 1)
                     ->where('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y_1) {
                         foreach ($jml_q_y_1 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -620,9 +1433,11 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
                 $data_cum_y_2 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 2)
                     ->where('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y_2) {
                         foreach ($jml_q_y_2 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -631,46 +1446,75 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_adhk_y = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
-                $data_adhk_y_1 = Pdrb::where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
-                $data_prov = Pdrb::where('kode_kab', '00')->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])->orderBy('revisi_ke', 'desc')->first();
+                $data_adhb_y = Pdrb::where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+                $data_adhb_y_1 = Pdrb::where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
 
-                $row['yoy_current'] = ($data_y && $data_y_1 && isset($data_y_1->c_pdrb) && $data_y_1->c_pdrb != 0) ? round(($data_y->c_pdrb - $data_y_1->c_pdrb) / $data_y_1->c_pdrb, 2) : null;
-                $row['yoy_prev']    = ($data_y_1 && $data_y_2 && isset($data_y_2->c_pdrb) && $data_y_2->c_pdrb != 0) ? round(($data_y_1->c_pdrb - $data_y_2->c_pdrb) / $data_y_2->c_pdrb, 2) : null;
-                $row['qtq_current'] = ($data_y && $data_q_1 && isset($data_q_1->c_pdrb) && $data_q_1->c_pdrb != 0) ? round(($data_y->c_pdrb - $data_q_1->c_pdrb) / $data_q_1->c_pdrb, 2) : null;
-                $row['qtq_prev']    = ($data_y_1 && $data_q_2 && isset($data_q_2->c_pdrb) && $data_q_2->c_pdrb != 0) ? round(($data_y_1->c_pdrb - $data_q_2->c_pdrb) / $data_q_2->c_pdrb, 2) : null;
-                $row['ctc_current'] = ($data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0) ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb, 2) : null;
-                $row['ctc_prev']    = ($data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0) ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb, 2) : null;
-                $row['implisit_yoy'] = ($data_y  && $data_adhk_y && $data_y_1 && $data_adhk_y_1 && isset($data_adhk_y->c_pdrb) && $data_adhk_y->c_pdrb != 0  && isset($data_y_1->c_pdrb) && $data_y_1->c_pdrb != 0  && isset($data_adhk_y_1->c_pdrb) && $data_adhk_y_1->c_pdrb != 0) ? round((($data_y->c_pdrb / $data_adhk_y->c_pdrb * 100) - ($data_y_1->c_pdrb / $data_adhk_y_1->c_pdrb * 100)) / ($data_y_1->c_pdrb / $data_adhk_y_1->c_pdrb * 100), 2) : null;
+                $data_prov = Pdrb::where('kode_kab', '00')
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+
+                $row['yoy_current'] = ($data_y && $data_y_1 && isset($data_y_1->c_pdrb) && $data_y_1->c_pdrb != 0) ? round(($data_y->c_pdrb - $data_y_1->c_pdrb) / $data_y_1->c_pdrb * 100, 2) : null;
+                $row['yoy_prev']    = ($data_y_1 && $data_y_2 && isset($data_y_2->c_pdrb) && $data_y_2->c_pdrb != 0) ? round(($data_y_1->c_pdrb - $data_y_2->c_pdrb) / $data_y_2->c_pdrb * 100, 2) : null;
+                $row['qtq_current'] = ($data_y && $data_q_1 && isset($data_q_1->c_pdrb) && $data_q_1->c_pdrb != 0) ? round(($data_y->c_pdrb - $data_q_1->c_pdrb) / $data_q_1->c_pdrb * 100, 2) : null;
+                $row['qtq_prev']    = ($data_y_1 && $data_q_2 && isset($data_q_2->c_pdrb) && $data_q_2->c_pdrb != 0) ? round(($data_y_1->c_pdrb - $data_q_2->c_pdrb) / $data_q_2->c_pdrb * 100, 2) : null;
+                $row['ctc_current'] = ($data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0) ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb * 100, 2) : null;
+                $row['ctc_prev']    = ($data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0) ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb * 100, 2) : null;
+                $row['implisit_yoy'] = ($data_adhb_y && $data_y  && $data_adhb_y_1 && $data_y_1  && isset($data_y->c_pdrb) && $data_y->c_pdrb != 0  && isset($data_y_1->c_pdrb) && $data_y_1->c_pdrb != 0  && isset($data_adhb_y_1->c_pdrb) && $data_adhb_y_1->c_pdrb != 0) ? round((($data_adhb_y->c_pdrb / $data_y->c_pdrb * 100) - ($data_adhb_y_1->c_pdrb / $data_y_1->c_pdrb * 100)) / ($data_adhb_y_1->c_pdrb / $data_y_1->c_pdrb * 100) * 100, 2) : null;
                 $row['share_prov']  = ($data_y  && $data_prov && isset($data_prov->c_pdrb) && $data_prov->c_pdrb != 0) ? round($data_y->c_pdrb / $data_prov->c_pdrb * 100, 2) : null;
             } else {
-                $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                    ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_q_y_1 =  Pdrb::where('kode_kab', $wilayah['id'])
-                    ->where('tahun', $arr_periode[0] - 1)->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_q_y_2 =  Pdrb::where('kode_kab', $wilayah['id'])
-                    ->where('tahun', $arr_periode[0] - 2)->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_y_2 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 2)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_q_prov =  Pdrb::where('kode_kab', '00')
-                    ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                $jml_q_prov =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', '00')
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
                 $data_cum_y = Pdrb::select('kode_kab', DB::raw('sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y) {
                         foreach ($jml_q_y as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -681,8 +1525,10 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
                 $data_cum_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y_1) {
                         foreach ($jml_q_y_1 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -692,8 +1538,10 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
                 $data_cum_y_2 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('kode_kab', $wil_id)
+                    ->where('tahun', $arr_periode[0] - 2)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y_2) {
                         foreach ($jml_q_y_2 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -702,9 +1550,11 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_adhk_cum_y = Pdrb::select('kode_kab', DB::raw('sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                $data_adhb_cum_y = Pdrb::select('kode_kab', DB::raw('sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y) {
                         foreach ($jml_q_y as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -714,9 +1564,11 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_adhk_cum_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                $data_adhb_cum_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y_1) {
                         foreach ($jml_q_y_1 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -726,8 +1578,10 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
                 $data_prov_cum = Pdrb::select('kode_kab', DB::raw('sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', "00")->where('adhb_or_adhk', 1)
+                    ->where('kode_kab', "00")
                     ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_prov) {
                         foreach ($jml_q_prov as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -738,19 +1592,17 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
 
-                $row['yoy_current'] = $data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb, 2) : null;
-                $row['yoy_prev'] = $data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0 ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb, 2) : null;
-                $row['qtq_current'] = $data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb, 2) : null;
-                $row['qtq_prev'] = $data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0 ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb, 2) : null;
-                $row['ctc_current'] = $data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb, 2) : null;
-                $row['ctc_prev'] = $data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0 ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb, 2) : null;
-                $row['implisit_yoy'] = $data_cum_y  && $data_adhk_cum_y && $data_cum_y_1 && $data_adhk_cum_y_1 && isset($data_adhk_cum_y->c_pdrb) && $data_adhk_cum_y->c_pdrb != 0 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 && isset($data_adhk_cum_y_1->c_pdrb) && $data_adhk_cum_y_1->c_pdrb != 0 ? round((($data_cum_y->c_pdrb / $data_adhk_cum_y->c_pdrb * 100) - ($data_cum_y_1->c_pdrb / $data_adhk_cum_y_1->c_pdrb * 100)) / ($data_cum_y_1->c_pdrb / $data_adhk_cum_y_1->c_pdrb * 100), 2) : null;
+                $row['yoy_current'] = $data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb * 100, 2) : null;
+                $row['yoy_prev'] = $data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0 ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb * 100, 2) : null;
+                $row['qtq_current'] = $data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb * 100, 2) : null;
+                $row['qtq_prev'] = $data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0 ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb * 100, 2) : null;
+                $row['ctc_current'] = $data_cum_y && $data_cum_y_1 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 ? round(($data_cum_y->c_pdrb - $data_cum_y_1->c_pdrb) / $data_cum_y_1->c_pdrb * 100, 2) : null;
+                $row['ctc_prev'] = $data_cum_y_1 && $data_cum_y_2 && isset($data_cum_y_2->c_pdrb) && $data_cum_y_2->c_pdrb != 0 ? round(($data_cum_y_1->c_pdrb - $data_cum_y_2->c_pdrb) / $data_cum_y_2->c_pdrb * 100, 2) : null;
+                $row['implisit_yoy'] = $data_cum_y  && $data_adhb_cum_y && $data_cum_y_1 && $data_adhb_cum_y_1 && isset($data_cum_y->c_pdrb) && $data_cum_y->c_pdrb != 0 && isset($data_cum_y_1->c_pdrb) && $data_cum_y_1->c_pdrb != 0 && isset($data_adhb_cum_y_1->c_pdrb) && $data_adhb_cum_y_1->c_pdrb != 0 ? round((($data_cum_y->c_pdrb / $data_adhb_cum_y->c_pdrb * 100) - ($data_cum_y_1->c_pdrb / $data_adhb_cum_y_1->c_pdrb * 100)) / ($data_cum_y_1->c_pdrb / $data_adhb_cum_y_1->c_pdrb * 100) * 100, 2) : null;
                 $row['share_prov'] = $data_cum_y  && $data_prov_cum && isset($data_prov_cum->c_pdrb) && $data_prov_cum->c_pdrb != 0 ? round($data_cum_y->c_pdrb / $data_prov_cum->c_pdrb * 100, 2) : null;
             }
-
             $data[] = $row;
         }
-        // dd($data);
         return view('pdrb_ringkasan.ringkasan2', compact('list_tabel', 'list_periode', 'periode_filter', 'tabel_filter', 'data'));
     }
 
@@ -778,46 +1630,60 @@ class TabelRingkasanController extends Controller
             }
         }
         $data = [];
-        foreach ($list_wilayah as $wilayah) {
+        foreach ($list_wilayah as $wil_id => $wilayah) {
             $row = [];
             $row = [
-                'id' => $wilayah['id'],
-                'name' => $wilayah['name'],
-                'alias' => $wilayah['alias']
+                'id' => $wil_id,
+                'name' => $wilayah,
+                'alias' => $wilayah
             ];
             $arr_periode = explode("Q", $periode_filter);
             if ($id == "1.4") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                        ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])
-                        ->orderBy('revisi_ke', 'desc')->first();
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
+                        ->orderBy('revisi_ke', 'desc')
+                        ->first();
 
                     $pdrb_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                        ->where('tahun', $arr_periode[0] - 1)->where('q', $arr_periode[1])
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
 
                     if ($pdrb_y && $pdrb_y_1) {
                         foreach ($komponens as $komp) {
                             $komp_id = $komp['id'];
-                            $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id : null;
+                            // dd($pdrb_y, $pdrb_y_1, $pdrb_y->$komp_id - $pdrb_y_1->$komp_id, ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id);
+                            $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id * 100 : null;
                         }
                     }
                 } else {
-                    $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
-                    $jml_q_y_1 =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y) {
                             foreach ($jml_q_y as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -827,8 +1693,10 @@ class TabelRingkasanController extends Controller
                             }
                         })->groupBy('kode_kab')->first();
                     $pdrb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y_1) {
                             foreach ($jml_q_y_1 as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -849,43 +1717,56 @@ class TabelRingkasanController extends Controller
             } else if ($id == "1.5") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                        ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
 
                     if ($arr_periode[1] == 1) {
                         $pdrb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0] - 1)->where('q', 4)
+                            ->where('kode_kab', $wil_id)
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', 4)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->orderBy('revisi_ke', 'desc')->first();
                     } else {
                         $pdrb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)
+                            ->where('kode_kab', $wil_id)
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->orderBy('revisi_ke', 'desc')->first();
                     }
-
-
                     if ($pdrb_y && $pdrb_q_1) {
                         foreach ($komponens as $komp) {
                             $komp_id = $komp['id'];
-                            $row[$komp_id] = isset($pdrb_q_1->$komp_id) && $pdrb_q_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_q_1->$komp_id) / $pdrb_q_1->$komp_id : null;
+                            $row[$komp_id] = isset($pdrb_q_1->$komp_id) && $pdrb_q_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_q_1->$komp_id) / $pdrb_q_1->$komp_id * 100 : null;
                         }
                     }
                 } else {
-                    $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
-                    $jml_q_y_1 =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y) {
                             foreach ($jml_q_y as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -895,8 +1776,10 @@ class TabelRingkasanController extends Controller
                             }
                         })->groupBy('kode_kab')->first();
                     $pdrb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y_1) {
                             foreach ($jml_q_y_1 as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -909,7 +1792,7 @@ class TabelRingkasanController extends Controller
                     if ($pdrb_y && $pdrb_y_1) {
                         foreach ($komponens as $komp) {
                             $komp_id = $komp['id'];
-                            $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id : null;
+                            $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id * 100 : null;
                         }
                     }
                 }
@@ -922,26 +1805,25 @@ class TabelRingkasanController extends Controller
                 } else {
                     $q = [1, 2, 3, 4];
                 }
-
                 $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
-                    ->where('kode_kab', $wilayah['id'])
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0])
-                    ->where('adhb_or_adhk', 1)
+                    ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
                 $jml_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
-                    ->where('kode_kab', $wilayah['id'])
+                    ->where('kode_kab', $wil_id)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->where('adhb_or_adhk', 1)
+                    ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
                 $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab',  $wilayah['id'])
+                    ->where('kode_kab',  $wil_id)
                     ->where('tahun', $arr_periode[0])
                     ->wherein('q', $q)
-                    ->where('adhb_or_adhk', 1)
+                    ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y) {
                         foreach ($jml_q_y as $q) {
@@ -953,10 +1835,10 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
                 $pdrb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab',  $wilayah['id'])
+                    ->where('kode_kab',  $wil_id)
                     ->where('tahun', $arr_periode[0] - 1)
                     ->wherein('q', $q)
-                    ->where('adhb_or_adhk', 1)
+                    ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_y_1) {
                         foreach ($jml_q_y_1 as $q) {
@@ -970,15 +1852,18 @@ class TabelRingkasanController extends Controller
                 if ($pdrb_y && $pdrb_y_1) {
                     foreach ($komponens as $komp) {
                         $komp_id = $komp['id'];
-                        $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id : null;
+                        $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id * 100 : null;
                     }
                 }
                 $data[] = $row;
             } else if ($id == "1.7") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)
-                        ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
 
                     if ($pdrb_y) {
@@ -988,15 +1873,19 @@ class TabelRingkasanController extends Controller
                         }
                     }
                 } else {
-                    $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 2)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
 
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y) {
                             foreach ($jml_q_y as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -1017,8 +1906,11 @@ class TabelRingkasanController extends Controller
             } else if ($id == "1.8") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                        ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
 
                     if ($pdrb_y) {
@@ -1028,15 +1920,19 @@ class TabelRingkasanController extends Controller
                         }
                     }
                 } else {
-                    $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
 
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y) {
                             foreach ($jml_q_y as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -1057,7 +1953,7 @@ class TabelRingkasanController extends Controller
             } else if ($id == "1.9") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_hb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 1)
@@ -1065,7 +1961,7 @@ class TabelRingkasanController extends Controller
                         ->orderby('revisi_ke', 'desc')
                         ->first();
                     $pdrb_hk_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 2)
@@ -1073,7 +1969,7 @@ class TabelRingkasanController extends Controller
                         ->orderby('revisi_ke', 'desc')
                         ->first();
                     $pdrb_hb_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 1)
@@ -1081,7 +1977,7 @@ class TabelRingkasanController extends Controller
                         ->orderby('revisi_ke', 'desc')
                         ->first();
                     $pdrb_hk_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 2)
@@ -1099,43 +1995,43 @@ class TabelRingkasanController extends Controller
                                 && $pdrb_hb_y_1->$komp_id != 0
                                 && isset($pdrb_hk_y_1->$komp_id)
                                 && $pdrb_hk_y_1->$komp_id != 0 ?
-                                (($pdrb_hb_y->$komp_id / $pdrb_hk_y->$komp_id * 100) - ($pdrb_hb_y_1->$komp_id / $pdrb_hk_y_1->$komp_id * 100)) / ($pdrb_hb_y_1->$komp_id / $pdrb_hk_y_1->$komp_id * 100) : null;
+                                (($pdrb_hb_y->$komp_id / $pdrb_hk_y->$komp_id * 100) - ($pdrb_hb_y_1->$komp_id / $pdrb_hk_y_1->$komp_id * 100)) / ($pdrb_hb_y_1->$komp_id / $pdrb_hk_y_1->$komp_id * 100) * 100 : null;
                         }
                     }
                 } else {
-                    $jml_q_hb =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hb =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
-                    $jml_q_hk =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hk =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
 
-                    $jml_q_hb_1 =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hb_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
-                    $jml_q_hk_1 =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hk_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
 
 
                     $pdrb_hb = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
@@ -1149,7 +2045,7 @@ class TabelRingkasanController extends Controller
                         })->groupBy('kode_kab')->first();
 
                     $pdrb_hk = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
@@ -1163,7 +2059,7 @@ class TabelRingkasanController extends Controller
                         })->groupBy('kode_kab')->first();
 
                     $pdrb_hb_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
@@ -1177,7 +2073,7 @@ class TabelRingkasanController extends Controller
                         })->groupBy('kode_kab')->first();
 
                     $pdrb_hk_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
@@ -1199,7 +2095,7 @@ class TabelRingkasanController extends Controller
                                 && $pdrb_hb_1->$komp_id != 0
                                 && isset($pdrb_hk_1->$komp_id)
                                 && $pdrb_hk_1->$komp_id != 0 ?
-                                (($pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100) - ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100)) / ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100) : null;
+                                (($pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100) - ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100)) / ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100) * 100 : null;
                         }
                     }
                 }
@@ -1207,7 +2103,7 @@ class TabelRingkasanController extends Controller
             } else if ($id == "1.10") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_hb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 1)
@@ -1215,7 +2111,7 @@ class TabelRingkasanController extends Controller
                         ->orderby('revisi_ke', 'desc')
                         ->first();
                     $pdrb_hk_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 2)
@@ -1226,21 +2122,33 @@ class TabelRingkasanController extends Controller
 
                     if ($arr_periode[1] == 1) {
                         $pdrb_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0] - 1)->where('q', 4)
+                            ->where('kode_kab', $wil_id)
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', 4)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
                             ->orderBy('revisi_ke', 'desc')->first();
                         $pdrb_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)
-                            ->where('tahun', $arr_periode[0] - 1)->where('q', 4)
+                            ->where('kode_kab', $wil_id)
+                            ->where('tahun', $arr_periode[0] - 1)
+                            ->where('q', 4)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->orderBy('revisi_ke', 'desc')->first();
                     } else {
                         $pdrb_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                            ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)
+                            ->where('kode_kab', $wil_id)
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1] - 1)
+                            ->where('adhb_or_adhk', 1)
+                            ->where('status_data', 1)
                             ->orderBy('revisi_ke', 'desc')->first();
                         $pdrb_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                            ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)
-                            ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1] - 1)
+                            ->where('kode_kab', $wil_id)
+                            ->where('tahun', $arr_periode[0])
+                            ->where('q', $arr_periode[1] - 1)
+                            ->where('adhb_or_adhk', 2)
+                            ->where('status_data', 1)
                             ->orderBy('revisi_ke', 'desc')->first();
                     }
 
@@ -1253,43 +2161,44 @@ class TabelRingkasanController extends Controller
                                 && $pdrb_hb_q_1->$komp_id != 0
                                 && isset($pdrb_hk_q_1->$komp_id)
                                 && $pdrb_hk_q_1->$komp_id != 0 ?
-                                (($pdrb_hb_y->$komp_id / $pdrb_hk_y->$komp_id * 100) - ($pdrb_hb_q_1->$komp_id / $pdrb_hk_q_1->$komp_id * 100)) / ($pdrb_hb_q_1->$komp_id / $pdrb_hk_q_1->$komp_id * 100) : null;
+                                (($pdrb_hb_y->$komp_id / $pdrb_hk_y->$komp_id * 100) - ($pdrb_hb_q_1->$komp_id / $pdrb_hk_q_1->$komp_id * 100)) / ($pdrb_hb_q_1->$komp_id / $pdrb_hk_q_1->$komp_id * 100) * 100 : null;
                         }
                     }
                 } else {
-                    $jml_q_hb =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hb =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                        ->groupBy('q')
-                        ->get();
-                    $jml_q_hk =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])
-                        ->where('adhb_or_adhk', 2)
-                        ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
 
-                    $jml_q_hb_1 =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hk =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
+                        ->groupBy('q')
+                        ->get();
+
+                    $jml_q_hb_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
-                    $jml_q_hk_1 =  Pdrb::where('kode_kab', $wilayah['id'])
+                    $jml_q_hk_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                         ->groupBy('q')
                         ->get();
 
 
                     $pdrb_hb = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
@@ -1303,7 +2212,7 @@ class TabelRingkasanController extends Controller
                         })->groupBy('kode_kab')->first();
 
                     $pdrb_hk = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
@@ -1317,7 +2226,7 @@ class TabelRingkasanController extends Controller
                         })->groupBy('kode_kab')->first();
 
                     $pdrb_hb_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 1)
                         ->where('status_data', 1)
@@ -1331,7 +2240,7 @@ class TabelRingkasanController extends Controller
                         })->groupBy('kode_kab')->first();
 
                     $pdrb_hk_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->where('adhb_or_adhk', 2)
                         ->where('status_data', 1)
@@ -1353,7 +2262,7 @@ class TabelRingkasanController extends Controller
                                 && $pdrb_hb_1->$komp_id != 0
                                 && isset($pdrb_hk_1->$komp_id)
                                 && $pdrb_hk_1->$komp_id != 0 ?
-                                (($pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100) - ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100)) / ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100) : null;
+                                (($pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100) - ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100)) / ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id * 100) * 100 : null;
                         }
                     }
                 }
@@ -1361,19 +2270,26 @@ class TabelRingkasanController extends Controller
             } else if ($id == "1.15") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
-                        ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
                 } else {
-                    $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 1)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
 
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 1)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y) {
                             foreach ($jml_q_y as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -1393,19 +2309,26 @@ class TabelRingkasanController extends Controller
             } else if ($id == "1.16") {
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)
-                        ->where('tahun', $arr_periode[0])->where('q', $arr_periode[1])
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
                 } else {
-                    $jml_q_y =  Pdrb::where('kode_kab', $wilayah['id'])
-                        ->where('tahun', $arr_periode[0])->where('adhb_or_adhk', 2)
-                        ->selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    $jml_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                        ->where('kode_kab', $wil_id)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->groupBy('q')
                         ->get();
 
                     $pdrb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                        ->where('kode_kab', $wilayah['id'])->where('adhb_or_adhk', 2)
+                        ->where('kode_kab', $wil_id)
                         ->where('tahun', $arr_periode[0])
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->where(function ($query) use ($jml_q_y) {
                             foreach ($jml_q_y as $q) {
                                 $query->orWhere(function ($subquery) use ($q) {
@@ -1424,7 +2347,6 @@ class TabelRingkasanController extends Controller
                 $data[] = $row;
             }
         }
-        // dd($data);
         return view('pdrb_ringkasan.ringkasan3', compact('list_tabel', 'list_periode', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
     }
 
@@ -1658,60 +2580,98 @@ class TabelRingkasanController extends Controller
             $arr_periode = explode("Q", $periode_filter);
 
             if (sizeof($arr_periode) > 1) {
-                $data_hb_y = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)
-                    ->orderBy('revisi_ke', 'desc')->first();
-                $data_hk_y = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)
+                $data_hb_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+                $data_hk_y = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->orderBy('revisi_ke', 'desc')->first();
 
-                $data_hb_y_1 = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
+                $data_hb_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
                     ->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->orderBy('revisi_ke', 'desc')->first();
-                $data_hk_y_1 = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)
+
+                $data_hk_y_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->orderBy('revisi_ke', 'desc')->first();
 
                 if ($arr_periode[1] != 1) {
                     // q2-q4
-                    $data_hb_q_1 = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 1)
+                    $data_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hk_q_1 = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 2)
+
+                    $data_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
                 } else {
-                    $data_hb_q_1 = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                        ->where('q', 4)->where('adhb_or_adhk', 1)
+                    $data_hb_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hk_q_1 = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                        ->where('q', 4)->where('adhb_or_adhk', 2)
+                    $data_hk_q_1 = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
                 }
 
-                $jml_hb_q_y =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_hb_q_y_1 =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_1 =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
@@ -1721,9 +2681,12 @@ class TabelRingkasanController extends Controller
                     $q[] = $i;
                 }
 
-                $data_hb_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0])->wherein('q', $q)
+                $data_hb_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hb_q_y) {
                         foreach ($jml_hb_q_y as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -1732,9 +2695,12 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0])->wherein('q', $q)
+                $data_hk_c = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hk_q_y) {
                         foreach ($jml_hk_q_y as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -1744,9 +2710,12 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
+                $data_hb_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hb_q_y_1) {
                         foreach ($jml_hb_q_y_1 as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -1755,9 +2724,12 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
+                $data_hk_c_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hk_q_y_1) {
                         foreach ($jml_hk_q_y_1 as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -1768,41 +2740,48 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
 
-                $row['yoy'] = $data_hb_y && $data_hb_y_1 && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0 ? ($data_hb_y->$komp_id - $data_hb_y_1->$komp_id) / $data_hb_y_1->$komp_id : null;
-                $row['qtq'] = $data_hb_y && $data_hb_q_1 && isset($data_hb_q_1->$komp_id) && $data_hb_q_1->$komp_id != 0 ? ($data_hb_y->$komp_id - $data_hb_q_1->$komp_id) / $data_hb_q_1->$komp_id : null;
-                $row['ctc'] = $data_hb_c && $data_hb_c_1 && isset($data_hb_c_1->$komp_id) && $data_hb_c_1->$komp_id != 0 ? ($data_hb_c->$komp_id - $data_hb_c_1->$komp_id) / $data_hb_c_1->$komp_id : null;
-                $row['implisit_yoy'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100)) / ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100) : null;
-                $row['implisit_qtq'] = $data_hb_y && $data_hk_y && $data_hb_q_1 && $data_hk_q_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_q_1->$komp_id) && $data_hb_q_1->$komp_id != 0   && isset($data_hk_q_1->$komp_id) && $data_hk_q_1->$komp_id != 0   ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100)) / ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100) : null;
-                $row['implisit_ctc'] = $data_hb_c && $data_hk_c && $data_hb_c_1 && $data_hk_c_1  && isset($data_hk_c->$komp_id) && $data_hk_c->$komp_id != 0   && isset($data_hb_c_1->$komp_id) && $data_hb_c_1->$komp_id != 0   && isset($data_hk_c_1->$komp_id) && $data_hk_c_1->$komp_id != 0   ? (($data_hb_c->$komp_id / $data_hk_c->$komp_id * 100)  - ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100)) / ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100) : null;
+                $row['yoy'] = $data_hk_y && $data_hk_y_1 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_y_1->$komp_id) / $data_hk_y_1->$komp_id * 100 : null;
+                $row['qtq'] = $data_hk_y && $data_hk_q_1 && isset($data_hk_q_1->$komp_id) && $data_hk_q_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_q_1->$komp_id) / $data_hk_q_1->$komp_id * 100 : null;
+                $row['ctc'] = $data_hk_c && $data_hk_c_1 && isset($data_hk_c_1->$komp_id) && $data_hk_c_1->$komp_id != 0 ? ($data_hk_c->$komp_id - $data_hk_c_1->$komp_id) / $data_hk_c_1->$komp_id * 100 : null;
+                $row['implisit_yoy'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100)) / ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100) * 100 : null;
+                $row['implisit_qtq'] = $data_hb_y && $data_hk_y && $data_hb_q_1 && $data_hk_q_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_q_1->$komp_id) && $data_hb_q_1->$komp_id != 0   && isset($data_hk_q_1->$komp_id) && $data_hk_q_1->$komp_id != 0   ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100)) / ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100) * 100 : null;
+                $row['implisit_ctc'] = $data_hb_c && $data_hk_c && $data_hb_c_1 && $data_hk_c_1  && isset($data_hk_c->$komp_id) && $data_hk_c->$komp_id != 0   && isset($data_hb_c_1->$komp_id) && $data_hb_c_1->$komp_id != 0   && isset($data_hk_c_1->$komp_id) && $data_hk_c_1->$komp_id != 0   ? (($data_hb_c->$komp_id / $data_hk_c->$komp_id * 100)  - ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100)) / ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100) * 100 : null;
             } else {
-                $jml_q_hb_y =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_q_hb_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_q_hk_y =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_q_hk_y =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_q_hb_y_1 =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_q_hb_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_q_hk_y_1 =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_q_hk_y_1 =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $data_hb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0])
+                $data_hb_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_hb_y) {
                         foreach ($jml_q_hb_y as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -1812,8 +2791,11 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hk_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)->where('tahun', $arr_periode[0])
+                $data_hk_y = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_hk_y) {
                         foreach ($jml_q_hk_y as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -1823,8 +2805,11 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab',  $wilayah_filter)->where('adhb_or_adhk', 1)->where('tahun', $arr_periode[0] - 1)
+                $data_hb_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab',  $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_hb_y_1) {
                         foreach ($jml_q_hb_y_1 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -1833,8 +2818,11 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab',  $wilayah_filter)->where('adhb_or_adhk', 2)->where('tahun', $arr_periode[0] - 1)
+                $data_hk_y_1 = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab',  $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_q_hk_y_1) {
                         foreach ($jml_q_hk_y_1 as $q) {
                             $query->orWhere(function ($subquery) use ($q) {
@@ -1843,12 +2831,12 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $row['yoy'] = $data_hb_y && $data_hb_y_1 && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0 ? ($data_hb_y->$komp_id - $data_hb_y_1->$komp_id) / $data_hb_y_1->$komp_id : null;
-                $row['qtq'] = $data_hb_y && $data_hb_y_1 && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0 ? ($data_hb_y->$komp_id - $data_hb_y_1->$komp_id) / $data_hb_y_1->$komp_id : null;
-                $row['ctc'] = $data_hb_y && $data_hb_y_1 && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0 ? ($data_hb_y->$komp_id - $data_hb_y_1->$komp_id) / $data_hb_y_1->$komp_id : null;
-                $row['implisit_yoy'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hk_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1 / $data_hk_y_1 * 100)) / ($data_hb_y_1 / $data_hk_y_1 * 100) : null;
-                $row['implisit_qtq'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hk_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1 / $data_hk_y_1 * 100)) / ($data_hb_y_1 / $data_hk_y_1 * 100) : null;
-                $row['implisit_ctc'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hk_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1 / $data_hk_y_1 * 100)) / ($data_hb_y_1 / $data_hk_y_1 * 100) : null;
+                $row['yoy'] = $data_hk_y && $data_hk_y_1 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_y_1->$komp_id) / $data_hk_y_1->$komp_id * 100 : null;
+                $row['qtq'] = $data_hk_y && $data_hk_y_1 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_y_1->$komp_id) / $data_hk_y_1->$komp_id * 100 : null;
+                $row['ctc'] = $data_hk_y && $data_hk_y_1 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_y_1->$komp_id) / $data_hk_y_1->$komp_id * 100 : null;
+                $row['implisit_yoy'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hk_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100)) / ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100) * 100 : null;
+                $row['implisit_qtq'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hk_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100)) / ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100) * 100 : null;
+                $row['implisit_ctc'] = $data_hb_y && $data_hk_y && $data_hb_y_1 && $data_hk_y_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_y_1->$komp_id) && $data_hb_y_1->$komp_id != 0   && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0   ? (($data_hk_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100)) / ($data_hb_y_1->$komp_id / $data_hk_y_1->$komp_id * 100) * 100 : null;
             }
             $data[] = $row;
         }
@@ -1879,113 +2867,182 @@ class TabelRingkasanController extends Controller
             $arr_periode = explode("Q", $periode_filter);
 
             if (sizeof($arr_periode) > 1) {
-                $data_hb_y_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)->where('status_data', 1)
-                    ->orderBy('revisi_ke', 'desc')->first();
-                $data_hk_y_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)->where('status_data', 1)
+                $data_hb_y_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+
+                $data_hk_y_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->orderBy('revisi_ke', 'desc')->first();
 
-                $data_hb_y_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)
-                    ->orderBy('revisi_ke', 'desc')->first();
-                $data_hk_y_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)
-                    ->orderBy('revisi_ke', 'desc')->first();
-
-                $data_hb_y_1_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)->where('status_data', 1)
-                    ->orderBy('revisi_ke', 'desc')->first();
-                $data_hk_y_1_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)->where('status_data', 1)
+                $data_hb_y_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
                     ->orderBy('revisi_ke', 'desc')->first();
 
-                $data_hb_y_1_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 1)
+                $data_hk_y_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
                     ->orderBy('revisi_ke', 'desc')->first();
-                $data_hk_y_1_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                    ->where('q', $arr_periode[1])->where('adhb_or_adhk', 2)
+
+                $data_hb_y_1_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->orderBy('revisi_ke', 'desc')->first();
+
+                $data_hk_y_1_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
+                    ->orderBy('revisi_ke', 'desc')->first();
+
+                $data_hb_y_1_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
+
+                $data_hk_y_1_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->orderBy('revisi_ke', 'desc')
+                    ->first();
 
                 if ($arr_periode[1] != 1) {
-                    $data_hb_q_1_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 1)->where('status_data', 1)
+                    $data_hb_q_1_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hk_q_1_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 2)->where('status_data', 1)
+
+                    $data_hk_q_1_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hb_q_1_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 1)
+
+                    $data_hb_q_1_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hk_q_1_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1] - 1)->where('adhb_or_adhk', 2)
+
+                    $data_hk_q_1_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1] - 1)
+                        ->where('adhb_or_adhk', 2)
                         ->orderBy('revisi_ke', 'desc')->first();
                 } else {
-                    $data_hb_q_1_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                        ->where('q', 4)->where('adhb_or_adhk', 1)->where('status_data', 1)
+                    $data_hb_q_1_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 1)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hk_q_1_rilis = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                        ->where('q', 4)->where('adhb_or_adhk', 2)->where('status_data', 1)
+
+                    $data_hk_q_1_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 2)
+                        ->where('status_data', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hb_q_1_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                        ->where('q', 4)->where('adhb_or_adhk', 1)
+
+                    $data_hb_q_1_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 1)
                         ->orderBy('revisi_ke', 'desc')->first();
-                    $data_hk_q_1_revisi = Pdrb::where('kode_kab', $wilayah_filter)->where('tahun', $arr_periode[0] - 1)
-                        ->where('q', 4)->where('adhb_or_adhk', 2)
+
+                    $data_hk_q_1_revisi = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+                        ->where('kode_kab', $wilayah_filter)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->where('q', 4)
+                        ->where('adhb_or_adhk', 2)
                         ->orderBy('revisi_ke', 'desc')->first();
                 }
-                $jml_hb_q_y_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_hb_q_y_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
                     ->groupBy('q')
                     ->get();
 
-                $jml_hb_q_y_1_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_1_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_1_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_1_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
 
-                $jml_hb_q_y_1_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_1_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_1_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_1_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
                     ->groupBy('q')
                     ->get();
@@ -1996,9 +3053,12 @@ class TabelRingkasanController extends Controller
                     $q[] = $i;
                 }
 
-                $data_hb_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0])->wherein('q', $q)->where('status_data', 1)
+                $data_hb_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hb_q_y_rilis) {
                         foreach ($jml_hb_q_y_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2008,9 +3068,12 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hk_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0])->wherein('q', $q)->where('status_data', 1)
+                $data_hk_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hk_q_y_rilis) {
                         foreach ($jml_hk_q_y_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2020,9 +3083,11 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0])->wherein('q', $q)
+                $data_hb_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 1)
                     ->where(function ($query) use ($jml_hb_q_y_revisi) {
                         foreach ($jml_hb_q_y_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2031,9 +3096,11 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0])->wherein('q', $q)
+                $data_hk_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 2)
                     ->where(function ($query) use ($jml_hk_q_y_revisi) {
                         foreach ($jml_hk_q_y_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2043,9 +3110,12 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)->where('status_data', 1)
+                $data_hb_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hb_q_y_1_rilis) {
                         foreach ($jml_hb_q_y_1_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2054,9 +3124,12 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)->where('status_data', 1)
+                $data_hk_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hk_q_y_1_rilis) {
                         foreach ($jml_hk_q_y_1_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2065,9 +3138,11 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hb_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
+                $data_hb_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 1)
                     ->where(function ($query) use ($jml_hb_q_y_1_revisi) {
                         foreach ($jml_hb_q_y_1_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2076,9 +3151,12 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0] - 1)->wherein('q', $q)
+
+                $data_hk_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q)
+                    ->where('adhb_or_adhk', 2)
                     ->where(function ($query) use ($jml_hk_q_y_1_revisi) {
                         foreach ($jml_hk_q_y_1_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2089,14 +3167,12 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
 
-                $row['yoy_rilis'] = $data_hb_y_rilis && $data_hb_y_1_rilis && isset($data_hb_y_1_rilis->$komp_id) && $data_hb_y_1_rilis->$komp_id != 0 ? ($data_hb_y_rilis->$komp_id - $data_hb_y_1_rilis->$komp_id) / $data_hb_y_1_rilis->$komp_id : null;
-                $row['yoy_revisi'] = $data_hb_y_revisi && $data_hb_y_1_revisi && isset($data_hb_y_1_revisi->$komp_id) && $data_hb_y_1_revisi->$komp_id != 0 ? ($data_hb_y_revisi->$komp_id - $data_hb_y_1_revisi->$komp_id) / $data_hb_y_1_revisi->$komp_id : null;
-
-                $row['qtq_rilis'] = $data_hb_y_rilis && $data_hb_q_1_rilis && isset($data_hb_q_1_rilis->$komp_id) && $data_hb_q_1_rilis->$komp_id != 0 ? ($data_hb_y_rilis->$komp_id - $data_hb_q_1_rilis->$komp_id) / $data_hb_q_1_rilis->$komp_id : null;
-                $row['qtq_revisi'] = $data_hb_y_revisi && $data_hb_q_1_revisi  && isset($data_hb_q_1_revisi->$komp_id) && $data_hb_q_1_revisi->$komp_id != 0 ? ($data_hb_y_revisi->$komp_id - $data_hb_q_1_revisi->$komp_id) / $data_hb_q_1_revisi->$komp_id : null;
-
-                $row['ctc_rilis'] = $data_hb_c_rilis && $data_hb_c_1_rilis && isset($data_hb_c_1_rilis->$komp_id) && $data_hb_c_1_rilis->$komp_id != 0 ? ($data_hb_c_rilis->$komp_id - $data_hb_c_1_rilis->$komp_id) / $data_hb_c_1_rilis->$komp_id : null;
-                $row['ctc_revisi'] = $data_hb_c_revisi && $data_hb_c_1_revisi  && isset($data_hb_c_1_revisi->$komp_id) && $data_hb_c_1_revisi->$komp_id != 0 ? ($data_hb_c_revisi->$komp_id - $data_hb_c_1_revisi->$komp_id) / $data_hb_c_1_revisi->$komp_id : null;
+                $row['yoy_rilis']   = $data_hk_y_rilis  && $data_hk_y_1_rilis   && isset($data_hk_y_1_rilis->$komp_id)  && $data_hk_y_1_rilis->$komp_id != 0    ? ($data_hk_y_rilis->$komp_id -     $data_hk_y_1_rilis->$komp_id)   / $data_hk_y_1_rilis->$komp_id  * 100 : null;
+                $row['yoy_revisi']  = $data_hk_y_revisi && $data_hk_y_1_revisi  && isset($data_hk_y_1_revisi->$komp_id) && $data_hk_y_1_revisi->$komp_id != 0   ? ($data_hk_y_revisi->$komp_id -    $data_hk_y_1_revisi->$komp_id)  / $data_hk_y_1_revisi->$komp_id * 100 : null;
+                $row['qtq_rilis']   = $data_hk_y_rilis  && $data_hk_q_1_rilis   && isset($data_hk_q_1_rilis->$komp_id)  && $data_hk_q_1_rilis->$komp_id != 0    ? ($data_hk_y_rilis->$komp_id -     $data_hk_q_1_rilis->$komp_id)   / $data_hk_q_1_rilis->$komp_id  * 100 : null;
+                $row['qtq_revisi']  = $data_hk_y_revisi && $data_hk_q_1_revisi  && isset($data_hk_q_1_revisi->$komp_id) && $data_hk_q_1_revisi->$komp_id != 0   ? ($data_hk_y_revisi->$komp_id -    $data_hk_q_1_revisi->$komp_id)  / $data_hk_q_1_revisi->$komp_id * 100 : null;
+                $row['ctc_rilis']   = $data_hk_c_rilis  && $data_hk_c_1_rilis   && isset($data_hk_c_1_rilis->$komp_id)  && $data_hk_c_1_rilis->$komp_id != 0    ? ($data_hk_c_rilis->$komp_id -     $data_hk_c_1_rilis->$komp_id)   / $data_hk_c_1_rilis->$komp_id  * 100 : null;
+                $row['ctc_revisi']  = $data_hk_c_revisi && $data_hk_c_1_revisi  && isset($data_hk_c_1_revisi->$komp_id) && $data_hk_c_1_revisi->$komp_id != 0   ? ($data_hk_c_revisi->$komp_id -    $data_hk_c_1_revisi->$komp_id)  / $data_hk_c_1_revisi->$komp_id * 100 : null;
 
                 $row['implisit_yoy_rilis'] = $data_hb_y_rilis
                     && $data_hk_y_rilis
@@ -2108,8 +3184,9 @@ class TabelRingkasanController extends Controller
                     && $data_hb_y_1_rilis->$komp_id != 0
                     && isset($data_hk_y_1_rilis->$komp_id)
                     && $data_hk_y_1_rilis->$komp_id != 0 ?
-                    (($data_hb_y_rilis->$komp_id / $data_hk_y_rilis->$komp_id * 100) - ($data_hb_y_1_rilis->$komp_id / $data_hk_y_1_rilis->$komp_id * 100)) / ($data_hb_y_1_rilis->$komp_id / $data_hk_y_1_rilis->$komp_id * 100)
+                    (($data_hb_y_rilis->$komp_id / $data_hk_y_rilis->$komp_id * 100) - ($data_hb_y_1_rilis->$komp_id / $data_hk_y_1_rilis->$komp_id * 100)) / ($data_hb_y_1_rilis->$komp_id / $data_hk_y_1_rilis->$komp_id * 100) * 100
                     : null;
+
                 $row['implisit_yoy_revisi'] = $data_hb_y_revisi
                     && $data_hk_y_revisi
                     && $data_hb_y_1_revisi
@@ -2120,7 +3197,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_y_1_revisi->$komp_id != 0
                     && isset($data_hk_y_1_revisi->$komp_id)
                     && $data_hk_y_1_revisi->$komp_id != 0 ?
-                    (($data_hb_y_revisi->$komp_id / $data_hk_y_revisi->$komp_id * 100) - ($data_hb_y_1_revisi->$komp_id / $data_hk_y_1_revisi->$komp_id * 100)) / ($data_hb_y_1_revisi->$komp_id / $data_hk_y_1_revisi->$komp_id * 100)
+                    (($data_hb_y_revisi->$komp_id / $data_hk_y_revisi->$komp_id * 100) - ($data_hb_y_1_revisi->$komp_id / $data_hk_y_1_revisi->$komp_id * 100)) / ($data_hb_y_1_revisi->$komp_id / $data_hk_y_1_revisi->$komp_id * 100) * 100
                     : null;
 
                 $row['implisit_qtq_rilis'] = $data_hb_y_rilis
@@ -2133,7 +3210,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_q_1_rilis->$komp_id != 0
                     && isset($data_hk_q_1_rilis->$komp_id)
                     && $data_hk_q_1_rilis->$komp_id != 0 ?
-                    (($data_hb_y_rilis->$komp_id / $data_hk_y_rilis->$komp_id * 100) - ($data_hb_q_1_rilis->$komp_id / $data_hk_q_1_rilis->$komp_id * 100)) / ($data_hb_q_1_rilis->$komp_id / $data_hk_q_1_rilis->$komp_id * 100)
+                    (($data_hb_y_rilis->$komp_id / $data_hk_y_rilis->$komp_id * 100) - ($data_hb_q_1_rilis->$komp_id / $data_hk_q_1_rilis->$komp_id * 100)) / ($data_hb_q_1_rilis->$komp_id / $data_hk_q_1_rilis->$komp_id * 100) * 100
                     : null;
 
                 $row['implisit_qtq_revisi'] = $data_hb_y_revisi
@@ -2146,7 +3223,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_q_1_revisi->$komp_id != 0
                     && isset($data_hk_q_1_revisi->$komp_id)
                     && $data_hk_q_1_revisi->$komp_id != 0 ?
-                    (($data_hb_y_revisi->$komp_id / $data_hk_y_revisi->$komp_id * 100) - ($data_hb_q_1_revisi->$komp_id / $data_hk_q_1_revisi->$komp_id * 100)) / ($data_hb_q_1_revisi->$komp_id / $data_hk_q_1_revisi->$komp_id * 100)
+                    (($data_hb_y_revisi->$komp_id / $data_hk_y_revisi->$komp_id * 100) - ($data_hb_q_1_revisi->$komp_id / $data_hk_q_1_revisi->$komp_id * 100)) / ($data_hb_q_1_revisi->$komp_id / $data_hk_q_1_revisi->$komp_id * 100) * 100
                     : null;
 
                 $row['implisit_ctc_rilis'] = $data_hb_c_rilis
@@ -2159,7 +3236,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_rilis->$komp_id != 0
                     && isset($data_hk_c_1_rilis->$komp_id)
                     && $data_hk_c_1_rilis->$komp_id != 0 ?
-                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)
+                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100) * 100
                     : null;
                 $row['implisit_ctc_revisi'] = $data_hb_c_revisi
                     && $data_hk_c_revisi
@@ -2171,67 +3248,69 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_revisi->$komp_id != 0
                     && isset($data_hk_c_1_revisi->$komp_id)
                     && $data_hk_c_1_revisi->$komp_id != 0 ?
-                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)
+                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100) * 100
                     : null;
             } else {
-                $jml_hb_q_y_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
                     ->where('status_data', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hb_q_y_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hb_q_y_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 1)
                     ->groupBy('q')
                     ->get();
-                $jml_hk_q_y_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
+                $jml_hk_q_y_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                    ->where('adhb_or_adhk', 2)
-                    ->groupBy('q')
-                    ->get();
-
-                $jml_hb_q_y_1_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
-                    ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                    ->where('adhb_or_adhk', 1)
-                    ->where('status_data', 1)
-                    ->groupBy('q')
-                    ->get();
-                $jml_hk_q_y_1_rilis =  Pdrb::where('kode_kab', $wilayah_filter)
-                    ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                    ->where('adhb_or_adhk', 2)
-                    ->where('status_data', 1)
-                    ->groupBy('q')
-                    ->get();
-
-                $jml_hb_q_y_1_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
-                    ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
-                    ->where('adhb_or_adhk', 1)
-                    ->groupBy('q')
-                    ->get();
-                $jml_hk_q_y_1_revisi =  Pdrb::where('kode_kab', $wilayah_filter)
-                    ->where('tahun', $arr_periode[0] - 1)
-                    ->selectRaw('q, MAX(revisi_ke) as max_revisi')
                     ->where('adhb_or_adhk', 2)
                     ->groupBy('q')
                     ->get();
 
-                $data_hb_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0])->where('status_data', 1)
+                $jml_hb_q_y_1_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
+                    ->groupBy('q')
+                    ->get();
+                $jml_hk_q_y_1_rilis =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
+                    ->groupBy('q')
+                    ->get();
+
+                $jml_hb_q_y_1_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 1)
+                    ->groupBy('q')
+                    ->get();
+                $jml_hk_q_y_1_revisi =  Pdrb::selectRaw('q, MAX(revisi_ke) as max_revisi')
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->groupBy('q')
+                    ->get();
+
+                $data_hb_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hb_q_y_rilis) {
                         foreach ($jml_hb_q_y_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2241,9 +3320,11 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hk_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0])->where('status_data', 1)
+                $data_hk_c_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hk_q_y_rilis) {
                         foreach ($jml_hk_q_y_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2253,9 +3334,10 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
+                $data_hb_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 1)
                     ->where(function ($query) use ($jml_hb_q_y_revisi) {
                         foreach ($jml_hb_q_y_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2264,9 +3346,10 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
+                $data_hk_c_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0])
+                    ->where('adhb_or_adhk', 2)
                     ->where(function ($query) use ($jml_hk_q_y_revisi) {
                         foreach ($jml_hk_q_y_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2276,9 +3359,11 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
-                    ->where('tahun', $arr_periode[0] - 1)->where('status_data', 1)
+                $data_hb_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 1)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hb_q_y_1_rilis) {
                         foreach ($jml_hb_q_y_1_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2287,9 +3372,11 @@ class TabelRingkasanController extends Controller
                             });
                         }
                     })->groupBy('kode_kab')->first();
-                $data_hk_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
-                    ->where('tahun', $arr_periode[0] - 1)->where('status_data', 1)
+                $data_hk_c_1_rilis = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
+                    ->where('status_data', 1)
                     ->where(function ($query) use ($jml_hk_q_y_1_rilis) {
                         foreach ($jml_hk_q_y_1_rilis as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2299,9 +3386,10 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hb_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 1)
+                $data_hb_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 1)
                     ->where(function ($query) use ($jml_hb_q_y_1_revisi) {
                         foreach ($jml_hb_q_y_1_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2311,9 +3399,10 @@ class TabelRingkasanController extends Controller
                         }
                     })->groupBy('kode_kab')->first();
 
-                $data_hk_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
-                    ->where('kode_kab', $wilayah_filter)->where('adhb_or_adhk', 2)
+                $data_hk_c_1_revisi = Pdrb::select('kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+                    ->where('kode_kab', $wilayah_filter)
                     ->where('tahun', $arr_periode[0] - 1)
+                    ->where('adhb_or_adhk', 2)
                     ->where(function ($query) use ($jml_hk_q_y_1_revisi) {
                         foreach ($jml_hk_q_y_1_revisi as $jml_q) {
                             $query->orWhere(function ($subquery) use ($jml_q) {
@@ -2324,14 +3413,12 @@ class TabelRingkasanController extends Controller
                     })->groupBy('kode_kab')->first();
 
 
-                $row['yoy_rilis'] = $data_hb_c_rilis && $data_hb_c_1_rilis && isset($data_hb_c_1_rilis->$komp_id) && $data_hb_c_1_rilis->$komp_id != 0 ? ($data_hb_c_rilis->$komp_id - $data_hb_c_1_rilis->$komp_id) / $data_hb_c_1_rilis->$komp_id : null;
-                $row['yoy_revisi'] = $data_hb_c_revisi && $data_hb_c_1_revisi && isset($data_hb_c_1_revisi->$komp_id) && $data_hb_c_1_revisi->$komp_id != 0 ? ($data_hb_c_revisi->$komp_id - $data_hb_c_1_revisi->$komp_id) / $data_hb_c_1_revisi->$komp_id : null;
-
-                $row['qtq_rilis'] = $data_hb_c_rilis && $data_hb_c_1_rilis && isset($data_hb_c_1_rilis->$komp_id) && $data_hb_c_1_rilis->$komp_id != 0 ? ($data_hb_c_rilis->$komp_id - $data_hb_c_1_rilis->$komp_id) / $data_hb_c_1_rilis->$komp_id : null;
-                $row['qtq_revisi'] = $data_hb_c_revisi && $data_hb_c_1_revisi && isset($data_hb_c_1_revisi->$komp_id) && $data_hb_c_1_revisi->$komp_id != 0 ? ($data_hb_c_revisi->$komp_id - $data_hb_c_1_revisi->$komp_id) / $data_hb_c_1_revisi->$komp_id : null;
-
-                $row['ctc_rilis'] = $data_hb_c_rilis && $data_hb_c_1_rilis && isset($data_hb_c_1_rilis->$komp_id) && $data_hb_c_1_rilis->$komp_id != 0 ? ($data_hb_c_rilis->$komp_id - $data_hb_c_1_rilis->$komp_id) / $data_hb_c_1_rilis->$komp_id : null;
-                $row['ctc_revisi'] = $data_hb_c_revisi && $data_hb_c_1_revisi && isset($data_hb_c_1_revisi->$komp_id) && $data_hb_c_1_revisi->$komp_id != 0 ? ($data_hb_c_revisi->$komp_id - $data_hb_c_1_revisi->$komp_id) / $data_hb_c_1_revisi->$komp_id : null;
+                $row['yoy_rilis']   = $data_hk_c_rilis  && $data_hk_c_1_rilis   && isset($data_hk_c_1_rilis->$komp_id)  && $data_hk_c_1_rilis->$komp_id != 0    ? ($data_hk_c_rilis->$komp_id   - $data_hk_c_1_rilis->$komp_id)     / $data_hk_c_1_rilis->$komp_id  * 100 : null;
+                $row['yoy_revisi']  = $data_hk_c_revisi && $data_hk_c_1_revisi  && isset($data_hk_c_1_revisi->$komp_id) && $data_hk_c_1_revisi->$komp_id != 0   ? ($data_hk_c_revisi->$komp_id  - $data_hk_c_1_revisi->$komp_id)    / $data_hk_c_1_revisi->$komp_id * 100 : null;
+                $row['qtq_rilis']   = $data_hk_c_rilis  && $data_hk_c_1_rilis   && isset($data_hk_c_1_rilis->$komp_id)  && $data_hk_c_1_rilis->$komp_id != 0    ? ($data_hk_c_rilis->$komp_id   - $data_hk_c_1_rilis->$komp_id)     / $data_hk_c_1_rilis->$komp_id  * 100 : null;
+                $row['qtq_revisi']  = $data_hk_c_revisi && $data_hk_c_1_revisi  && isset($data_hk_c_1_revisi->$komp_id) && $data_hk_c_1_revisi->$komp_id != 0   ? ($data_hk_c_revisi->$komp_id  - $data_hk_c_1_revisi->$komp_id)    / $data_hk_c_1_revisi->$komp_id * 100 : null;
+                $row['ctc_rilis']   = $data_hk_c_rilis  && $data_hk_c_1_rilis   && isset($data_hk_c_1_rilis->$komp_id)  && $data_hk_c_1_rilis->$komp_id != 0    ? ($data_hk_c_rilis->$komp_id   - $data_hk_c_1_rilis->$komp_id)     / $data_hk_c_1_rilis->$komp_id  * 100 : null;
+                $row['ctc_revisi']  = $data_hk_c_revisi && $data_hk_c_1_revisi  && isset($data_hk_c_1_revisi->$komp_id) && $data_hk_c_1_revisi->$komp_id != 0   ? ($data_hk_c_revisi->$komp_id  - $data_hk_c_1_revisi->$komp_id)    / $data_hk_c_1_revisi->$komp_id * 100 : null;
 
                 $row['implisit_yoy_rilis'] = $data_hb_c_rilis
                     && $data_hk_c_rilis
@@ -2343,7 +3430,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_rilis->$komp_id != 0
                     && isset($data_hk_c_1_rilis->$komp_id)
                     && $data_hk_c_1_rilis->$komp_id != 0 ?
-                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)
+                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100) * 100
                     : null;
                 $row['implisit_yoy_revisi'] = $data_hb_c_revisi
                     && $data_hk_c_revisi
@@ -2355,7 +3442,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_revisi->$komp_id != 0
                     && isset($data_hk_c_1_revisi->$komp_id)
                     && $data_hk_c_1_revisi->$komp_id != 0 ?
-                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)
+                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100) * 100
                     : null;
 
                 $row['implisit_qtq_rilis'] = $data_hb_c_rilis
@@ -2368,7 +3455,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_rilis->$komp_id != 0
                     && isset($data_hk_c_1_rilis->$komp_id)
                     && $data_hk_c_1_rilis->$komp_id != 0 ?
-                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)
+                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100) * 100
                     : null;
                 $row['implisit_qtq_revisi'] = $data_hb_c_revisi
                     && $data_hk_c_revisi
@@ -2380,7 +3467,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_revisi->$komp_id != 0
                     && isset($data_hk_c_1_revisi->$komp_id)
                     && $data_hk_c_1_revisi->$komp_id != 0 ?
-                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)
+                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100) * 100
                     : null;
 
                 $row['implisit_ctc_rilis'] = $data_hb_c_rilis
@@ -2393,7 +3480,7 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_rilis->$komp_id != 0
                     && isset($data_hk_c_1_rilis->$komp_id)
                     && $data_hk_c_1_rilis->$komp_id != 0 ?
-                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)
+                    (($data_hb_c_rilis->$komp_id / $data_hk_c_rilis->$komp_id * 100) - ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100)) / ($data_hb_c_1_rilis->$komp_id / $data_hk_c_1_rilis->$komp_id * 100) * 100
                     : null;
                 $row['implisit_ctc_revisi'] = $data_hb_c_revisi
                     && $data_hk_c_revisi
@@ -2405,13 +3492,11 @@ class TabelRingkasanController extends Controller
                     && $data_hb_c_1_revisi->$komp_id != 0
                     && isset($data_hk_c_1_revisi->$komp_id)
                     && $data_hk_c_1_revisi->$komp_id != 0 ?
-                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)
+                    (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100) * 100
                     : null;
             }
             $data[] = $row;
         }
-        // $data = [];
-        // dd($data);
         return view('pdrb_ringkasan.ringkasan6', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
     }
 }

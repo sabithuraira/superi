@@ -83,9 +83,12 @@
                                                 </td>
                                                 @foreach ($komponens as $key => $komp)
                                                     <td>
-                                                        {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']] ? round($dt[$komp['id']], 2) : '' }}
+                                                        {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']]
+                                                            ? number_format(round($dt[$komp['id']], 2), 2, ',', '.')
+                                                            : '' }}
                                                     </td>
                                                 @endforeach
+
                                             </tr>
                                         @endforeach
                                     </tbody>

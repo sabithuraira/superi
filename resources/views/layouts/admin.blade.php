@@ -75,6 +75,7 @@
 
     <!-- Javascript -->
 
+    @yield('scripts')
     <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
     <script src="{{ asset('assets/bundles/vendorscripts.bundle.js') }}"></script>
     <script src="{{ asset('lucid/assets/vendor/bootstrap-colorpicker/js/bootstrap-colorpicker.js') }}"></script>
@@ -93,12 +94,12 @@
     <script src="{{ asset('assets/bundles/knob.bundle.js') }}"></script>
     <script src="{{ asset('lucid/assets/vendor/toastr/toastr.js') }}"></script>
 
-
     <script src="{{ asset('lucid/assets/vendor/sweetalert/sweetalert.min.js') }}"></script>
     <script src="{{ asset('assets/bundles/mainscripts.bundle.js') }}"></script>
     {{-- <script src="{!! asset('assets/js/index.js') !!}"></script> --}}
 
-    @yield('scripts')
+    {{-- <script src="{{ asset('assets/js/pages/ui/dialogs.js') }}"></script> --}}
+
 </body>
 
 </html>

@@ -17,32 +17,32 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Auth::routes();
 
-Route::get('upload/import', 'UploadController@upload');
-Route::post('upload/import', 'UploadController@import');
-Route::post('upload/pdrb', 'UploadController@pdrb');
-Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
-Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
-Route::post('upload/fenomena', 'UploadController@fenomena');
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('upload/import', 'UploadController@upload')->name('upload/import');
+    Route::post('upload/import', 'UploadController@import');
+    Route::post('upload/pdrb', 'UploadController@pdrb');
+    Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
+    Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
+    Route::post('upload/fenomena', 'UploadController@fenomena'); 
 
-////////////////////
+    ////////////////////
 
-Route::get('pdrb_ringkasan1/{id}', 'TabelRingkasanController@ringkasan1');
-Route::get('pdrb_ringkasan2/{id}', 'TabelRingkasanController@ringkasan2');
-Route::get('pdrb_ringkasan3/{id}', 'TabelRingkasanController@ringkasan3');
-Route::get('pdrb_ringkasan4/{id}', 'TabelRingkasanController@ringkasan4');
-Route::get('pdrb_ringkasan5/{id}', 'TabelRingkasanController@ringkasan5');
-Route::get('pdrb_ringkasan6/{id}', 'TabelRingkasanController@ringkasan6');
+    Route::get('pdrb_ringkasan1/{id}', 'TabelRingkasanController@ringkasan1');
+    Route::get('pdrb_ringkasan2/{id}', 'TabelRingkasanController@ringkasan2');
+    Route::get('pdrb_ringkasan3/{id}', 'TabelRingkasanController@ringkasan3');
+    Route::get('pdrb_ringkasan4/{id}', 'TabelRingkasanController@ringkasan4');
+    Route::get('pdrb_ringkasan5/{id}', 'TabelRingkasanController@ringkasan5');
+    Route::get('pdrb_ringkasan6/{id}', 'TabelRingkasanController@ringkasan6');
 
-Route::get('pdrb_kabkot/{id}', 'TabelKabkotController@kabkot');
-Route::get('pdrb_kabkot_7pkrt/{id}', 'TabelKabkotController@kabkot_7pkrt');
-Route::get('pdrb_kabkot_brs/{id}', 'TabelKabkotController@kabkot_brs');
+    Route::get('pdrb_kabkot/{id}', 'TabelKabkotController@kabkot');
+    Route::get('pdrb_kabkot_7pkrt/{id}', 'TabelKabkotController@kabkot_7pkrt');
+    Route::get('pdrb_kabkot_brs/{id}', 'TabelKabkotController@kabkot_brs');
 
-Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
-Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
+    Route::get('tabel/resume', 'ResumeController@index');
+    Route::post('tabel/resume', 'ResumeController@get');
 
-Route::get('tabel/resume', 'ResumeController@index');
-Route::post('tabel/resume', 'ResumeController@get');
-
-Route::get('revisi/total', 'RevisiTotalController@index');
-Route::post('revisi/total', 'RevisiTotalController@get');
+    Route::get('revisi/total', 'RevisiTotalController@index');
+    Route::post('revisi/total', 'RevisiTotalController@get');
+});

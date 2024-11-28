@@ -20,9 +20,11 @@ php artisan key:generate
 php artisan migrate
 php artisan db:seed --class=KomponenTabelSeeder
 ```
-
 * Klik menu upload & pilih file excel pdrb pada root
 
+## Panduan Konfigurasi Login Otomatis Non SSO
+* Run "php artisan migrate" last version
+* Run "php artisan db:seed --class=UsersInsertAdminSeeder"
 
 ## Task
 Sabit:

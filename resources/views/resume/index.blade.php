@@ -196,6 +196,11 @@
         if (periode_check.checked) periode.push("{{ $periode_item->periode }}");
         @endforeach
 
+        var kab_desc = {};
+        @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
+        kab_desc["16{{ $kd_kab }}"] = "{{ $nm_kab }}";
+        @endforeach
+
         fetch(url, {
             method: "post",
             body: JSON.stringify({
@@ -214,17 +219,18 @@
             document.getElementById("table_title").innerHTML = document.querySelector(`option[value="${tabel}"]`).text;
             document.getElementById("table_column").innerHTML = "";
             document.getElementById("table_data").innerHTML = "";
-            for (const col in json[0]) {
+            for (const i in json.columns) {
                 var table_column = document.getElementById("table_column");
                 var cell = table_column.insertCell(-1);
-                cell.outerHTML = "<th>" + (col == "kd_kab" ? "Kabupaten/Kota" : col) + "</th>";
+                cell.outerHTML = "<th>" + (json.columns[i] == "kd_kab" ? "Kabupaten/Kota" : json.columns[i]) + "</th>";
             }
-            for (const i in json) {
+            for (const i in json.pdrb) {
                 var table_data = document.getElementById("table_data");
                 var row = table_data.insertRow(-1);
-                for (const j in json[i]) {
+                for (const j in json.pdrb[i]) {
                     var cell = row.insertCell(-1);
-                    cell.innerHTML = json[i][j];
+                    if (j == 0) cell.innerHTML = kab_desc[json.pdrb[i][j]];
+                    else cell.innerHTML = json.pdrb[i][j];
                 }
             }
         });

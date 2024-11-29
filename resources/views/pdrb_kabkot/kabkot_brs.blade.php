@@ -50,10 +50,10 @@
                                     <div class="form-group col-sm-12 col-md-4">
                                         <select name="wilayah_filter" id="wilayah_filter" class="form-control"
                                             onchange="updateFormActionWilayah()">
-                                            @foreach ($list_wilayah as $wil)
-                                                <option value="{{ $wil['id'] }}" data-id="{{ $wil['id'] }}"
-                                                    @if ($wil['id'] == $wilayah_filter) selected @endif>
-                                                    {{ $wil['id'] }} - {{ $wil['name'] }}</option>
+                                            @foreach ($list_wilayah as $key => $wil)
+                                                <option value="{{ $key }}" data-id="{{ $key }}"
+                                                    @if ($key == $wilayah_filter) selected @endif>
+                                                    {{ $key }} - {{ $wil }}</option>
                                             @endforeach
                                         </select>
                                     </div>

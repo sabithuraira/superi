@@ -88,10 +88,10 @@
                                                 <td>{{ $dt['komponen_name'] }}</td>
                                                 @foreach ($periode_filter as $periode)
                                                     <td>
-                                                        {{ array_key_exists($periode . 'adhb', $dt) ? round($dt[$periode . 'adhb'], 2) : 'N/A' }}
+                                                        {{ array_key_exists($periode . 'adhb', $dt) && $dt[$periode . 'adhb'] ? round($dt[$periode . 'adhb'], 2) : '' }}
                                                     </td>
                                                     <td>
-                                                        {{ array_key_exists($periode . 'adhk', $dt) ? round($dt[$periode . 'adhk'], 2) : 'N/A' }}
+                                                        {{ array_key_exists($periode . 'adhk', $dt) && $dt[$periode . 'adhb'] ? round($dt[$periode . 'adhk'], 2) : '' }}
                                                     </td>
                                                 @endforeach
                                             </tr>

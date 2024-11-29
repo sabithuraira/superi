@@ -37,7 +37,9 @@
                                     </div>
 
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        <button class="btn btn-success w-100" type="button">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button"onclick="exportToExcel()">
+                                            Export Excel
+                                        </button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
                                         <a class="btn btn-primary w-100" type="button"
@@ -50,10 +52,10 @@
                                     <div class="form-group col-sm-12 col-md-4">
                                         <select name="wilayah_filter" id="wilayah_filter" class="form-control"
                                             onchange="updateFormActionWilayah()">
-                                            @foreach ($list_wilayah as $wil)
-                                                <option value="{{ $wil['id'] }}" data-id="{{ $wil['id'] }}"
-                                                    @if ($wil['id'] == $wilayah_filter) selected @endif>
-                                                    {{ $wil['id'] }} - {{ $wil['name'] }}</option>
+                                            @foreach ($list_wilayah as $key => $wil)
+                                                <option value="{{ $key }}" data-id="{{ $key }}"
+                                                    @if ($key == $wilayah_filter) selected @endif>
+                                                    {{ $key }} - {{ $wil }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -81,8 +83,8 @@
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive">
-                                <table class="table">
+                            <div class="table-responsive table-bordered" id="table-responsive">
+                                <table class="table" border="1px solid black">
                                     <thead>
                                         <tr class="text-center">
                                             <th>Komponen</th>
@@ -94,7 +96,12 @@
                                     <tbody>
                                         @foreach ($data as $dt)
                                             <tr>
-                                                <td>{{ $dt['name'] }}</td>
+                                                @if (strlen($dt['id']) >= 1)
+                                                    <th>{{ $dt['name'] }}</th>
+                                                @else
+                                                    <td>{{ $dt['name'] }}</td>
+                                                @endif
+
                                                 @foreach ($periode_filter as $periode)
                                                     <td>
                                                         {{ array_key_exists($periode, $dt) && $dt[$periode] ? round($dt[$periode], 2) : '' }}
@@ -233,6 +240,19 @@
             form.action = window.origin + '/superi/public/pdrb_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
+        }
+
+        function exportToExcel() {
+            var location = 'data:application/vnd.ms-excel;base64,';
+            var excelTemplate = '<html> ' +
+                '<head> ' +
+                '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
+                '</head> ' +
+                '<body> ' +
+                document.getElementById("table-responsive").innerHTML +
+                '</body> ' +
+                '</html>'
+            window.location.href = location + window.btoa(excelTemplate);
         }
     </script>
 @endsection

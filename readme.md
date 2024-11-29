@@ -26,6 +26,13 @@ php artisan db:seed --class=KomponenTabelSeeder
 * Run "php artisan migrate" last version
 * Run "php artisan db:seed --class=UsersInsertAdminSeeder"
 
+## Panduan Konfigurasi Role Superadmin
+* composer update, pastikan dependecies spatie terinstall
+* Run "php artisan migrate" last version
+* Run "php artisan db:seed --class=PermissionTableSeeder"
+* Jadikan current user punya role "superadmin" dengan akses {url path}/authorization/set_my_role
+* Baik left menu aplikasi maupun routes otomatis di filter berdasarkan ini.
+
 ## Task
 Sabit:
 * Authentikasi SSO

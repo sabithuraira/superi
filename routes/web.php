@@ -19,31 +19,73 @@ Route::get('/', function () {
 
 Auth::routes();
 
+// Route::group(['middleware' => ['role:superadmin']], function () {
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('authorization/set_my_role', 'AuthorizationController@set_my_role');
+});
+
+Route::group(['middleware' => ['role:superadmin']], function () {
+    //SPATIE
+    Route::get('authorization/permission', 'AuthorizationController@permission');
+    Route::post('authorization/permission', 'AuthorizationController@permission_store');
+
+    Route::get('authorization/role', 'AuthorizationController@role');
+    Route::get('authorization/{id}/role_edit', 'AuthorizationController@role_edit');
+    Route::post('authorization/role', 'AuthorizationController@role_store');
+
+    Route::get('authorization/user', 'AuthorizationController@user');
+    Route::get('authorization/{id}/user_edit', 'AuthorizationController@user_edit');
+    Route::post('authorization/user', 'AuthorizationController@user_update');
+});
+
+// Route::group(['middleware' => ['role:superadmin','permission:import_pdrb']], function () {
+Route::group(['middleware' => ['permission:import_pdrb']], function () {
     Route::get('upload/import', 'UploadController@upload')->name('upload/import');
     Route::post('upload/import', 'UploadController@import');
-    Route::post('upload/pdrb', 'UploadController@pdrb');
+});
+
+Route::group(['middleware' => ['permission:import_fenomena']], function () {
     Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
     Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
     Route::post('upload/fenomena', 'UploadController@fenomena');
+});
 
-    ////////////////////
-
+Route::group(['middleware' => ['permission:tabel_ringkasan']], function () {
     Route::get('pdrb_ringkasan1/{id}', 'TabelRingkasanController@ringkasan1');
     Route::get('pdrb_ringkasan2/{id}', 'TabelRingkasanController@ringkasan2');
     Route::get('pdrb_ringkasan3/{id}', 'TabelRingkasanController@ringkasan3');
     Route::get('pdrb_ringkasan4/{id}', 'TabelRingkasanController@ringkasan4');
     Route::get('pdrb_ringkasan5/{id}', 'TabelRingkasanController@ringkasan5');
     Route::get('pdrb_ringkasan6/{id}', 'TabelRingkasanController@ringkasan6');
+});
 
+Route::group(['middleware' => ['permission:tabel_resume']], function () {
+    Route::get('tabel/resume', 'ResumeController@index');
+    Route::post('tabel/resume', 'ResumeController@get');
+});
+
+Route::group(['middleware' => ['permission:tabel_kabkot']], function () {
     Route::get('pdrb_kabkot/{id}', 'TabelKabkotController@kabkot');
     Route::get('pdrb_kabkot_7pkrt/{id}', 'TabelKabkotController@kabkot_7pkrt');
     Route::get('pdrb_kabkot_brs/{id}', 'TabelKabkotController@kabkot_brs');
     Route::get('pdrb_kabkot_rilis/{id}', 'TabelKabkotController@kabkot_rilis');
+});
 
-    Route::get('tabel/resume', 'ResumeController@index');
-    Route::post('tabel/resume', 'ResumeController@get');
+Route::group(['middleware' => ['permission:tabel_history']], function () {});
 
+Route::group(['middleware' => ['permission:arah_revisi_total']], function () {
     Route::get('revisi/total', 'RevisiTotalController@index');
     Route::post('revisi/total', 'RevisiTotalController@get');
+});
+
+Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {});
+
+
+Route::group(['middleware' => ['permission:fenomena_total']], function () {});
+
+Route::group(['middleware' => ['permission:fenomena_kabkota']], function () {});
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::post('upload/pdrb', 'UploadController@pdrb');
+    Route::post('upload/fenomena', 'UploadController@fenomena');
 });

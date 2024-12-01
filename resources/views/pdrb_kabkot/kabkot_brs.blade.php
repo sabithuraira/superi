@@ -235,5 +235,18 @@
             console.log(form.action)
             form.submit();
         }
+
+        function exportToExcel() {
+            var location = 'data:application/vnd.ms-excel;base64,';
+            var excelTemplate = '<html> ' +
+                '<head> ' +
+                '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
+                '</head> ' +
+                '<body> ' +
+                document.getElementById("table-responsive").innerHTML +
+                '</body> ' +
+                '</html>'
+            window.location.href = location + window.btoa(excelTemplate);
+        }
     </script>
 @endsection

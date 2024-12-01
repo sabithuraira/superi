@@ -3,7 +3,7 @@
 @section('breadcrumb')
     <ul class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ url('/') }}"><i class="icon-home"></i></a></li>
-        <li class="breadcrumb-item">Tabel PDRB per Kabupaten Kota (PKRT 12 Komponen)</li>
+        <li class="breadcrumb-item">Tabel PDRB per Kabupaten Kota (Rilis)</li>
     </ul>
 @endsection
 
@@ -12,7 +12,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="header">
-                    <h2>Tabel PDRB per Kabupaten Kota (PKRT 12 Komponen)</h2>
+                    <h2>Tabel PDRB per Kabupaten Kota (Rilis)</h2>
                 </div>
                 <div class="body">
                     <div class="row">
@@ -37,14 +37,12 @@
                                     </div>
 
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        <button class="btn btn-success w-100" type="button"onclick="exportToExcel()">
-                                            Export Excel
-                                        </button>
+                                        <button class="btn btn-success w-100" type="button">Export Excel</button>
                                     </div>
+
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        <a class="btn btn-primary w-100" type="button"
-                                            href="{{ url('pdrb_kabkot_7pkrt/3.1') }}">PKRT
-                                            7 Komponen</a>
+                                        <a class="btn btn-primary w-100" type="button" href="{{ url('pdrb_kabkot/3.1') }}">
+                                            PKRT 12 Komponen</a>
                                     </div>
 
                                 </div>
@@ -66,7 +64,8 @@
                                     <div class="col-sm-6 col-md-2"></div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
                                         <a class="btn btn-primary w-100" type="button"
-                                            href="{{ url('pdrb_kabkot_rilis/3.1') }}">Tabel Rilis</a>
+                                            href="{{ url('pdrb_kabkot_7pkrt/3.1') }}">PKRT
+                                            7 Komponen</a>
                                     </div>
                                 </div>
                             </form>
@@ -83,8 +82,8 @@
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive table-bordered" id="table-responsive">
-                                <table class="table" border="1px solid black">
+                            <div class="table-responsive">
+                                <table class="table">
                                     <thead>
                                         <tr class="text-center">
                                             <th>Komponen</th>
@@ -96,16 +95,10 @@
                                     <tbody>
                                         @foreach ($data as $dt)
                                             <tr>
-                                                @php
-                                                    $shouldBold = strlen($dt['id']) < 4 || $dt['id'] == 'c_pdrb';
-                                                @endphp
-
-                                                <td style="@if ($shouldBold) font-weight: bold; @endif">
-                                                    {{ $dt['name'] }}</td>
-
+                                                <td>{{ $dt['name'] }}</td>
                                                 @foreach ($periode_filter as $periode)
-                                                    <td class="text-right">
-                                                        {{ array_key_exists($periode, $dt) && $dt[$periode] ? number_format(round($dt[$periode], 2), 2, ',', '.') : '' }}
+                                                    <td>
+                                                        {{ array_key_exists($periode, $dt) && $dt[$periode] ? round($dt[$periode], 2) : '' }}
                                                     </td>
                                                 @endforeach
                                             </tr>
@@ -224,7 +217,7 @@
             var form = document.getElementById('form_filter');
             var selectedOption = selectElement.options[selectElement.selectedIndex];
             var data_id = selectedOption.getAttribute('data-id');
-            form.action = window.origin + '/superi/public/pdrb_kabkot' + '/' + data_id;
+            form.action = window.origin + '/superi/public/pdrb_kabkot_rilis' + '/' + data_id;
             form.submit();
         }
 
@@ -238,7 +231,7 @@
                 .selectedIndex];
             var wilayah = wilayah_option.getAttribute('data-id');
 
-            form.action = window.origin + '/superi/public/pdrb_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
+            form.action = window.origin + '/superi/public/pdrb_kabkot_rilis' + '/' + data_id + '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
         }

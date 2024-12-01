@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('upload/pdrb', 'UploadController@pdrb');
     Route::get('upload/fenomena_import', 'UploadController@fenomena_upload');
     Route::post('upload/fenomena_import', 'UploadController@fenomena_import');
-    Route::post('upload/fenomena', 'UploadController@fenomena'); 
+    Route::post('upload/fenomena', 'UploadController@fenomena');
 
     ////////////////////
 
@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('pdrb_kabkot/{id}', 'TabelKabkotController@kabkot');
     Route::get('pdrb_kabkot_7pkrt/{id}', 'TabelKabkotController@kabkot_7pkrt');
     Route::get('pdrb_kabkot_brs/{id}', 'TabelKabkotController@kabkot_brs');
+    Route::get('pdrb_kabkot_rilis/{id}', 'TabelKabkotController@kabkot_rilis');
 
     Route::get('tabel/resume', 'ResumeController@index');
     Route::post('tabel/resume', 'ResumeController@get');

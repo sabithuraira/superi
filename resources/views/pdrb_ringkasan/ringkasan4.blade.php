@@ -42,7 +42,8 @@
                                             data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success w-100" type="button">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button"
+                                            onclick="exportToExcel()">Export Excel</button>
                                     </div>
                                 </div>
                             </form>
@@ -213,6 +214,19 @@
             var data_id = selectedOption.getAttribute('data-id');
             form.action = window.origin + '/superi/public/' + url + '/' + data_id;
             form.submit();
+        }
+
+        function exportToExcel() {
+            var location = 'data:application/vnd.ms-excel;base64,';
+            var excelTemplate = '<html> ' +
+                '<head> ' +
+                '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
+                '</head> ' +
+                '<body> ' +
+                document.getElementById("table-responsive").innerHTML +
+                '</body> ' +
+                '</html>'
+            window.location.href = location + window.btoa(excelTemplate);
         }
     </script>
 @endsection

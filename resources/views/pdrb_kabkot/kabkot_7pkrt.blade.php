@@ -62,8 +62,8 @@
                                     </div>
                                     <div class="col-sm-6 col-md-2"></div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        <a class="btn btn-primary w-100" href="{{ url('pdrb_kabkot_brs/3.1') }}"
-                                            type="button">Tabel BRS</a>
+                                        <a class="btn btn-primary w-100" href="{{ url('pdrb_kabkot_rilis/3.1') }}"
+                                            type="button">Tabel Rilis</a>
                                     </div>
                                 </div>
                             </form>
@@ -232,6 +232,19 @@
             form.action = window.origin + '/superi/public/pdrb_kabkot_7pkrt' + '/' + data_id + '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
+        }
+
+        function exportToExcel() {
+            var location = 'data:application/vnd.ms-excel;base64,';
+            var excelTemplate = '<html> ' +
+                '<head> ' +
+                '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
+                '</head> ' +
+                '<body> ' +
+                document.getElementById("table-responsive").innerHTML +
+                '</body> ' +
+                '</html>'
+            window.location.href = location + window.btoa(excelTemplate);
         }
     </script>
 @endsection

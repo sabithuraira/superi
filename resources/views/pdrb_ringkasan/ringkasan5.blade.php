@@ -53,7 +53,8 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 ">
-                                        <button class="btn btn-success w-100" type="button">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button"
+                                            onclick="exportToExcel()">Export Excel</button>
                                     </div>
 
                                 </div>
@@ -167,6 +168,19 @@
                 '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
+        }
+
+        function exportToExcel() {
+            var location = 'data:application/vnd.ms-excel;base64,';
+            var excelTemplate = '<html> ' +
+                '<head> ' +
+                '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
+                '</head> ' +
+                '<body> ' +
+                document.getElementById("table-responsive").innerHTML +
+                '</body> ' +
+                '</html>'
+            window.location.href = location + window.btoa(excelTemplate);
         }
     </script>
 @endsection

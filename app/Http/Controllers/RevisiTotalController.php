@@ -354,12 +354,18 @@ class RevisiTotalController extends Controller
                     $periode_pdrb = explode('_', $pdrb_key)[1];
                     $rilis_key = 'Rilis_' . $periode_pdrb;
                     $revisi_key = 'Revisi_' . $periode_pdrb;
+
                     if ($pdrb_item->$revisi_key > $pdrb_item->$rilis_key) {
                         $pdrb_value = '<div class="text-success">▲</div>';
                     } elseif ($pdrb_item->$revisi_key < $pdrb_item->$rilis_key) {
                         $pdrb_value = '<div class="text-danger">▼</div>';
                     } else {
                         $pdrb_value = '<div class="text-warning">═</div>';
+                    }
+
+                    if ($pdrb_item->$revisi_key * $pdrb_item->$rilis_key < 0) {
+                        $pdrb_item->$revisi_key = 'WARNING' . $pdrb_item->$revisi_key;
+                        $pdrb_item->$rilis_key = 'WARNING' . $pdrb_item->$rilis_key;
                     }
                 }
             }

@@ -168,6 +168,7 @@
                 for (const j in json[i]) {
                     var cell = row.insertCell(-1);
                     if (json[i][j]) if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning'>" + json[i][j].replace("WARNING", "") + "</td>";
+                    else if (json[i][j]) if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center'>" + json[i][j].replace("CENTER", "") + "</td>";
                     else cell.innerHTML = json[i][j];
                 }
             }

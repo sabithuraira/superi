@@ -101,8 +101,13 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($data as $dt)
-                                            <tr>
-                                                <td>
+                                            @php
+                                                $shouldBold = $dt['id'] == '00';
+
+                                            @endphp
+                                            <tr
+                                                style="@if ($shouldBold) background-color:#f2f2f2;font-weight: bold; @endif">
+                                                <td style="@if ($shouldBold) font-weight: bold; @endif">
                                                     [{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 <td>

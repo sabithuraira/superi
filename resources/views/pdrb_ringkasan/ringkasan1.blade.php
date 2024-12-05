@@ -87,17 +87,14 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($data as $dt)
-                                            <tr>
-                                                @php
-                                                    $shouldBold =
-                                                        strlen($dt['komponen']) < 4 || $dt['komponen'] == 'c_pdrb';
-                                                @endphp
-
+                                            @php
+                                                $shouldBold =
+                                                    strlen($dt['komponen']) < 4 || $dt['komponen'] == 'c_pdrb';
+                                            @endphp
+                                            <tr style="@if ($shouldBold) background-color:#f2f2f2; @endif">
                                                 <td style="@if ($shouldBold) font-weight: bold; @endif">
                                                     {{ $dt['komponen_name'] }}
                                                 </td>
-
-
                                                 @foreach ($periode_filter as $periode)
                                                     @php
                                                         $qtqProv = $dt[$periode . 'qtq_prov'] ?? null;

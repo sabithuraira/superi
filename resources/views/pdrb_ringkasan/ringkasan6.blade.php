@@ -101,7 +101,11 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($data as $dt)
-                                            <tr class="text-right">
+                                            @php
+                                                $shouldBold = strlen($dt['id']) < 4 || $dt['id'] == 'c_pdrb';
+                                            @endphp
+                                            <tr class="text-right"
+                                                style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td class="text-left">
                                                     {{ $dt['name'] }}
                                                 </td>

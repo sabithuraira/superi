@@ -71,14 +71,20 @@ Route::group(['middleware' => ['permission:tabel_kabkot']], function () {
     Route::get('pdrb_kabkot_rilis/{id}', 'TabelKabkotController@kabkot_rilis');
 });
 
-Route::group(['middleware' => ['permission:tabel_history']], function () {});
+Route::group(['middleware' => ['permission:tabel_history']], function () {
+    Route::get('pdrb_putaran/{id}', 'PdrbPutaranController@index');
+});
 
 Route::group(['middleware' => ['permission:arah_revisi_total']], function () {
     Route::get('revisi/total', 'RevisiTotalController@index');
     Route::post('revisi/total', 'RevisiTotalController@get');
 });
 
-Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {});
+Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {
+    Route::get('revisi_kabkot/{id}', 'RevisiKabkotController@index');
+    Route::get('revisi_kabkot_7pkrt/{id}', 'RevisiKabkotController@revisi_7pkrt');
+    Route::get('revisi_kabkot_rilis/{id}', 'RevisiKabkotController@revisi_rilis');
+});
 
 
 Route::group(['middleware' => ['permission:fenomena_total']], function () {});

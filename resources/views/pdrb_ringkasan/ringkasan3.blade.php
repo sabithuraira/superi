@@ -78,12 +78,15 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($data as $dt)
-                                            <tr>
-                                                <td>
+                                            @php
+                                                $shouldBold = $dt['id'] == '00';
+                                            @endphp
+                                            <tr style="@if ($shouldBold) background-color:#f2f2f2; @endif">
+                                                <td style="@if ($shouldBold) font-weight: bold; @endif">
                                                     [{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 @foreach ($komponens as $key => $komp)
-                                                    <td>
+                                                    <td style="@if ($shouldBold) font-weight: bold; @endif">
                                                         {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']]
                                                             ? number_format(round($dt[$komp['id']], 2), 2, ',', '.')
                                                             : '' }}

@@ -1798,6 +1798,7 @@ class TabelRingkasanController extends Controller
                 }
                 $data[] = $row;
             } else if ($id == "1.6") {
+                $q = [];
                 if (sizeof($arr_periode) > 1) {
                     for ($i = 1; $i <= $arr_periode[1]; $i++) {
                         $q[] = $i;
@@ -2559,7 +2560,9 @@ class TabelRingkasanController extends Controller
                             })->groupBy('kode_kab')->first();
                     }
                 } else if ($id == '1.12') {
+                    $q = [];
                     if (sizeof($arr_periode) > 1) {
+
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
                         }
@@ -2789,8 +2792,8 @@ class TabelRingkasanController extends Controller
                     ->groupBy('q')
                     ->get();
 
-                $q = [];
 
+                $q = [];
                 for ($i = 1; $i <= $arr_periode[1]; $i++) {
                     $q[] = $i;
                 }
@@ -3161,8 +3164,8 @@ class TabelRingkasanController extends Controller
                     ->groupBy('q')
                     ->get();
 
-                $q = [];
 
+                $q = [];
                 for ($i = 1; $i <= $arr_periode[1]; $i++) {
                     $q[] = $i;
                 }

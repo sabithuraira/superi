@@ -8,6 +8,7 @@ use App\Imports\PdrbImport;
 use App\Imports\FenomenaImport;
 use App\Exports\PdrbExport;
 use App\Exports\FenomenaExport;
+use App\SettingApp;
 
 class UploadController extends Controller
 {
@@ -15,6 +16,9 @@ class UploadController extends Controller
     public function upload(){
         $wilayah = '00';
         $tahun = date('Y');
+        
+        $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
+        if($tahun_berlaku!=null) $tahun = $tahun_berlaku->setting_value;
 
         $model = new \App\Pdrb();
         return view('upload.upload',compact('model', 'wilayah', 'tahun'));
@@ -57,19 +61,28 @@ class UploadController extends Controller
     public function fenomena_upload(){
         $wilayah = '00';
         $tahun = date('Y');
+        $triwulan = 1;
+        
+        $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
+        if($tahun_berlaku!=null) $tahun = $tahun_berlaku->setting_value;
+        
+        $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
+        if($triwulan_berlaku!=null) $triwulan = $triwulan_berlaku->setting_value;
 
         $model = new \App\Fenomena();
-        return view('upload.fenomena',compact('model', 'wilayah', 'tahun'));
+        return view('upload.fenomena',compact('model', 'wilayah', 'tahun', 'triwulan'));
     }
 
     public function fenomena_import(Request $request){
         $wilayah = '00';
         $tahun = date('Y');
         $triwulan = 1;
+        
+        $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
+        if($triwulan_berlaku!=null) $triwulan = $triwulan_berlaku->setting_value;
 
         if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
         if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
-        if (strlen($request->get('triwulan')) > 0) $triwulan = $request->get('triwulan');
 
 
         if($request->get('action')==1){

@@ -33,6 +33,9 @@ php artisan db:seed --class=KomponenTabelSeeder
 * Jadikan current user punya role "superadmin" dengan akses {url path}/authorization/set_my_role
 * Baik left menu aplikasi maupun routes otomatis di filter berdasarkan ini.
 
+## Seed DB Setting Konfigurasi
+* php artisan db:seed --class=SettingSeeder
+
 ## Task
 Sabit:
 * Authentikasi SSO

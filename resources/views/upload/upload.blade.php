@@ -39,7 +39,7 @@
                                 <label>Tahun:</label>
 
                                 <div class="input-group">
-                                <select class="form-control  form-control-sm" name="tahun" v-model="form_data.tahun">
+                                <select class="form-control  form-control-sm" disabled name="tahun" v-model="form_data.tahun">
                                     @for ($i=date('Y');$i>=2023;$i--)
                                         <option value="{{ $i }}">{{ $i }}</option>
                                     @endfor

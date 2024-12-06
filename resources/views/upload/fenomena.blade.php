@@ -38,7 +38,7 @@
                             <div class="form-group">
                                 <label>Tahun:</label>
                                 <div class="input-group">
-                                <select class="form-control  form-control-sm" name="tahun" v-model="form_data.tahun">
+                                <select class="form-control  form-control-sm" name="tahun" disabled v-model="form_data.tahun">
                                     @for ($i=date('Y');$i>=2023;$i--)
                                         <option value="{{ $i }}">{{ $i }}</option>
                                     @endfor
@@ -51,7 +51,7 @@
                             <div class="form-group">
                                 <label>Triwulan:</label>
                                 <div class="input-group">
-                                <select class="form-control  form-control-sm" name="triwulan" v-model="form_data.triwulan">
+                                <select class="form-control  form-control-sm" name="triwulan" disabled v-model="form_data.triwulan">
                                     @for ($i=1;$i<=4;$i++)
                                         <option value="{{ $i }}">{{ $i }}</option>
                                     @endfor
@@ -83,7 +83,7 @@
                 <table id="my_table" class="table-bordered m-b-0" style="min-width:100%">
                     <tr class="text-center">
                         <th>Komponen</th>
-                        <th>Pertumbuhah</th>
+                        <th>Pertumbuhan</th>
                         <th>Fenomena</th>
                     </tr>
                     
@@ -91,19 +91,19 @@
                         <tr>
                             <td rowspan="3"><b>@{{ data.no_komponen }} @{{ data.nama_komponen }}</b></td>
                             
-                            <td>q-to-q</td>
+                            <td class="text-center">q-to-q</td>
                             <td v-if="datas['q-to-q'][form_data.triwulan-1]==null"></td>
                             <td v-else>@{{ datas['q-to-q'][form_data.triwulan-1]['fenomena_c_'+data.no_komponen.replaceAll('.', '')] }}</td>
                         </tr>
 
                         <tr>
-                            <td>y-o-y</td>
+                            <td class="text-center">y-o-y</td>
                             <td v-if="datas['y-o-y'][form_data.triwulan-1]==null"></td>
                             <td v-else>@{{ datas['y-o-y'][form_data.triwulan-1]['fenomena_c_'+data.no_komponen.replaceAll('.', '')] }}</td>
                         </tr>
                         
                         <tr>
-                            <td>c-to-c</td>
+                            <td class="text-center">c-to-c</td>
                             <td v-if="datas['c-to-c'][form_data.triwulan-1]==null"></td>
                             <td v-else>@{{ datas['c-to-c'][form_data.triwulan-1]['fenomena_c_'+data.no_komponen.replaceAll('.', '')] }}</td>
                         </tr>
@@ -112,19 +112,19 @@
                             <tr>
                                 <td rowspan="3"><b>@{{ data2.no_komponen }} @{{ data2.nama_komponen }}</b></td>
                                 
-                                <td>q-to-q</td>
+                                <td class="text-center">q-to-q</td>
                                 <td v-if="datas['q-to-q'][form_data.triwulan-1]==null"></td>
                                 <td v-else>@{{ datas['q-to-q'][form_data.triwulan-1]['fenomena_c_'+data2.no_komponen.replaceAll('.', '')] }}</td>
                             </tr>
 
                             <tr>
-                                <td>y-o-y</td>
+                                <td class="text-center">y-o-y</td>
                                 <td v-if="datas['y-o-y'][form_data.triwulan-1]==null"></td>
                                 <td v-else>@{{ datas['y-o-y'][form_data.triwulan-1]['fenomena_c_'+data2.no_komponen.replaceAll('.', '')] }}</td>
                             </tr>
                             
                             <tr>
-                                <td>c-to-c</td>
+                                <td class="text-center">c-to-c</td>
                                 <td v-if="datas['c-to-c'][form_data.triwulan-1]==null"></td>
                                 <td v-else>@{{ datas['c-to-c'][form_data.triwulan-1]['fenomena_c_'+data2.no_komponen.replaceAll('.', '')] }}</td>
                             </tr>
@@ -134,19 +134,19 @@
                     <tr>
                         <td rowspan="3"><b>PDRB</b></td>
                         
-                        <td>q-to-q</td>
+                        <td class="text-center">q-to-q</td>
                         <td v-if="datas['q-to-q'][form_data.triwulan-1]==null"></td>
                         <td v-else>@{{ datas['q-to-q'][form_data.triwulan-1]['fenomena_c_pdrb'] }}</td>
                     </tr>
 
                     <tr>
-                        <td>y-o-y</td>
+                        <td class="text-center">y-o-y</td>
                         <td v-if="datas['y-o-y'][form_data.triwulan-1]==null"></td>
                         <td v-else>@{{ datas['y-o-y'][form_data.triwulan-1]['fenomena_c_pdrb'] }}</td>
                     </tr>
                     
                     <tr>
-                        <td>c-to-c</td>
+                        <td class="text-center">c-to-c</td>
                         <td v-if="datas['c-to-c'][form_data.triwulan-1]==null"></td>
                         <td v-else>@{{ datas['c-to-c'][form_data.triwulan-1]['fenomena_c_pdrb'] }}</td>
                     </tr>
@@ -172,7 +172,7 @@ var vm = new Vue({
         form_data: {
             wilayah: {!! json_encode($wilayah) !!},
             tahun: {!! json_encode($tahun) !!},
-            triwulan: 1
+            triwulan:  {!! json_encode($triwulan) !!},
         },
         datas: [],
         komponen: []

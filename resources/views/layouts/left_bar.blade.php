@@ -122,7 +122,10 @@
                             <li class="{{ request()->is('authorization/role') ? 'active' : '' }}"><a href="{{ url('authorization/role') }}">Role</a></li>
                             <li class="{{ request()->is('authorization/user') ? 'active' : '' }}"><a href="{{ url('authorization/user') }}">User Role</a></li>
                             <li class="{{ request()->is('setting_app') ? 'active' : '' }}"><a href="{{ url('setting_app') }}">Konfigurasi Aplikasi</a></li>
+<<<<<<< HEAD
 >>>>>>> 13db502 (setting - add tahun & triwulan berlaku)
+=======
+>>>>>>> main
                         </ul>
                     </li>
                 @endhasrole

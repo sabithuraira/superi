@@ -64,8 +64,8 @@
                         </div>
                     </div>
                     <div class="col-12">
+                        <h5 id="table_title" class="text-center mt-2"></h5>
                         <div class="table-responsive">
-                            <h5 id="table_title" class="text-center mt-2"></h5>
                             <div id="table-container">
                                 <table class="table table-bordered">
                                     <thead>
@@ -167,9 +167,19 @@
                 var row = table_data.insertRow(-1);
                 for (const j in json[i]) {
                     var cell = row.insertCell(-1);
-                    if (json[i][j]) if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning'>" + json[i][j].replace("WARNING", "") + "</td>";
-                    else if (json[i][j]) if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center'>" + json[i][j].replace("CENTER", "") + "</td>";
-                    else cell.innerHTML = json[i][j];
+                    if (json[i]['Komponen'].includes("BOLD")) {
+                        if (json[i][j]) if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning font-weight-bold'>" + json[i][j].replace("WARNING", "").replace("BOLD", "") + "</td>";
+                        else if (json[i][j]) if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center' style='background-color:#f2f2f2'>" + json[i][j].replace("CENTER", "").replace("BOLD", "") + "</td>";
+                        else cell.outerHTML = "<td class='font-weight-bold' style='background-color:#f2f2f2'>" + json[i][j].replace("BOLD", "") + "</td>";
+                    }
+                    else {
+                        if (json[i][j]) if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning'>" + json[i][j].replace("WARNING", "") + "</td>";
+                        else if (json[i][j]) if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center'>" + json[i][j].replace("CENTER", "") + "</td>";
+                        else cell.outerHTML = "<td>" + json[i][j] + "</td>";
+
+                    }
+
+
                 }
             }
         });

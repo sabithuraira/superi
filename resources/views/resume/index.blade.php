@@ -67,8 +67,8 @@
                         </div>
                     </div>
                     <div class="col-12">
+                        <h5 id="table_title" class="text-center mt-2"></h5>
                         <div class="table-responsive">
-                            <h5 id="table_title" class="text-center mt-2"></h5>
                             <div id="table-container">
                                 <table class="table table-bordered">
                                     <thead>

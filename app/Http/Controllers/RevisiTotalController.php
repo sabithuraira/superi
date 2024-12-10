@@ -14,9 +14,29 @@ class RevisiTotalController extends Controller
     public function index() {
         $tahun = DB::select('SELECT DISTINCT tahun FROM superi_pdrb_rev_view ORDER BY tahun');
 
+        $tahun_now = DB::table('setting')
+                     ->select('setting_value')
+                     ->where('setting_name', '=', 'tahun_berlaku')
+                     ->first();
+        $tahun_now = $tahun_now->setting_value;
+
+        $q_now = DB::table('setting')
+                 ->select('setting_value')
+                 ->where('setting_name', '=', 'triwulan_berlaku')
+                 ->first();
+        $q_now = $q_now->setting_value;
+
         $periode = [];
         foreach ($tahun as $t) {
-            array_push($periode, (object) array('periode' => $t->tahun . 'Q1'), (object) array('periode' => $t->tahun . 'Q2'), (object) array('periode' => $t->tahun . 'Q3'), (object) array('periode' => $t->tahun . 'Q4'), (object) array('periode' => $t->tahun));
+            if ((int) $t->tahun < (int) $tahun_now) {
+                $q = 4;
+            } else $q = (int) $q_now;
+
+            for ($i = 1; $i <= $q; $i++) {
+                array_push($periode, (object) array('periode' => $t->tahun . 'Q' . $i));
+            }
+
+            if ($q == 4) array_push($periode, (object) array('periode' => $t->tahun));
         }
 
         return view('revisi.total', compact('periode'));

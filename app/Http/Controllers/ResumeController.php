@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ResumeExport;
 use App\Komponen;
 
 class ResumeController extends Controller
@@ -31,6 +32,24 @@ class ResumeController extends Controller
         $periode = explode(',', $request->input('periode'));
         $kd_kab = explode(',', $request->input('kd_kab'));
 
+        $pdrb = $this->resume($tabel, $c, $periode, $kd_kab);
+
+        return response()->json($pdrb);
+    }
+
+    public function export(Request $request) {
+        $judul = $request->input('judul');
+        $tabel = $request->input('tabel');
+        $c = $request->input('komponen');
+        $periode = explode(',', $request->input('periode'));
+        $kd_kab = explode(',', $request->input('kd_kab'));
+
+        $pdrb = $this->resume($tabel, $c, $periode, $kd_kab);
+
+        return Excel::download(new ResumeExport($judul, $pdrb['columns'], $pdrb['pdrb']), 'Resume' . $judul . '.xlsx');
+    }
+
+    private function resume($tabel, $c, $periode, $kd_kab) {
         $pdrb = [];
 
         if ($c == 'c_pdrb') {
@@ -255,6 +274,6 @@ class ResumeController extends Controller
         }
         $columns = array_unique($columns);
 
-        return response()->json(['columns' => $columns, 'pdrb' => $pdrb_array]);
+        return ['columns' => $columns, 'pdrb' => $pdrb_array];
     }
 }

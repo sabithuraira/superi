@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RevisiTotalExport;
 use App\Komponen;
 
 class RevisiTotalController extends Controller
@@ -25,6 +26,23 @@ class RevisiTotalController extends Controller
         $kd_kab = $request->input('kd_kab');
         $periode = explode(',', $request->input('periode'));
 
+        $pdrb = $this->total($tabel, $kd_kab, $periode);
+
+        return response()->json($pdrb);
+    }
+
+    public function export(Request $request) {
+        $judul = $request->input('judul');
+        $tabel = $request->input('tabel');
+        $kd_kab = $request->input('kd_kab');
+        $periode = explode(',', $request->input('periode'));
+
+        $pdrb = $this->total($tabel, $kd_kab, $periode);
+
+        return Excel::download(new RevisiTotalExport($judul, $pdrb), 'Arah Revisi Total ' . $judul . '.xlsx');
+    }
+
+    private function total($tabel, $kd_kab, $periode) {
         $komponen = DB::table('komponen')
                     ->where('status_aktif', '=', 1)
                     ->orderBy('no_komponen')
@@ -383,6 +401,6 @@ class RevisiTotalController extends Controller
             }
         }
 
-        return response()->json($pdrb);
+        return $pdrb;
     }
 }

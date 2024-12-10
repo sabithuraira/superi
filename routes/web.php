@@ -38,7 +38,7 @@ Route::group(['middleware' => ['role:superadmin']], function () {
     Route::get('authorization/user', 'AuthorizationController@user');
     Route::get('authorization/{id}/user_edit', 'AuthorizationController@user_edit');
     Route::post('authorization/user', 'AuthorizationController@user_update');
-    
+
     Route::get('setting_app', 'SettingAppController@index');
     Route::post('setting_app', 'SettingAppController@store');
 });
@@ -67,6 +67,7 @@ Route::group(['middleware' => ['permission:tabel_ringkasan']], function () {
 Route::group(['middleware' => ['permission:tabel_resume']], function () {
     Route::get('tabel/resume', 'ResumeController@index');
     Route::post('tabel/resume', 'ResumeController@get');
+    Route::post('tabel/resume/export', 'ResumeController@export');
 });
 
 Route::group(['middleware' => ['permission:tabel_kabkot']], function () {
@@ -83,6 +84,7 @@ Route::group(['middleware' => ['permission:tabel_history']], function () {
 Route::group(['middleware' => ['permission:arah_revisi_total']], function () {
     Route::get('revisi/total', 'RevisiTotalController@index');
     Route::post('revisi/total', 'RevisiTotalController@get');
+    Route::post('revisi/total/export', 'RevisiTotalController@export');
 });
 
 Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {

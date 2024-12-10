@@ -178,24 +178,46 @@
                         else cell.outerHTML = "<td>" + json[i][j] + "</td>";
 
                     }
-
-
                 }
             }
         });
     }
     lihat();
     function exportToExcel() {
-        var location = 'data:application/vnd.ms-excel;base64,';
-        var excelTemplate = '<html> ' +
-            '<head> ' +
-            '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
-            '</head> ' +
-            '<body> ' +
-            document.getElementById("table-container").innerHTML +
-            '</body> ' +
-            '</html>'
-        window.location.href = location + window.btoa(unescape(encodeURIComponent(excelTemplate)));
+        var url = "{{ url("/revisi/total/export") }}";
+
+        var judul = document.querySelector(`#tabel_filter option[value='${document.getElementById("tabel_filter").value}']`).text;
+
+        var tabel = document.getElementById("tabel_filter").value;
+        var kd_kab = document.getElementById("kab_filter").value;
+
+        var periode = [];
+        @foreach($periode as $periode_item)
+        periode_check = document.getElementById("periode_filter_{{ $periode_item->periode }}");
+        if (periode_check.checked) periode.push("{{ $periode_item->periode }}");
+        @endforeach
+
+        fetch(url, {
+            method: "post",
+            body: JSON.stringify({
+                judul: judul,
+                tabel: tabel,
+                kd_kab: kd_kab,
+                periode: periode.toString()
+            }),
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": "{{ csrf_token() }}"
+            }
+        })
+        .then(res => res.blob())
+        .then(blob => URL.createObjectURL(blob))
+        .then(href => {
+            Object.assign(document.createElement('a'), {
+                href,
+                download: `Arah Revisi Total ${judul}.xlsx`,
+            }).click();
+        });
     }
 </script>
 @endsection

@@ -33,7 +33,7 @@ class HomeController extends Controller
             'realm'                 => 'pegawai-bps',
             'clientId'              => '11600-musi-p93',
             'clientSecret'          => 'c9da3629-8a2d-4563-b9a9-043590445e45',
-            'redirectUri'           => 'https://webapps.bps.go.id/sumsel/superi/beranda'
+            'redirectUri'           => 'https://webapps.bps.go.id/sumsel/superi/home'
         ]);
 
 
@@ -48,6 +48,7 @@ class HomeController extends Controller
             dd($request->session()->all());
             exit;
         
+        
         } else {
             $token = "";
             try {
@@ -57,16 +58,9 @@ class HomeController extends Controller
                 $request->session()->put('token', $token);
             } catch (Exception $e) {
                 print_r('Gagal mendapatkan akses token : '.$e->getMessage());
+                die();
             }
-
             
-            $data_request = array(
-                $this->username() =>'admin@email.com',
-                'password'  => 'admin123'
-            );
-            if ($this->attemptLogin($data_request)) {
-                return $this->sendLoginResponse($data_request);
-            }
         
             // Opsional: Setelah mendapatkan token, anda dapat melihat data profil pengguna
             // SETELAH LOGIN LANGSUNG SYNC DATA PEGAWAI DG SIMPEG (KALO SIMPEG DILUAR SUMSEL GA BISA AKSES)
@@ -129,58 +123,6 @@ class HomeController extends Controller
                             $this->username()=>$model->email,
                             'password'  =>$model->email
                         );
-                        try {
-                            $service_url    =  "https://apisimpeg.web.bps.go.id/bps16"; //'https://simpeg.bps.go.id/api/bps16';
-                            $curl           = curl_init($service_url);
-                            $curl_post_data = array(
-                                "apiKey" =>  "L2cvVWtDaE5sczVzTHFPaHBZT0Rzdz09.".$token,
-                                "kategori"=> 'view_jabatan',
-                                "nip" => $c_nip,
-                            );
-                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                            curl_setopt($curl, CURLOPT_POST, true);
-                            curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
-                            $curl_response = json_decode(curl_exec($curl));
-                            if(!isset($curl_response->error)){
-                                // print_r($curl_response);die();
-                                if(sizeof($curl_response)==0){
-                                    print_r("Tidak ada Data");
-                                }
-                                else{
-                                    foreach($curl_response as $res){
-                                    $tmt = date("Y-m-d", strtotime($res->tmt) );
-                                    $tglsk = null;
-                                    if($res->tglsk){
-                                        $tglsk = date("Y-m-d", strtotime($res->tglsk) );
-                                    }
-                                    \DB::table('riwayat_sk')->updateOrInsert(
-                                        [ 'niplama' => $res->niplama, 'nosk' => $res->nosk],
-                                        [
-                                            'flagstjab' => $res->flagstjab,
-                                            'kdstjab' => $res->kdstjab,
-                                            'urutreog' => $res->urutreog,
-                                            'kdorg' => $res->kdorg,
-                                            'flagwil' => $res->flagwil,
-                                            'kdprop' => $res->kdprop,
-                                            'kdkab' => $res->kdkab,
-                                            'kdkec' => $res->kdkec,
-                                            'tmt' => $tmt,
-                                            'tglsk' => $tglsk,
-                                            'penugasan' => $res->penugasan,
-                                            'kdstkerja' => $res->kdstkerja,
-                                            'nmstjab' => $res->nmstjab,
-                                            'nmorg' => $res->nmorg,
-                                            'nmwil' => $res->nmwil,
-                                            'created_by' => 1,
-                                        ]
-                                    );
-                                    }
-                                }
-                            }
-                        } catch (Exception $e) {
-                            print_r('Gagal Mendapatkan Riwayat SK: '.$e->getMessage());
-                            die();
-                        }
                         
                         if ($this->attemptLogin($data_request)) {
                             return $this->sendLoginResponse($data_request);
@@ -195,10 +137,29 @@ class HomeController extends Controller
                     return route('guest');
                 }
             }
+            
+            
+            //KALO MAU LOGIN TANPA SYNC SIMPEG PAKE INI
+            // $user = $provider->getResourceOwner($token);
+
+            //     print_r("test");
+            //     print_r($user);die();
+            // $c_nip = $user->getNip();
+            // $data_request = array(
+            //     $this->username()=>$c_nip,
+            //     'password'  =>$c_nip
+            // );
+            // if ($this->attemptLogin($data_request)) {
+            //     return $this->sendLoginResponse($data_request);
+            // }
         }
         // $this->incrementLoginAttempts($request);
     }
 
+    // public function hai(){
+    //     return view('hai');
+    // }
+    
     protected function attemptLogin($params){
         return $this->guard()->attempt(
             $params, true
@@ -208,9 +169,4 @@ class HomeController extends Controller
     protected function sendLoginResponse($params){
         return redirect('beranda');
     }
-
-
-    // public function hai(){
-    //     return view('hai');
-    // }
 }

@@ -18,6 +18,7 @@
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-success btn-sm" type="button" onclick="exportToExcel()">Export Excel</button>
+                        <button class="btn btn-success btn-sm" type="button" onclick="exportAllToExcel()">Export All Excel</button>
                     </div>
                 </div>
             </div>
@@ -216,6 +217,46 @@
             Object.assign(document.createElement('a'), {
                 href,
                 download: `Arah Revisi Total ${judul}.xlsx`,
+            }).click();
+        });
+    }
+    function exportAllToExcel() {
+        var url = "{{ url("/revisi/total/exportall") }}";
+
+        var judul = document.querySelector(`#tabel_filter option[value='${document.getElementById("tabel_filter").value}']`).text;
+
+        var tabel = document.getElementById("tabel_filter").value;
+
+        var kd_kab = [];
+        @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
+        kd_kab.push("{{ '16' . $kd_kab }}");
+        @endforeach
+
+        var periode = [];
+        @foreach($periode as $periode_item)
+        periode_check = document.getElementById("periode_filter_{{ $periode_item->periode }}");
+        if (periode_check.checked) periode.push("{{ $periode_item->periode }}");
+        @endforeach
+
+        fetch(url, {
+            method: "post",
+            body: JSON.stringify({
+                judul: judul,
+                tabel: tabel,
+                kd_kab: kd_kab.toString(),
+                periode: periode.toString()
+            }),
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": "{{ csrf_token() }}"
+            }
+        })
+        .then(res => res.blob())
+        .then(blob => URL.createObjectURL(blob))
+        .then(href => {
+            Object.assign(document.createElement('a'), {
+                href,
+                download: `All Arah Revisi Total ${judul}.xlsx`,
             }).click();
         });
     }

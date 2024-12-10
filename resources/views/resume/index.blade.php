@@ -18,6 +18,7 @@
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-success btn-sm" type="button" onclick="exportToExcel()">Export Excel</button>
+                        <button class="btn btn-success btn-sm" type="button" onclick="exportAllToExcel()">Export All Excel</button>
                     </div>
                 </div>
             </div>
@@ -277,6 +278,54 @@
             Object.assign(document.createElement('a'), {
                 href,
                 download: `Resume ${judul}.xlsx`,
+            }).click();
+        });
+    }
+    function exportAllToExcel() {
+        var url = "{{ url("/tabel/resume/exportall") }}";
+
+        var judul = document.querySelector(`#tabel_filter option[value='${document.getElementById("tabel_filter").value}']`).text;
+
+        var tabel = document.getElementById("tabel_filter").value;
+        var tabel_desc = document.getElementById("tabel_filter").innerHTML;
+
+        var komponen = [];
+        @foreach($komponen as $komponen_item)
+        komponen.push("{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}");
+        @endforeach
+
+        var kd_kab = [];
+        kab.forEach(e => {
+            kab_check = document.getElementById("kabkot_filter_" + e);
+            if (kab_check.checked) kd_kab.push(e);
+        });
+
+        var periode = [];
+        @foreach($periode as $periode_item)
+        periode_check = document.getElementById("periode_filter_{{ $periode_item->periode }}");
+        if (periode_check.checked) periode.push("{{ $periode_item->periode }}");
+        @endforeach
+
+        fetch(url, {
+            method: "post",
+            body: JSON.stringify({
+                judul:judul,
+                tabel: tabel,
+                komponen: komponen.toString(),
+                kd_kab: kd_kab.toString(),
+                periode: periode.toString()
+            }),
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": "{{ csrf_token() }}"
+            }
+        })
+        .then(res => res.blob())
+        .then(blob => URL.createObjectURL(blob))
+        .then(href => {
+            Object.assign(document.createElement('a'), {
+                href,
+                download: `All Resume ${judul}.xlsx`,
             }).click();
         });
     }

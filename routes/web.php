@@ -68,6 +68,7 @@ Route::group(['middleware' => ['permission:tabel_resume']], function () {
     Route::get('tabel/resume', 'ResumeController@index');
     Route::post('tabel/resume', 'ResumeController@get');
     Route::post('tabel/resume/export', 'ResumeController@export');
+    Route::post('tabel/resume/exportall', 'ResumeController@export_all');
 });
 
 Route::group(['middleware' => ['permission:tabel_kabkot']], function () {
@@ -85,6 +86,7 @@ Route::group(['middleware' => ['permission:arah_revisi_total']], function () {
     Route::get('revisi/total', 'RevisiTotalController@index');
     Route::post('revisi/total', 'RevisiTotalController@get');
     Route::post('revisi/total/export', 'RevisiTotalController@export');
+    Route::post('revisi/total/exportall', 'RevisiTotalController@export_all');
 });
 
 Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {

@@ -42,8 +42,11 @@
                                             data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success w-100" type="button"
+                                        <button class="btn btn-success w-100 mb-2" type="button"
                                             onclick="exportToExcel()">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button" onclick="export_all()">
+                                            Export All
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -140,6 +143,18 @@
                                     @endforeach
                                 </div>
                                 <div class="modal-footer">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                            Pilihan
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button class="dropdown-item" id="modal_komp_pilih" type="button">semua
+                                                komponen</button>
+                                            <button class="dropdown-item" id="modal_komp_hapus" type="button">hapus
+                                                semua</button>
+                                        </div>
+                                    </div>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">OK</button>
                                 </div>
@@ -197,6 +212,46 @@
                                     @endfor
                                 </div>
                                 <div class="modal-footer">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                            Pilihan
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button class="dropdown-item" id="modal_periode_semua" type="button">
+                                                Semua Periode
+                                            </button>
+                                            <button class="dropdown-item" id="modal_periode_q1" type="button">
+                                                Semua Q1
+                                            </button>
+                                            <button class="dropdown-item" id="modal_periode_q2" type="button">
+                                                Semua Q2
+                                            </button>
+                                            <button class="dropdown-item" id="modal_periode_q3" type="button">
+                                                Semua Q3
+                                            </button>
+                                            <button class="dropdown-item" id="modal_periode_q4" type="button">
+                                                Semua Q4
+                                            </button>
+                                            <button class="dropdown-item" id="modal_periode_tahun" type="button">
+                                                Semua Tahun
+                                            </button>
+                                            <div class="dropdown-submenu">
+                                                <button class="dropdown-item dropdown-toggle" type="button">
+                                                    Tahun
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @for ($i = 3; $i >= 0; $i--)
+                                                        <button class="dropdown-item tahun-selector"
+                                                            id="{{ 'modal_tahun_' . ($tahun_berlaku - $i) }}"
+                                                            type="button">{{ $tahun_berlaku - $i }}</button>
+                                                    @endfor
+                                                </div>
+                                            </div>
+                                            <button class="dropdown-item" id="modal_periode_hapus" type="button">
+                                                Hapus Semua</button>
+                                        </div>
+                                    </div>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">OK</button>
                                 </div>
@@ -233,5 +288,133 @@
                 '</html>'
             window.location.href = location + window.btoa(excelTemplate);
         }
+
+        function export_all() {
+            const url = new URL(window.location.href);
+            const periode_filter = url.searchParams.get('periode_filter');
+            let currentUrl = window.location.origin;
+            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            if (periode_filter) {
+                newUrl += `?periode_filter=${periode_filter}`;
+            }
+            console.log(newUrl)
+            window.open(newUrl, '_blank');
+        }
+
+        document.getElementById('modal_komp_pilih').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll("input[id^='komponen_filter']");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_komp_hapus').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll("input[id^='komponen_filter']");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+        });
+
+        document.getElementById('modal_periode_semua').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll("input[id^='periode_filter']");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_periode_hapus').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll("input[id^='periode_filter']");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+        });
+
+        document.getElementById('modal_periode_q1').addEventListener('click', () => {
+            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
+            allCheckboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            const q1Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q1']");
+            q1Checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_periode_q2').addEventListener('click', () => {
+            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
+            allCheckboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            const q2Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q2']");
+            q2Checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_periode_q3').addEventListener('click', () => {
+            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
+            allCheckboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            const q3Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q3']");
+            q3Checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_periode_q4').addEventListener('click', () => {
+            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
+            allCheckboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            const q4Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q4']");
+            q4Checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_periode_tahun').addEventListener('click', () => {
+            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
+            allCheckboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+            allCheckboxes.forEach((checkbox) => {
+                const id = checkbox.id;
+                if (/periode_filter_\d{4}$/.test(id)) {
+                    checkbox.checked = true;
+                }
+            });
+        });
+
+        document.querySelectorAll('.tahun-selector').forEach((button) => {
+            button.addEventListener('click', (event) => {
+                const buttonId = event.target.id;
+                const year = buttonId.split('_').pop();
+                const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
+                allCheckboxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                });
+                allCheckboxes.forEach((checkbox) => {
+                    const id = checkbox.id;
+                    if (id.includes(year)) {
+                        checkbox.checked = true;
+                    }
+                });
+                console.log(`Tombol untuk tahun ${year} diproses.`);
+            });
+        });
+
+        document.querySelectorAll('.dropdown-submenu .dropdown-toggle').forEach(function(element) {
+            element.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.nextElementSibling.classList.toggle('show');
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            document.querySelectorAll('.dropdown-submenu .dropdown-menu').forEach(function(submenu) {
+                submenu.classList.remove('show');
+            });
+        });
     </script>
 @endsection

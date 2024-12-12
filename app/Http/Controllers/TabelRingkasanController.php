@@ -2,19 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RingkasanExportAll;
 use App\Pdrb;
+use App\SettingApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Calculation\Financial\CashFlow\Constant\Periodic\Cumulative;
 use SebastianBergmann\CodeUnitReverseLookup\Wizard;
 
 class TabelRingkasanController extends Controller
 {
     public $list_wilayah;
+    public $tahun_berlaku;
+    public $triwulan_berlaku;
+    public $list_periode = [];
 
     public function __construct()
     {
         $this->list_wilayah = config("app.wilayah");
+        $this->tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first()->setting_value;
+        $this->triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first()->setting_value;
+        for ($i = 3; $i >= 0; $i--) {
+            $tahun = $this->tahun_berlaku - $i;
+            array_push($this->list_periode, "{$tahun}Q1");
+            array_push($this->list_periode, "{$tahun}Q2");
+            array_push($this->list_periode, "{$tahun}Q3");
+            array_push($this->list_periode, "{$tahun}Q4");
+            array_push($this->list_periode, "{$tahun}");
+        }
     }
 
     public $list_tabel = [
@@ -99,32 +115,10 @@ class TabelRingkasanController extends Controller
             'url' => 'pdrb_ringkasan3'
         ],
     ];
-    public $list_periode = [
-        '2021Q1',
-        '2021Q2',
-        '2021Q3',
-        '2021Q4',
-        '2021',
-        '2022Q1',
-        '2022Q2',
-        '2022Q3',
-        '2022Q4',
-        '2022',
-        '2023Q1',
-        '2023Q2',
-        '2023Q3',
-        '2023Q4',
-        '2023',
-        '2024Q1',
-        '2024Q2',
-        '2024Q3',
-        '2024Q4',
-        '2024'
-    ];
 
     public $list_group_komponen = [
         ['column' => "c_pdrb", 'name' => 'PDRB'],
-        ['column' => "c_1, c_1a, c_1b, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
         ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
         ['column' => "c_3, c_3a, c_3b", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
         ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],
@@ -162,36 +156,94 @@ class TabelRingkasanController extends Controller
         ['id' => 'c_8b',  'alias' => '8b. M AP',            'name' =>  '  8.b. Impor Antar Daerah']
     ];
 
-    // public $list_wilayah = [
-    //     ['id' => '00', 'alias' => 'Sumsel',         'name' => 'Sumatera Selatan'],
-    //     ['id' => '01', 'alias' => 'OKU',            'name' => 'Ogan Komering Ulu'],
-    //     ['id' => '02', 'alias' => 'OKI',            'name' => 'Ogan Komering Ilir'],
-    //     ['id' => '03', 'alias' => 'Muara Enim',     'name' => 'Muara Enim'],
-    //     ['id' => '04', 'alias' => 'Lahat',          'name' => 'Lahat'],
-    //     ['id' => '05', 'alias' => 'Musi Rawas',     'name' => 'Musi Rawas'],
-    //     ['id' => '06', 'alias' => 'Muba',           'name' => 'Musi Banyuasin'],
-    //     ['id' => '07', 'alias' => 'Banyu Asin',     'name' => 'Banyuasin'],
-    //     ['id' => '08', 'alias' => 'OKUS',           'name' => 'Ogan Komering Ulu Selatan'],
-    //     ['id' => '09', 'alias' => 'OKUT',           'name' => 'Ogan Komering Ulu Timur'],
-    //     ['id' => '10', 'alias' => 'Ogan Ilir',      'name' => 'Ogan Ilir'],
-    //     ['id' => '11', 'alias' => 'Empat Lawang',   'name' => 'Empat Lawang'],
-    //     ['id' => '12', 'alias' => 'PALI',           'name' => 'PALI'],
-    //     ['id' => '13', 'alias' => 'Muratara',       'name' => 'Musi Rawas Utara'],
-    //     ['id' => '71', 'alias' => 'Palembang',      'name' => 'Palembang'],
-    //     ['id' => '72', 'alias' => 'Prabumulih',     'name' => 'Prabumulih'],
-    //     ['id' => '73', 'alias' => 'Pagar Alam',     'name' => 'Pagar Alam'],
-    //     ['id' => '74', 'alias' => 'Lubuk Linggau',  'name' => 'Lubuk Linggau'],
-    // ];
-
     public function ringkasan1(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_periode = $this->list_periode;
+        $tahun_berlaku = $this->tahun_berlaku;
+        $list_group_komponen = $this->list_group_komponen;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
+        $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_pdrb', 'c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b'];
+        $array_komp_filter = [];
+        foreach ($komponen_filter as $item) {
+            $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
+        }
+        $komponens = [];
+
+        foreach ($array_komp_filter as $arr_komp_filter) {
+            foreach ($list_detail_komponen as $dtl_komp) {
+                if ($dtl_komp['id'] == $arr_komp_filter) {
+                    $komponens[] = [
+                        'id' => $arr_komp_filter,
+                        'name' => $dtl_komp['name'],
+                        'alias' => $dtl_komp['alias']
+                    ];
+                }
+            }
+        }
+        $data = $this->rumus_1($komponens, $periode_filter, $id);
+        return view('pdrb_ringkasan.ringkasan1', compact('list_tabel', 'list_periode', 'tahun_berlaku', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
+    }
+
+    public function ringkasan2(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_periode = $this->list_periode;
+        $list_wilayah = $this->list_wilayah;
+
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.3';
+        $tahun_berlaku = $this->tahun_berlaku;
+        $triwulan_berlaku = $this->triwulan_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : $tahun_berlaku . "Q" . $triwulan_berlaku;
+
+        $data = $this->rumus_2($list_wilayah, $periode_filter);
+        return view('pdrb_ringkasan.ringkasan2', compact('list_tabel', 'list_periode', 'periode_filter', 'tabel_filter', 'data'));
+    }
+
+    public function ringkasan3(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_group_komponen = $this->list_group_komponen;
         $list_detail_komponen = $this->list_detail_komponen;
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : ['2024Q1', '2024Q2', '2024Q3', '2024Q4', '2024'];
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_pdrb', 'c_1, c_1a, c_1b,c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b'];
+        $list_wilayah = $this->list_wilayah;
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
+        $tahun_berlaku = $this->tahun_berlaku;
+        $triwulan_berlaku = $this->triwulan_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : $tahun_berlaku . "Q" . $triwulan_berlaku;
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_1a', 'c_1b', 'c_1c', 'c_1d', 'c_1e', 'c_1f', 'c_1g', 'c_2', 'c_3', 'c_3a', 'c_3b', 'c_4', 'c_4a', 'c_4b', 'c_5', 'c_6', 'c_6a', 'c_6b', 'c_7', 'c_7a', 'c_7b', 'c_8', 'c_8a', 'c_8b', 'c_pdrb'];
+        $komponens = [];
+        foreach ($komponen_filter as $komp_filter) {
+            foreach ($list_detail_komponen as $dtl_komp) {
+                if ($dtl_komp['id'] == $komp_filter) {
+                    $komponens[] = [
+                        'id' => $komp_filter,
+                        'name' => $dtl_komp['name'],
+                        'alias' => $dtl_komp['alias']
+                    ];
+                }
+            }
+        }
+
+        $data = $this->rumus_3($list_wilayah, $komponens, $periode_filter, $id);
+        return view('pdrb_ringkasan.ringkasan3', compact('list_tabel', 'list_periode', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+    }
+
+    public function ringkasan4(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_periode = $this->list_periode;
+        $list_group_komponen = $this->list_group_komponen;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+        $tahun_berlaku = $this->tahun_berlaku;
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.11';
+        $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter :  array_map(function ($item) {
+            return $item['column'];
+        }, $list_group_komponen);
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
@@ -208,8 +260,122 @@ class TabelRingkasanController extends Controller
                 }
             }
         }
-        $data = [];
 
+        $data = $this->rumus_4($komponens, $periode_filter, $id);
+        return view('pdrb_ringkasan.ringkasan4', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_detail_komponen', 'list_group_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+    }
+
+    public function ringkasan5(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_periode = $this->list_periode;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.13';
+        $tahun_berlaku = $this->tahun_berlaku;
+        $triwulan_berlaku = $this->triwulan_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : $tahun_berlaku . "Q" . $triwulan_berlaku;
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+
+        $data = $this->rumus_5($list_detail_komponen, $wilayah_filter, $periode_filter);
+        return view('pdrb_ringkasan.ringkasan5', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
+    }
+
+    public function ringkasan6(Request $request, $id)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_periode = $this->list_periode;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.14';
+        $tahun_berlaku = $this->tahun_berlaku;
+        $triwulan_berlaku = $this->triwulan_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : $tahun_berlaku . "Q" . $triwulan_berlaku;
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+
+        $data = $this->rumus_6($list_detail_komponen, $wilayah_filter, $periode_filter);
+        return view('pdrb_ringkasan.ringkasan6', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
+    }
+
+    public function export_all(Request $request)
+    {
+        $list_tabel = $this->list_tabel;
+        $list_periode = $this->list_periode;
+        $tahun_berlaku = $this->tahun_berlaku;
+        $triwulan_berlaku = $this->triwulan_berlaku;
+        $list_group_komponen = $this->list_group_komponen;
+        $list_detail_komponen = $this->list_detail_komponen;
+        $list_wilayah = $this->list_wilayah;
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+
+        $komponens = [];
+        foreach ($list_detail_komponen as $dtl_komp) {
+            $komponens[] = [
+                'id' => $dtl_komp['id'],
+                'name' => $dtl_komp['name'],
+                'alias' => $dtl_komp['alias']
+            ];
+        }
+
+        $table = [];
+        foreach ($list_tabel as $tbl) {
+            $row = [
+                'id' => $tbl['id'],
+                'name' => $tbl['name']
+            ];
+            if (in_array($tbl['id'], ['1.1', '1.2'], true)) {
+                $periode = is_array($request->periode_filter) && !empty($request->periode_filter)
+                    ? $request->periode_filter : $this->list_periode;
+                $row['periode_filter'] = $periode;
+                $rumus = $this->rumus_1($komponens, $periode, $tbl['id']);
+                $row['data'] = $rumus;
+            } elseif (in_array($tbl['id'], ['1.3'], true)) {
+                $periode = $request->periode_filter && !is_array($request->periode_filter)
+                    ? $request->periode_filter : $tahun_berlaku . 'Q' . $triwulan_berlaku;
+                $row['periode_filter'] = $periode;
+                $rumus = $this->rumus_2($list_wilayah, $periode);
+                $row['data'] = $rumus;
+            } elseif (in_array($tbl['id'], ['1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '1.10', '1.15', '1.16'], true)) {
+                $periode = $request->periode_filter && !is_array($request->periode_filter)
+                    ? $request->periode_filter : $tahun_berlaku . 'Q' . $triwulan_berlaku;
+                $row['periode_filter'] = $periode;
+                $triwulan_berlaku;
+                $row['komponens'] = $this->list_detail_komponen;
+                $rumus = $this->rumus_3($list_wilayah, $komponens, $periode, $tbl['id']);
+                $row['data'] = $rumus;
+            } elseif (in_array($tbl['id'], ['1.11', '1.12'], true)) {
+                $periode = is_array($request->periode_filter) && !empty($request->periode_filter)
+                    ? $request->periode_filter : $this->list_periode;
+                $row['periode_filter'] = $periode;
+                $rumus = $this->rumus_4($komponens,  $periode, $tbl['id']);
+                $row['data'] = $rumus;
+            } elseif (in_array($tbl['id'], ['1.13'], true)) {
+                $row['wilayah_filter'] = $wilayah_filter;
+                $periode = $request->periode_filter && !is_array($request->periode_filter)
+                    ? $request->periode_filter : $tahun_berlaku . 'Q' . $triwulan_berlaku;
+                $row['periode_filter'] = $periode;
+                $rumus = $this->rumus_5($komponens, $wilayah_filter, $periode);
+                $row['data'] = $rumus;
+            } elseif (in_array($tbl['id'], ['1.14'], true)) {
+                $row['wilayah_filter'] = $wilayah_filter;
+                $periode = $request->periode_filter && !is_array($request->periode_filter)
+                    ? $request->periode_filter : $tahun_berlaku . 'Q' . $triwulan_berlaku;
+                $row['periode_filter'] = $periode;
+                $rumus = $this->rumus_6($komponens, $wilayah_filter, $periode);
+                $row['data'] = $rumus;
+            }
+            $table[] = $row;
+        }
+
+        // return view('pdrb_ringkasan.export_all', compact('table'));
+        return Excel::download(new RingkasanExportAll($table), 'All_Ringkasan.xlsx');
+    }
+
+    public function rumus_1($komponens, $periode_filter, $id)
+    {
+        $data = [];
         foreach ($komponens as $komponen) {
             $row = [];
             $row = [
@@ -217,14 +383,9 @@ class TabelRingkasanController extends Controller
                 'komponen_name' => $komponen['name'],
             ];
             $komp_id = $komponen['id'];
-            // $isFirstIteration = true;
             foreach ($periode_filter as $periode) {
-                // if ($isFirstIteration) {
-                //     $isFirstIteration = false;
-                //     continue;
-                // }
                 $arr_periode = explode("Q", $periode);
-                if ($id == '1.1') {
+                if ($id === '1.1') {
                     if (sizeof($arr_periode) > 1) {
                         $rev_kab =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
                             ->where('kode_kab', "!=",  '00')
@@ -637,7 +798,7 @@ class TabelRingkasanController extends Controller
                             $row[$periode . 'ctc_prov'] = null;
                         }
                     }
-                } else if ($id == '1.2') {
+                } else if ($id === '1.2') {
                     if (sizeof($arr_periode) > 1) {
                         $rev_kab_hb =  Pdrb::selectRaw('kode_kab, MAX(revisi_ke) as max_revisi')
                             ->where('kode_kab', "!=",  '00')
@@ -1297,17 +1458,11 @@ class TabelRingkasanController extends Controller
             }
             $data[] = $row;
         }
-        // dd($data);
-        return view('pdrb_ringkasan.ringkasan1', compact('list_tabel', 'list_periode', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
+        return $data;
     }
 
-    public function ringkasan2(Request $request, $id)
+    public function rumus_2($list_wilayah, $periode_filter)
     {
-        $list_tabel = $this->list_tabel;
-        $list_periode = $this->list_periode;
-        $list_wilayah = $this->list_wilayah;
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.3';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
         $data = [];
         foreach ($list_wilayah as $wil_id => $wilayah) {
             $row = [];
@@ -1603,32 +1758,11 @@ class TabelRingkasanController extends Controller
             }
             $data[] = $row;
         }
-        return view('pdrb_ringkasan.ringkasan2', compact('list_tabel', 'list_periode', 'periode_filter', 'tabel_filter', 'data'));
+        return $data;
     }
 
-    public function ringkasan3(Request $request, $id)
+    public function rumus_3($list_wilayah, $komponens, $periode_filter, $id)
     {
-        $list_tabel = $this->list_tabel;
-        $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
-        $list_detail_komponen = $this->list_detail_komponen;
-        $list_wilayah = $this->list_wilayah;
-
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_1a', 'c_1b', 'c_1c', 'c_1d', 'c_1e', 'c_1f', 'c_1g', 'c_2', 'c_3', 'c_3a', 'c_3b', 'c_4', 'c_4a', 'c_4b', 'c_5', 'c_6', 'c_6a', 'c_6b', 'c_7', 'c_7a', 'c_7b', 'c_8', 'c_8a', 'c_8b', 'c_pdrb'];
-        $komponens = [];
-        foreach ($komponen_filter as $komp_filter) {
-            foreach ($list_detail_komponen as $dtl_komp) {
-                if ($dtl_komp['id'] == $komp_filter) {
-                    $komponens[] = [
-                        'id' => $komp_filter,
-                        'name' => $dtl_komp['name'],
-                        'alias' => $dtl_komp['alias']
-                    ];
-                }
-            }
-        }
         $data = [];
         foreach ($list_wilayah as $wil_id => $wilayah) {
             $row = [];
@@ -2348,40 +2482,11 @@ class TabelRingkasanController extends Controller
                 $data[] = $row;
             }
         }
-        return view('pdrb_ringkasan.ringkasan3', compact('list_tabel', 'list_periode', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+        return $data;
     }
 
-    public function ringkasan4(Request $request, $id)
+    public function rumus_4($komponens, $periode_filter, $id)
     {
-        $list_tabel = $this->list_tabel;
-        $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
-        $list_detail_komponen = $this->list_detail_komponen;
-        $list_wilayah = $this->list_wilayah;
-
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : ['2024Q1', '2024Q2', '2024Q3', '2024Q4', '2024'];
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter :  array_map(function ($item) {
-            return $item['column'];
-        }, $list_group_komponen);
-        $array_komp_filter = [];
-        foreach ($komponen_filter as $item) {
-            // Pecah elemen berdasarkan koma dan spasi, lalu gabungkan ke array akhir
-            $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
-        }
-        $komponens = [];
-        foreach ($array_komp_filter as $arr_komp_filter) {
-            foreach ($list_detail_komponen as $dtl_komp) {
-                if ($dtl_komp['id'] == $arr_komp_filter) {
-                    $komponens[] = [
-                        'id' => $arr_komp_filter,
-                        'name' => $dtl_komp['name'],
-                        'alias' => $dtl_komp['alias']
-                    ];
-                }
-            }
-        }
-
         $data = [];
         foreach ($komponens as $komponen) {
             $row = [];
@@ -2668,26 +2773,16 @@ class TabelRingkasanController extends Controller
                 $row[$periode . 'adhb'] = $data_hb_kab && isset($data_hb_kab->$komp_id) && $data_hb_prov && isset($data_hb_prov->$komp_id) && $data_hb_prov->$komp_id != 0 ?  ($data_hb_kab->$komp_id - $data_hb_prov->$komp_id) / $data_hb_prov->$komp_id * 100 : null;
                 $row[$periode . 'adhk'] = $data_hk_kab && isset($data_hk_kab->$komp_id) && $data_hk_prov && isset($data_hk_prov->$komp_id) && $data_hk_prov->$komp_id != 0 ?  ($data_hk_kab->$komp_id - $data_hk_prov->$komp_id) / $data_hk_prov->$komp_id * 100 : null;
             }
+            // dd($row);
             $data[] = $row;
         }
-        // dd($data);
-        return view('pdrb_ringkasan.ringkasan4', compact('list_tabel', 'list_periode', 'list_detail_komponen', 'list_group_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+        return $data;
     }
 
-    public function ringkasan5(Request $request, $id)
+    public function rumus_5($komponens, $wilayah_filter, $periode_filter)
     {
-        $list_tabel = $this->list_tabel;
-        $list_periode = $this->list_periode;
-        $list_detail_komponen = $this->list_detail_komponen;
-        $list_wilayah = $this->list_wilayah;
-
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
-
         $data = [];
-
-        foreach ($list_detail_komponen as $komp) {
+        foreach ($komponens as $komp) {
             $row = [
                 'id' => $komp['id'],
                 'name' => $komp['name'],
@@ -2957,24 +3052,13 @@ class TabelRingkasanController extends Controller
             }
             $data[] = $row;
         }
-        // dd($data);
-        return view('pdrb_ringkasan.ringkasan5', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
+        return $data;
     }
 
-    public function ringkasan6(Request $request, $id)
+    public function rumus_6($komponens, $wilayah_filter, $periode_filter)
     {
-        $list_tabel = $this->list_tabel;
-        $list_periode = $this->list_periode;
-        $list_detail_komponen = $this->list_detail_komponen;
-        $list_wilayah = $this->list_wilayah;
-
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : '2024Q2';
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
-
         $data = [];
-
-        foreach ($list_detail_komponen as $komp) {
+        foreach ($komponens as $komp) {
             $row = [
                 'id' => $komp['id'],
                 'name' => $komp['name'],
@@ -2982,7 +3066,6 @@ class TabelRingkasanController extends Controller
             ];
             $komp_id = $komp['id'];
             $arr_periode = explode("Q", $periode_filter);
-
             if (sizeof($arr_periode) > 1) {
                 $data_hb_y_rilis = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
                     ->where('kode_kab', $wilayah_filter)
@@ -3614,6 +3697,6 @@ class TabelRingkasanController extends Controller
             }
             $data[] = $row;
         }
-        return view('pdrb_ringkasan.ringkasan6', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
+        return $data;
     }
 }

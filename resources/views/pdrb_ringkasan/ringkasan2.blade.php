@@ -47,6 +47,11 @@
                                         <button class="btn btn-success w-100" type="button"
                                             onclick="exportToExcel()">Export Excel</button>
                                     </div>
+                                    <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
+                                        <button class="btn btn-success w-100" type="button" onclick="export_all()">
+                                            Export All
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -186,6 +191,18 @@
                 '</body> ' +
                 '</html>'
             window.location.href = location + window.btoa(excelTemplate);
+        }
+
+        function export_all() {
+            const url = new URL(window.location.href);
+            const periode_filter = url.searchParams.get('periode_filter');
+            let currentUrl = window.location.origin;
+            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            if (periode_filter) {
+                newUrl += `?periode_filter=${periode_filter}`;
+            }
+            console.log(newUrl)
+            window.open(newUrl, '_blank');
         }
     </script>
 @endsection

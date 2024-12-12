@@ -48,8 +48,11 @@
                                             data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success w-100" type="button"
+                                        <button class="btn btn-success w-100 mb-2" type="button"
                                             onclick="exportToExcel()">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button" onclick="export_all()">
+                                            Export All
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -92,7 +95,6 @@
                                                             : '' }}
                                                     </td>
                                                 @endforeach
-
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -100,7 +102,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="modal fade" id="komponenModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
@@ -133,6 +134,18 @@
                                     @endforeach
                                 </div>
                                 <div class="modal-footer">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            data-toggle="dropdown" aria-expanded="false">
+                                            Pilihan
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <button class="dropdown-item" id="modal_komp_pilih" type="button">semua
+                                                komponen</button>
+                                            <button class="dropdown-item" id="modal_komp_hapus" type="button">hapus
+                                                semua</button>
+                                        </div>
+                                    </div>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">OK</button>
                                 </div>
@@ -186,5 +199,31 @@
                 '</html>'
             window.location.href = location + window.btoa(excelTemplate);
         }
+
+        function export_all() {
+            const url = new URL(window.location.href);
+            const periode_filter = url.searchParams.get('periode_filter');
+            let currentUrl = window.location.origin;
+            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            if (periode_filter) {
+                newUrl += `?periode_filter=${periode_filter}`;
+            }
+            console.log(newUrl)
+            window.open(newUrl, '_blank');
+        }
+
+        document.getElementById('modal_komp_pilih').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll("input[id^='komponen_filter']");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('modal_komp_hapus').addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll("input[id^='komponen_filter']");
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+            });
+        });
     </script>
 @endsection

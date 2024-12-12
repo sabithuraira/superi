@@ -3,16 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Pdrb;
+use App\SettingApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TabelKabkotController extends Controller
 {
     public $list_wilayah;
+    public $tahun_berlaku;
+    public $triwulan_berlaku;
+    public $list_periode = [];
 
     public function __construct()
     {
         $this->list_wilayah = config("app.wilayah");
+        $this->tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first()->setting_value;
+        $this->triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first()->setting_value;
+        for ($i = 3; $i >= 0; $i--) {
+            $tahun = $this->tahun_berlaku - $i;
+            array_push($this->list_periode, "{$tahun}Q1");
+            array_push($this->list_periode, "{$tahun}Q2");
+            array_push($this->list_periode, "{$tahun}Q3");
+            array_push($this->list_periode, "{$tahun}Q4");
+            array_push($this->list_periode, "{$tahun}");
+        }
     }
 
     public $list_tabel = [
@@ -59,16 +73,8 @@ class TabelKabkotController extends Controller
 
     ];
 
-    public $list_periode = [
-        '2024Q1',
-        '2024Q2',
-        '2024Q3',
-        '2024Q4',
-        '2024'
-    ];
-
-    public $list_group_komponen = [
-        ['column' => "c_1, c_1a, c_1b, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+    public $list_group_12_pkrt = [
+        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
         ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
         ['column' => "c_3, c_3a, c_3b", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
         ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],
@@ -77,6 +83,26 @@ class TabelKabkotController extends Controller
         ['column' => "c_7, c_7a, c_7b", 'name' => '7. Impor Luar Negeri'],
         ['column' => "c_8, c_8a, c_8b", 'name' => '8. Net Ekspor Antar Daerah'],
         ['column' => "c_pdrb", 'name' => '9. PDRB'],
+    ];
+
+    public $list_group_7_pkrt = [
+        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+        ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
+        ['column' => "c_3, c_3a, c_3b", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
+        ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],
+        ['column' => "c_5", 'name' => '5. Perubahan Inventori'],
+        ['column' => "c_6, c_6a, c_6b", 'name' => '6. Ekspor Luar Negeri'],
+        ['column' => "c_7, c_7a, c_7b", 'name' => '7. Impor Luar Negeri'],
+        ['column' => "c_8, c_8a, c_8b", 'name' => '8. Net Ekspor Antar Daerah'],
+        ['column' => "c_pdrb", 'name' => '9. PDRB'],
+    ];
+
+    public $list_group_rilis_komponen = [
+        ['column' => "c_1", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+        ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
+        ['column' => "c_3", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
+        ['column' => "c_4", 'name' => '4. Pembentukan Modal tetap Bruto'],
+        ['column' => "c_pdrb", 'name' => '5. PDRB'],
     ];
 
     public $list_detail_komponen = [
@@ -162,38 +188,17 @@ class TabelKabkotController extends Controller
         ['id' => 'c_pdrb',  'alias' => 'PDRB',               'name' => 'PDRB'],
     ];
 
-
-    // public $list_wilayah = [
-    //     ['id' => '00', 'alias' => 'Sumsel',         'name' => 'Sumatera Selatan'],
-    //     ['id' => '01', 'alias' => 'OKU',            'name' => 'Ogan Komering Ulu'],
-    //     ['id' => '02', 'alias' => 'OKI',            'name' => 'Ogan Komering Ilir'],
-    //     ['id' => '03', 'alias' => 'Muara Enim',     'name' => 'Muara Enim'],
-    //     ['id' => '04', 'alias' => 'Lahat',          'name' => 'Lahat'],
-    //     ['id' => '05', 'alias' => 'Musi Rawas',     'name' => 'Musi Rawas'],
-    //     ['id' => '06', 'alias' => 'Muba',           'name' => 'Musi Banyuasin'],
-    //     ['id' => '07', 'alias' => 'Banyu Asin',     'name' => 'Banyuasin'],
-    //     ['id' => '08', 'alias' => 'OKUS',           'name' => 'Ogan Komering Ulu Selatan'],
-    //     ['id' => '09', 'alias' => 'OKUT',           'name' => 'Ogan Komering Ulu Timur'],
-    //     ['id' => '10', 'alias' => 'Ogan Ilir',      'name' => 'Ogan Ilir'],
-    //     ['id' => '11', 'alias' => 'Empat Lawang',   'name' => 'Empat Lawang'],
-    //     ['id' => '12', 'alias' => 'PALI',           'name' => 'PALI'],
-    //     ['id' => '13', 'alias' => 'Muratara',       'name' => 'Musi Rawas Utara'],
-    //     ['id' => '71', 'alias' => 'Palembang',      'name' => 'Palembang'],
-    //     ['id' => '72', 'alias' => 'Prabumulih',     'name' => 'Prabumulih'],
-    //     ['id' => '73', 'alias' => 'Pagar Alam',     'name' => 'Pagar Alam'],
-    //     ['id' => '74', 'alias' => 'Lubuk Linggau',  'name' => 'Lubuk Linggau'],
-    // ];
-
     public function kabkot(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
+        $list_group_komponen = $this->list_group_12_pkrt;
         $list_detail_komponen = $this->list_detail_komponen;
         $list_wilayah = $this->list_wilayah;
+        $tahun_berlaku = $this->tahun_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b,c_1c, c_1d, c_1e, c_1f, c_1g,c_1h, c_1i, c_1j, c_1k, c_1l', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b', 'c_8, c_8a, c_8b', 'c_pdrb'];
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b', 'c_8, c_8a, c_8b', 'c_pdrb'];
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
         $array_komp_filter = [];
@@ -879,24 +884,26 @@ class TabelKabkotController extends Controller
             $data[] = $row;
         }
         // dd($data);
-        return view('pdrb_kabkot.index', compact('list_tabel', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.index', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 
     public function kabkot_7pkrt(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
+        $list_group_komponen = $this->list_group_7_pkrt;
         $list_detail_komponen = $this->list_detail_komponen_7pkrt;
         $list_wilayah = $this->list_wilayah;
-        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b,c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b', 'c_8, c_8a, c_8b', 'c_pdrb'];
+        $tahun_berlaku = $this->tahun_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
+        $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';  //'c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g'
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b', 'c_8, c_8a, c_8b', 'c_pdrb'];
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
         }
+
         $komponens = [];
         foreach ($array_komp_filter as $arr_komp_filter) {
             foreach ($list_detail_komponen as $dtl_komp) {
@@ -1597,14 +1604,14 @@ class TabelKabkotController extends Controller
             }
             $data[] = $row;
         }
-        return view('pdrb_kabkot.kabkot_7pkrt', compact('list_tabel', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.kabkot_7pkrt', compact('list_tabel', 'tahun_berlaku',  'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 
     public function kabkot_brs(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
+        $list_group_komponen = $this->list_group_7_pkrt;
         $list_detail_komponen = $this->list_detail_komponen_brs;
         $list_wilayah = $this->list_wilayah;
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
@@ -2395,12 +2402,13 @@ class TabelKabkotController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
+        $list_group_komponen = $this->list_group_rilis_komponen;
         $list_detail_komponen = $this->list_detail_komponen_rilis;
         $list_wilayah = $this->list_wilayah;
+        $tahun_berlaku = $this->tahun_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
-        $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b,c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b', 'c_8, c_8a, c_8b', 'c_pdrb'];
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_2', 'c_3', 'c_4', 'c_pdrb'];
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
@@ -3106,6 +3114,6 @@ class TabelKabkotController extends Controller
             }
             $data[] = $row;
         }
-        return view('pdrb_kabkot.kabkot_rilis', compact('list_tabel', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.kabkot_rilis', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 }

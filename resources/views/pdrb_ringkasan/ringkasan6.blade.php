@@ -53,8 +53,11 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 ">
-                                        <button class="btn btn-success w-100" type="button"
+                                        <button class="btn btn-success w-100 mb-2" type="button"
                                             onclick="exportToExcel()">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button" onclick="export_all()">
+                                            Export All
+                                        </button>
                                     </div>
                                 </div>
                             </form>
@@ -110,40 +113,40 @@
                                                     {{ $dt['name'] }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('yoy_rilis', $dt) ? round($dt['yoy_rilis'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('yoy_rilis', $dt) && $dt['yoy_rilis'] ? round($dt['yoy_rilis'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('yoy_revisi', $dt) ? round($dt['yoy_revisi'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('yoy_revisi', $dt) && $dt['yoy_revisi'] ? round($dt['yoy_revisi'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('qtq_rilis', $dt) ? round($dt['qtq_rilis'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('qtq_rilis', $dt) && $dt['qtq_rilis'] ? round($dt['qtq_rilis'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('qtq_revisi', $dt) ? round($dt['qtq_revisi'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('qtq_revisi', $dt) && $dt['qtq_revisi'] ? round($dt['qtq_revisi'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('ctc_rilis', $dt) ? round($dt['ctc_rilis'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('ctc_rilis', $dt) && $dt['ctc_rilis'] ? round($dt['ctc_rilis'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('ctc_revisi', $dt) ? round($dt['ctc_revisi'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('ctc_revisi', $dt) && $dt['ctc_revisi'] ? round($dt['ctc_revisi'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_yoy_rilis', $dt) ? round($dt['implisit_yoy_rilis'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_yoy_rilis', $dt) && $dt['implisit_yoy_rilis'] ? round($dt['implisit_yoy_rilis'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_yoy_revisi', $dt) ? round($dt['implisit_yoy_revisi'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_yoy_revisi', $dt) && $dt['implisit_yoy_revisi'] ? round($dt['implisit_yoy_revisi'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_qtq_rilis', $dt) ? round($dt['implisit_qtq_rilis'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_qtq_rilis', $dt) && $dt['implisit_qtq_rilis'] ? round($dt['implisit_qtq_rilis'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_qtq_revisi', $dt) ? round($dt['implisit_qtq_revisi'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_qtq_revisi', $dt) && $dt['implisit_qtq_revisi'] ? round($dt['implisit_qtq_revisi'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_ctc_rilis', $dt) ? round($dt['implisit_ctc_rilis'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_ctc_rilis', $dt) && $dt['implisit_ctc_rilis'] ? round($dt['implisit_ctc_rilis'], 2) : '' }}
                                                 </td>
                                                 <td>
-                                                    {{ array_key_exists('implisit_ctc_revisi', $dt) ? round($dt['implisit_ctc_revisi'], 2) : 'N/A' }}
+                                                    {{ array_key_exists('implisit_ctc_revisi', $dt) && $dt['implisit_ctc_revisi'] ? round($dt['implisit_ctc_revisi'], 2) : '' }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -185,6 +188,18 @@
             form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' + periode;
             console.log(form.action)
             form.submit();
+        }
+
+        function export_all() {
+            const url = new URL(window.location.href);
+            const periode_filter = url.searchParams.get('periode_filter');
+            let currentUrl = window.location.origin;
+            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            if (periode_filter) {
+                newUrl += `?periode_filter=${periode_filter}`;
+            }
+            console.log(newUrl)
+            window.open(newUrl, '_blank');
         }
     </script>
 @endsection

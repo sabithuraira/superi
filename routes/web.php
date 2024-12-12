@@ -62,6 +62,7 @@ Route::group(['middleware' => ['permission:tabel_ringkasan']], function () {
     Route::get('pdrb_ringkasan4/{id}', 'TabelRingkasanController@ringkasan4');
     Route::get('pdrb_ringkasan5/{id}', 'TabelRingkasanController@ringkasan5');
     Route::get('pdrb_ringkasan6/{id}', 'TabelRingkasanController@ringkasan6');
+    Route::get('pdrb_ringkasan_export_all', 'TabelRingkasanController@export_all');
 });
 
 Route::group(['middleware' => ['permission:tabel_resume']], function () {

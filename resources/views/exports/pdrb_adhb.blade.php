@@ -11,9 +11,15 @@
         <tr>
             <th width="50"><b>Komponen</b></th>
             <th><b>{{ $tahun }}Q1</b></th>
-            <th><b>{{ $tahun }}Q2</b></th>
+            @if($triwulan>=2)
+                <th><b>{{ $tahun }}Q2</b></th>
+            @endif
+            @if($triwulan>=3)
             <th><b>{{ $tahun }}Q3</b></th>
+            @endif
+            @if($triwulan>=4)
             <th><b>{{ $tahun }}Q4</b></th>
+            @endif
         </tr>
     </thead>
 
@@ -34,22 +40,28 @@
                     <td >{{ $datas['adhb'][0]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
                 @endif
                 
-                @if($datas['adhb'][1]==null)
-                    <td></td>
-                @else 
-                    <td >{{ $datas['adhb'][1]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
+                @if($triwulan>=2)
+                    @if($datas['adhb'][1]==null)
+                        <td></td>
+                    @else 
+                        <td >{{ $datas['adhb'][1]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
+                    @endif
                 @endif
                 
-                @if($datas['adhb'][2]==null)
-                    <td></td>
-                @else 
-                    <td >{{ $datas['adhb'][2]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
+                @if($triwulan>=3)
+                    @if($datas['adhb'][2]==null)
+                        <td></td>
+                    @else 
+                        <td >{{ $datas['adhb'][2]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
+                    @endif
                 @endif
                 
-                @if($datas['adhb'][3]==null)
-                    <td></td>
-                @else 
-                    <td >{{ $datas['adhb'][3]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
+                @if($triwulan>=4)
+                    @if($datas['adhb'][3]==null)
+                        <td></td>
+                    @else 
+                        <td >{{ $datas['adhb'][3]->{'c_'.str_replace('.', '', $data['no_komponen'])} }}</td>
+                    @endif
                 @endif
             </tr>
 
@@ -69,22 +81,28 @@
                         <td >{{ $datas['adhb'][0]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
                     @endif
                     
-                    @if($datas['adhb'][1]==null)
-                        <td></td>
-                    @else 
-                        <td >{{ $datas['adhb'][1]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
+                    @if($triwulan>=2)
+                        @if($datas['adhb'][1]==null)
+                            <td></td>
+                        @else 
+                            <td >{{ $datas['adhb'][1]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
+                        @endif
                     @endif
                     
-                    @if($datas['adhb'][2]==null)
-                        <td></td>
-                    @else 
-                        <td >{{ $datas['adhb'][2]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
+                    @if($triwulan>=3)
+                        @if($datas['adhb'][2]==null)
+                            <td></td>
+                        @else 
+                            <td >{{ $datas['adhb'][2]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
+                        @endif
                     @endif
                     
-                    @if($datas['adhb'][3]==null)
-                        <td></td>
-                    @else 
-                        <td >{{ $datas['adhb'][3]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
+                    @if($triwulan>=4)
+                        @if($datas['adhb'][3]==null)
+                            <td></td>
+                        @else 
+                            <td >{{ $datas['adhb'][3]->{'c_'.str_replace('.', '', $data2['no_komponen'])} }}</td>
+                        @endif
                     @endif
                 </tr>
             @endforeach
@@ -99,22 +117,28 @@
                 <td >{{ $datas['adhb'][0]->{'c_pdrb'} }}</td>
             @endif
             
+            @if($triwulan>=2)
             @if($datas['adhb'][1]==null)
                 <td></td>
             @else 
                 <td >{{ $datas['adhb'][1]->{'c_pdrb'} }}</td>
             @endif
+            @endif
             
+            @if($triwulan>=3)
             @if($datas['adhb'][2]==null)
                 <td></td>
             @else 
                 <td >{{ $datas['adhb'][2]->{'c_pdrb'} }}</td>
             @endif
+            @endif
             
+            @if($triwulan>=4)
             @if($datas['adhb'][3]==null)
                 <td></td>
             @else 
                 <td >{{ $datas['adhb'][3]->{'c_pdrb'} }}</td>
+            @endif
             @endif
         </tr>
     </tbody>

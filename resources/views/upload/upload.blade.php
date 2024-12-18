@@ -19,7 +19,7 @@
                     @csrf
                     <div class="row clearfix">
 
-                        <div class="col-lg-4 col-md-12 left-box">
+                        <div class="col-lg-3 col-md-12 left-box">
                             <div class="form-group">
                                 <label>Kabupaten/Kota:</label>
 
@@ -34,7 +34,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-12 left-box">
+                        <div class="col-lg-3 col-md-12 left-box">
                             <div class="form-group">
                                 <label>Tahun:</label>
 
@@ -48,7 +48,20 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-12 right-box">
+                        <div class="col-lg-3 col-md-12 left-box">
+                            <div class="form-group">
+                                <label>Triwulan:</label>
+                                <div class="input-group">
+                                <select class="form-control  form-control-sm" name="triwulan" disabled v-model="form_data.triwulan">
+                                    @for ($i=1;$i<=4;$i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-12 right-box">
                             <div class="form-group">
                                 <label>Pilih File:</label>
                                 <input type="file" class="form-control" name="excel_file">
@@ -214,7 +227,8 @@ var vm = new Vue({
     data:  {
         form_data: {
             wilayah: {!! json_encode($wilayah) !!},
-            tahun: {!! json_encode($tahun) !!}
+            tahun: {!! json_encode($tahun) !!},
+            triwulan:  {!! json_encode($triwulan) !!},
         },
         datas: [],
         komponen: [],

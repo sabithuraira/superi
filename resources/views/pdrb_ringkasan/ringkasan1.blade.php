@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="col">
                             <form id="form_filter" method="get" action="{{ url('pdrb_ringkasan1') }}">
-                                @csrf
+
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
                                         <select name="tabel_filter" id="tabel_filter" class="form-control"
@@ -226,37 +226,41 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @for ($i = 2021; $i <= 2024; $i++)
-                                        <div class ="row">
-                                            @for ($q = 1; $q <= 4; $q++)
-                                                <div class="form-check col-2">
+                                    <div class="row">
+                                        @foreach ($list_periode as $li_per)
+                                            @if ($li_per < 2018)
+                                                <div class="col-8"></div>
+                                                <div class="form-check col-4">
                                                     <input class="form-check-input" type="checkbox"
-                                                        value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
                                                         @foreach ($periode_filter as $per_fil)
-                                                                @if ($per_fil === $i . 'Q' . $q)
-                                                                checked
-                                                                @endif @endforeach>
+                                                @if ($per_fil === $li_per)
+                                                checked
+                                                @endif @endforeach>
                                                     <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $i . 'Q' . $q }}">
-                                                        {{ $i . 'Q' . $q }}
+                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                        {{ $li_per }}
                                                     </label>
                                                 </div>
-                                            @endfor
-                                            <div class="form-check col-2">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="{{ $i }}" name="periode_filter[]"
-                                                    id="{{ 'periode_filter_' . $i }}"
-                                                    @foreach ($periode_filter as $per_fil)
-                                                                @if ($per_fil === (string) $i)
-                                                                checked
-                                                                @endif @endforeach>
-                                                <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">
-                                                    {{ $i }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                    @endfor
+                                            @else
+                                                <div
+                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                        @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil === $li_per)
+                                                    checked
+                                                    @endif @endforeach>
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                        {{ $li_per }}
+                                                    </label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
@@ -302,7 +306,6 @@
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">OK</button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -310,17 +313,18 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
     <script>
+        var APP_URL = {!! json_encode(url('/')) !!}
+
         function updateFormAction(selectElement) {
             var form = document.getElementById('form_filter');
             var selectedOption = selectElement.options[selectElement.selectedIndex];
             var url = selectedOption.getAttribute('data-url');
             var data_id = selectedOption.getAttribute('data-id');
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id;
+            form.action = APP_URL + '/' + url + '/' + data_id;
             form.submit();
         }
 
@@ -341,11 +345,10 @@
             const url = new URL(window.location.href);
             const periode_filter = url.searchParams.get('periode_filter');
             let currentUrl = window.location.origin;
-            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            let newUrl = `${APP_URL}/pdrb_ringkasan_export_all`;
             if (periode_filter) {
                 newUrl += `?periode_filter=${periode_filter}`;
             }
-            console.log(newUrl)
             window.open(newUrl, '_blank');
         }
 

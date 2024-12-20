@@ -19,12 +19,9 @@ class RevisiKabkotController extends Controller
     {
         $this->list_wilayah = config("app.wilayah");
         $this->tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first()->setting_value;
-        for ($i = 3; $i >= 0; $i--) {
-            $tahun = $this->tahun_berlaku - $i;
-            array_push($this->list_periode, "{$tahun}Q1");
-            array_push($this->list_periode, "{$tahun}Q2");
-            array_push($this->list_periode, "{$tahun}Q3");
-            array_push($this->list_periode, "{$tahun}Q4");
+        $this->triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first()->setting_value;
+        for ($i = 1; $i <= $this->triwulan_berlaku; $i++) {
+            array_push($this->list_periode, "{$this->tahun_berlaku}Q{$i}");
         }
     }
 

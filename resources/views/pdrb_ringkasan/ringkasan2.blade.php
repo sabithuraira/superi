@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col">
                             <form id="form_filter" method="get" action="{{ url('pdrb_ringkasan1') }}">
-                                @csrf
+
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
                                         <select name="tabel_filter" id="tabel_filter" class="form-control"
@@ -113,7 +113,7 @@
                                             <tr
                                                 style="@if ($shouldBold) background-color:#f2f2f2;font-weight: bold; @endif">
                                                 <td style="@if ($shouldBold) font-weight: bold; @endif">
-                                                    [{{ $dt['id'] }}] {{ $dt['alias'] }}
+                                                    [16{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 <td>
                                                     {{ array_key_exists('yoy_prev', $dt) && $dt['yoy_prev'] ? round($dt['yoy_prev'], 2) : '' }}
@@ -154,6 +154,8 @@
 
 @section('scripts')
     <script>
+        var APP_URL = {!! json_encode(url('/')) !!}
+
         function updateFormAction() {
             var form = document.getElementById('form_filter');
             var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
@@ -161,8 +163,7 @@
             var url = tabel_option.getAttribute('data-url');
             var data_id = tabel_option.getAttribute('data-id');
             document.getElementById("periode_filter").disabled = true;
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id;
-            console.log(form.action)
+            form.action = APP_URL + '/' + url + '/' + data_id;
             form.submit();
         }
 
@@ -175,7 +176,7 @@
             var periode_option = document.getElementById('periode_filter').options[document.getElementById('periode_filter')
                 .selectedIndex];
             var periode = periode_option.getAttribute('data-periode')
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' + periode;
+            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' + periode;
             console.log(form.action)
             form.submit();
         }
@@ -197,7 +198,7 @@
             const url = new URL(window.location.href);
             const periode_filter = url.searchParams.get('periode_filter');
             let currentUrl = window.location.origin;
-            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            let newUrl = `${APP_URL}/pdrb_ringkasan_export_all`;
             if (periode_filter) {
                 newUrl += `?periode_filter=${periode_filter}`;
             }

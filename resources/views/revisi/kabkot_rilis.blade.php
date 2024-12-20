@@ -55,7 +55,7 @@
                                             @foreach ($list_wilayah as $key => $wil)
                                                 <option value="{{ $key }}" data-id="{{ $key }}"
                                                     @if ($key == $wilayah_filter) selected @endif>
-                                                    {{ $key }} - {{ $wil }}
+                                                    16{{ $key }} - {{ $wil }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -143,8 +143,8 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
+
                 <div class="modal fade" id="komponenModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -196,6 +196,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="modal fade" id="periodeModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -212,37 +213,41 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    @for ($i = 2021; $i <= 2024; $i++)
-                                        <div class="row">
-                                            @for ($q = 1; $q <= 4; $q++)
-                                                <div class="form-check col-2">
+                                    <div class="row">
+                                        @foreach ($list_periode as $li_per)
+                                            @if ($li_per < 2018)
+                                                <div class="col-8"></div>
+                                                <div class="form-check col-4">
                                                     <input class="form-check-input" type="checkbox"
-                                                        value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
                                                         @foreach ($periode_filter as $per_fil)
-                                        @if ($per_fil === $i . 'Q' . $q)
-                                        checked
-                                        @endif @endforeach>
+                                                @if ($per_fil === $li_per)
+                                                checked
+                                                @endif @endforeach>
                                                     <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $i . 'Q' . $q }}">
-                                                        {{ $i . 'Q' . $q }}
+                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                        {{ $li_per }}
                                                     </label>
                                                 </div>
-                                            @endfor
-                                            <div class="form-check col-2">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="{{ $i }}" name="periode_filter[]"
-                                                    id="{{ 'periode_filter_' . $i }}"
-                                                    @foreach ($periode_filter as $per_fil)
-                                @if ($per_fil === (string) $i)
-                                checked
-                                @endif @endforeach>
-                                                <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">
-                                                    {{ $i }}
-                                                </label>
-                                            </div>
-                                        </div>
-                                    @endfor
+                                            @else
+                                                <div
+                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                        @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil === $li_per)
+                                                    checked
+                                                    @endif @endforeach>
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                        {{ $li_per }}
+                                                    </label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
@@ -288,11 +293,11 @@
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">OK</button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -335,6 +340,7 @@
                 '</html>'
             window.location.href = location + window.btoa(unescape(encodeURIComponent(excelTemplate)));
         }
+
         document.getElementById('modal_komp_pilih').addEventListener('click', () => {
             const checkboxes = document.querySelectorAll("input[id^='komponen_filter']");
             checkboxes.forEach((checkbox) => {

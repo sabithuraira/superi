@@ -18,7 +18,7 @@
                     <div class="row">
                         <div class="col">
                             <form id="form_filter" method="get" action="{{ url('pdrb_ringkasan1') }}">
-                                @csrf
+
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
                                         <select name="tabel_filter" id="tabel_filter" class="form-control"
@@ -38,7 +38,7 @@
                                             @foreach ($list_wilayah as $wil_id => $wil)
                                                 <option value="{{ $wil_id }}" data-id="{{ $wil_id }}"
                                                     @if ($wil_id == $wilayah_filter) selected @endif>
-                                                    {{ $wil_id }} - {{ $wil }}</option>
+                                                    16{{ $wil_id }} - {{ $wil }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -129,6 +129,8 @@
 
 @section('scripts')
     <script>
+        var APP_URL = {!! json_encode(url('/')) !!}
+
         function updateFormAction() {
             var form = document.getElementById('form_filter');
             var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
@@ -136,8 +138,7 @@
             var url = tabel_option.getAttribute('data-url');
             var data_id = tabel_option.getAttribute('data-id');
             document.getElementById("periode_filter").disabled = true;
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id;
-            console.log(form.action)
+            form.action = APP_URL + '/' + url + '/' + data_id;
             form.submit();
         }
 
@@ -153,9 +154,8 @@
             var wilayah_option = document.getElementById(
                 'wilayah_filter').options[document.getElementById('wilayah_filter').selectedIndex];
             var wilayah = wilayah_option.getAttribute('data-id');
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' +
+            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' +
                 periode + '?wilayah_filter=' + wilayah;
-            console.log(form.action)
             form.submit();
         }
 
@@ -171,9 +171,8 @@
             var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
                 .selectedIndex];
             var wilayah = wilayah_option.getAttribute('data-id');
-            form.action = window.origin + '/superi/public/' + url + '/' + data_id + '?periode_filter=' + periode +
+            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' + periode +
                 '?wilayah_filter=' + wilayah;
-            console.log(form.action)
             form.submit();
         }
 
@@ -194,11 +193,10 @@
             const url = new URL(window.location.href);
             const periode_filter = url.searchParams.get('periode_filter');
             let currentUrl = window.location.origin;
-            let newUrl = `${currentUrl}/superi/public/pdrb_ringkasan_export_all`;
+            let newUrl = `${APP_URL}/pdrb_ringkasan_export_all`;
             if (periode_filter) {
                 newUrl += `?periode_filter=${periode_filter}`;
             }
-            console.log(newUrl)
             window.open(newUrl, '_blank');
         }
     </script>

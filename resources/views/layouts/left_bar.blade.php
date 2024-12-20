@@ -75,7 +75,7 @@
                     </ul>
                 </li>
 
-                <li class="{{ request()->is('revisi/*') ? 'active' : '' }}">
+                <li class="{{ request()->is('revisi*') ? 'active' : '' }}">
                     <a href="#Revisi" class="has-arrow"><i class="icon-directions"></i>
                         <span>Arah Revisi</span></a>
                     <ul>
@@ -110,10 +110,14 @@
                         <a href="#Superadmin" class="has-arrow"><i class="icon-settings"></i>
                             <span>Setting</span></a>
                         <ul>
-                            <li class="{{ request()->is('authorization/permission') ? 'active' : '' }}"><a href="{{ url('authorization/permission') }}">Permission</a></li>
-                            <li class="{{ request()->is('authorization/role') ? 'active' : '' }}"><a href="{{ url('authorization/role') }}">Role</a></li>
-                            <li class="{{ request()->is('authorization/user') ? 'active' : '' }}"><a href="{{ url('authorization/user') }}">User Role</a></li>
-                            <li class="{{ request()->is('setting_app') ? 'active' : '' }}"><a href="{{ url('setting_app') }}">Konfigurasi Aplikasi</a></li>
+                            <li class="{{ request()->is('authorization/permission') ? 'active' : '' }}"><a
+                                    href="{{ url('authorization/permission') }}">Permission</a></li>
+                            <li class="{{ request()->is('authorization/role') ? 'active' : '' }}"><a
+                                    href="{{ url('authorization/role') }}">Role</a></li>
+                            <li class="{{ request()->is('authorization/user') ? 'active' : '' }}"><a
+                                    href="{{ url('authorization/user') }}">User Role</a></li>
+                            <li class="{{ request()->is('setting_app') ? 'active' : '' }}"><a
+                                    href="{{ url('setting_app') }}">Konfigurasi Aplikasi</a></li>
                         </ul>
                     </li>
                 @endhasrole

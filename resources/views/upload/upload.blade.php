@@ -530,12 +530,15 @@
                     $('#wait_progres').modal('show');
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                         }
                     })
 =======
+=======
+>>>>>>> main
                 console.log(self.datas)
                 $('#wait_progres').modal('hide');
             }).fail(function (msg) {

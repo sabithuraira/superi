@@ -30,7 +30,7 @@ class PdrbExport implements WithMultipleSheets{
 
     public function sheets(): array{
         $model = new \App\Pdrb();
-        $datas = $model->getPdrb(self::$wilayah, self::$tahun);
+        $datas = $model->getPdrb(self::$wilayah, self::$tahun, self::$triwulan);
 
         $komponen = \App\Komponen::where('status_aktif', 1)->get();
 
@@ -69,7 +69,7 @@ class PdrbAdhbExport implements FromView, WithEvents, WithTitle{
      * @return array
      */
     public function registerEvents(): array{
-        $cellSelected = 'A3:E25';
+        $cellSelected = 'A3:M25';
         switch ($this->triwulan) {
             case 1:
                 $cellSelected = 'A3:B25';
@@ -80,13 +80,15 @@ class PdrbAdhbExport implements FromView, WithEvents, WithTitle{
             case 3:
                 $cellSelected = 'A3:D25';
                 break;
+            case 4:
+                $cellSelected = 'A3:M25';
+                break;
             default:
                 $cellSelected = 'A3:E25';
         };
 
         return [
             AfterSheet::class    => function(AfterSheet $event) use ($cellSelected) {
-                // $event->sheet->getDelegate()->setRightToLeft(true);
                 $event->sheet->getStyle($cellSelected)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
@@ -133,7 +135,7 @@ class PdrbAdhkExport implements FromView, WithEvents, WithTitle{
      * @return array
      */
     public function registerEvents(): array{
-        $cellSelected = 'A3:E25';
+        $cellSelected = 'A3:M25';
         switch ($this->triwulan) {
             case 1:
                 $cellSelected = 'A3:B25';
@@ -145,7 +147,7 @@ class PdrbAdhkExport implements FromView, WithEvents, WithTitle{
                 $cellSelected = 'A3:D25';
                 break;
             default:
-                $cellSelected = 'A3:E25';
+                $cellSelected = 'A3:M25';
         };
         return [
             AfterSheet::class    => function(AfterSheet $event) use ($cellSelected){

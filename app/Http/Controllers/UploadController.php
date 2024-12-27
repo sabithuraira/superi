@@ -53,12 +53,16 @@ class UploadController extends Controller
         $datas=array();
         $wilayah = '00';
         $tahun = date('Y');
+        $triwulan = 1;
+        
+        $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
+        if($triwulan_berlaku!=null) $triwulan = $triwulan_berlaku->setting_value;
 
         if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
         if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
 
         $model = new \App\Pdrb();
-        $datas = $model->getPdrb($wilayah, $tahun);
+        $datas = $model->getPdrb($wilayah, $tahun, $triwulan);
 
         $komponen = \App\Komponen::where('status_aktif', 1)->get();
         

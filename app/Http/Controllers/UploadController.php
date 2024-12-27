@@ -40,7 +40,7 @@ class UploadController extends Controller
         if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
 
         if($request->get('action')==1){
-            Excel::import(new PdrbImport($wilayah, $tahun), $request->file('excel_file'));
+            Excel::import(new PdrbImport($wilayah, $tahun, $triwulan), $request->file('excel_file'));
             return redirect('upload/import')->with('success', 'Data berhasil disimpan');
         }
         else{

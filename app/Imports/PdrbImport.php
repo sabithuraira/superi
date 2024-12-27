@@ -14,17 +14,19 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
 
     private static $wilayah;
     private static $tahun;
+    private static $triwulan;
 
-    public function __construct($wilayah, $tahun) {
+    public function __construct($wilayah, $tahun, $triwulan) {
         self::$wilayah = $wilayah;
         self::$tahun = $tahun;
+        self::$triwulan = $triwulan;
     }
 
     public function sheets(): array
     {
         return [
-            0 => new AdhbSheetImport(self::$wilayah,  self::$tahun),
-            1 => new AdhkSheetImport(self::$wilayah,  self::$tahun),
+            0 => new AdhbSheetImport(self::$wilayah,  self::$tahun,  self::$triwulan),
+            1 => new AdhkSheetImport(self::$wilayah,  self::$tahun,  self::$triwulan),
         ];
     }
 
@@ -33,10 +35,10 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
         $split_header = explode("Q", $header_pdrb);
 
         if(count($split_header)==2 && is_numeric($split_header[0]) && is_numeric($split_header[1])){
-            // $year = $split_header[0];
+            $year = $split_header[0];
             $q = $split_header[1];
 
-            $model = Pdrb::where('tahun', self::$tahun)
+            $model = Pdrb::where('tahun', $year) //self::$tahun)
                 ->where('q', $q)
                 ->where('adhb_or_adhk', $is_adhb)
                 ->where('kode_prov', '16')
@@ -44,7 +46,7 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
                 ->first();
 
             $new_model = new Pdrb;
-            $new_model->tahun =self::$tahun;
+            $new_model->tahun = $year; //self::$tahun;
             $new_model->q = $q;
             $new_model->adhb_or_adhk = $is_adhb;
             $new_model->status_data = 1;
@@ -112,15 +114,22 @@ class AdhbSheetImport implements ToCollection
 {
     public $wilayah;
     public $tahun;
+    public $triwulan;
 
-    public function __construct($wilayah, $tahun) {
+    public function __construct($wilayah, $tahun, $triwulan) {
         $this->wilayah = $wilayah;
         $this->tahun = $tahun;
+        $this->triwulan = $triwulan;
     }
 
     public function collection(Collection $rows){
-        for($i=1;$i<=4;++$i){
-            if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun))->importColumn($rows, $i, 1);
+        $max = 12;
+        if($this->triwulan<4){
+            $max = $this->triwulan;
+        }
+        
+        for($i=1;$i<=$max;++$i){
+            if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun,  $this->triwulan))->importColumn($rows, $i, 1);
         }
     }
 }
@@ -129,16 +138,22 @@ class AdhkSheetImport implements ToCollection
 {
     public $wilayah;
     public $tahun;
+    public $triwulan;
 
-    public function __construct($wilayah, $tahun) {
+    public function __construct($wilayah, $tahun, $triwulan) {
         $this->wilayah = $wilayah;
         $this->tahun = $tahun;
+        $this->triwulan = $triwulan;
     }
 
     public function collection(Collection $rows)
     {
-        for($i=1;$i<=4;++$i){
-            if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun))->importColumn($rows, $i, 2);
+        $max = 12;
+        if($this->triwulan<4){
+            $max = $this->triwulan;
+        }
+        for($i=1;$i<=$max;++$i){
+            if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun,  $this->triwulan))->importColumn($rows, $i, 2);
         }
     }
 }

@@ -61,44 +61,46 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             if($model==null) $new_model->revisi_ke = 0;
             else $new_model->revisi_ke = 1;
             
-            $new_model->c_1a     = $rows[4][$col_no];
-            $new_model->c_1b     = $rows[5][$col_no];
-            $new_model->c_1c     = $rows[6][$col_no];
-            $new_model->c_1d     = $rows[7][$col_no];
-            $new_model->c_1e     = $rows[8][$col_no];
-            $new_model->c_1f     = $rows[9][$col_no];
-            $new_model->c_1g     = $rows[10][$col_no];
-            $new_model->c_1h     = $rows[11][$col_no];
-            $new_model->c_1i     = $rows[12][$col_no];
-            $new_model->c_1j     = $rows[13][$col_no];
-            $new_model->c_1k     = $rows[14][$col_no];
-            $new_model->c_1l     = $rows[15][$col_no];
-            $new_model->c_1     = $rows[3][$col_no];
+            // dd($rows[3]);die();
 
-            $new_model->c_2     = $rows[16][$col_no];
+            $new_model->c_1a     = strval($rows[4][$col_no]);
+            $new_model->c_1b     = strval($rows[5][$col_no]);
+            $new_model->c_1c     = strval($rows[6][$col_no]);
+            $new_model->c_1d     = strval($rows[7][$col_no]);
+            $new_model->c_1e     = strval($rows[8][$col_no]);
+            $new_model->c_1f     = strval($rows[9][$col_no]);
+            $new_model->c_1g     = strval($rows[10][$col_no]);
+            $new_model->c_1h     = strval($rows[11][$col_no]);
+            $new_model->c_1i     = strval($rows[12][$col_no]);
+            $new_model->c_1j     = strval($rows[13][$col_no]);
+            $new_model->c_1k     = strval($rows[14][$col_no]);
+            $new_model->c_1l     = strval($rows[15][$col_no]);
+            $new_model->c_1      = strval($rows[3][$col_no]);
 
-            $new_model->c_3     = $rows[17][$col_no];
+            $new_model->c_2     = strval($rows[16][$col_no]);
+
+            $new_model->c_3     = strval($rows[17][$col_no]);
             $new_model->c_3a     = 0;
             $new_model->c_3b     = 0;
 
-            $new_model->c_4     = $rows[18][$col_no];
-            $new_model->c_4a     = $rows[19][$col_no];
-            $new_model->c_4b     = $rows[20][$col_no];
+            $new_model->c_4     = strval($rows[18][$col_no]);
+            $new_model->c_4a     = strval($rows[19][$col_no]);
+            $new_model->c_4b     = strval($rows[20][$col_no]);
 
-            $new_model->c_5     = $rows[21][$col_no];
+            $new_model->c_5     = strval($rows[21][$col_no]);
 
-            $new_model->c_6     = $rows[22][$col_no];
+            $new_model->c_6     = strval($rows[22][$col_no]);
             $new_model->c_6a     = 0;
             $new_model->c_6b     = 0;
 
-            $new_model->c_7     = $rows[23][$col_no];
+            $new_model->c_7     = strval($rows[23][$col_no]);
             $new_model->c_7a     = 0;
             $new_model->c_7b     = 0;
 
             $new_model->c_8     = 0;
             $new_model->c_8a     = 0;
             $new_model->c_8b     = 0;
-            $new_model->c_pdrb     = $rows[24][$col_no];
+            $new_model->c_pdrb     = strval($rows[24][$col_no]);
 
             try {
                 $new_model->save();

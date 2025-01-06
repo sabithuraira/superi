@@ -26,7 +26,7 @@
         <nav id="left-sidebar-nav" class="sidebar-nav">
             <ul id="main-menu" class="metismenu">
                 <li class="{{ request()->is('beranda*') ? 'active' : '' }}">
-                    <a href="#Dashboard"><i class="icon-home"></i>
+                    <a href="{{ url('beranda') }}"><i class="icon-home"></i>
                         <span>Beranda</span></a>
                 </li>
 

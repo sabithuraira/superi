@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
+use App\Pdrb;
+use App\Observers\PdrbObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Pdrb::observe(PdrbObserver::class);
     }
 }

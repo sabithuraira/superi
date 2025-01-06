@@ -26,7 +26,7 @@
                     <div class="card overflowhidden">
                         <div class="body text-center">
                             <div class="p-15">
-                                <h3>87</h3>
+                                <h3>{{ $data_resume['yony'] }}</h3>
                                 <span>Y-ON-Y</span>
                             </div>                            
                         </div>
@@ -36,7 +36,7 @@
                     <div class="card overflowhidden">
                         <div class="body text-center">
                             <div class="p-15">
-                                <h3>318</h3>
+                                <h3>{{ $data_resume['qtoq'] }}</h3>
                                 <span>Q-TO-Q</span>
                             </div>                           
                         </div>
@@ -46,7 +46,7 @@
                     <div class="card overflowhidden">
                         <div class="body text-center">
                             <div class="p-15">
-                                <h3>520</h3>
+                                <h3>{{ $data_resume['ctoc'] }}</h3>
                                 <span>C-TO-C</span>
                             </div>                            
                         </div>

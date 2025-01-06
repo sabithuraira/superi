@@ -65,15 +65,4 @@ class Pdrb extends Model
             return $datas;
         }
     }
-
-    private function getResumeBeranda(){
-        $tahun = date('Y');
-        $triwulan = 1;
-        
-        $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
-        if($tahun_berlaku!=null) $tahun = $tahun_berlaku->setting_value;
-        
-        $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
-        if($triwulan_berlaku!=null) $triwulan = $triwulan_berlaku->setting_value;
-    }
 }

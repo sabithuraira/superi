@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Session; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\PdrbFinal;
 
 class HomeController extends Controller
 {
@@ -16,7 +17,14 @@ class HomeController extends Controller
     protected $redirectTo = 'hai';
 
     public function beranda(Request $request){
-        return view('home.beranda');
+        $wilayah = '00';
+        if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
+
+        $pdrb_final = new PdrbFinal;
+        $data_resume = $pdrb_final->getResumeBeranda($wilayah);
+        // dd($data_resume);die();
+
+        return view('home.beranda', compact('wilayah', 'data_resume'));
     }
 
     /**

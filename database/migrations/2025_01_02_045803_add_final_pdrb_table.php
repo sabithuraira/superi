@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePdrbTable extends Migration
+class AddFinalPdrbTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreatePdrbTable extends Migration
      */
     public function up()
     {
-        Schema::create('pdrb', function (Blueprint $table) {
+        Schema::create('pdrb_final', function (Blueprint $table) {
             $table->increments('id');
 
-            // $table->string("komponen_id", 5);
             $table->integer("tahun");
             $table->tinyInteger("q");
             $table->char("kode_kab", 2);
@@ -72,6 +71,6 @@ class CreatePdrbTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pdrb');
+        //
     }
 }

@@ -121,7 +121,7 @@ class TabelRingkasanController extends Controller
 
     public $list_group_komponen = [
         ['column' => "c_pdrb", 'name' => 'PDRB'],
-        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
         ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
         ['column' => "c_3", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
         ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],

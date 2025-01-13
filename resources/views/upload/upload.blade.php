@@ -24,8 +24,7 @@
                                     <label>Kabupaten/Kota:</label>
 
                                     <div class="input-group">
-                                        <select class="form-control  form-control-sm" name="wilayah"
-                                            v-model="form_data.wilayah">
+                                        <select class="form-control  form-control-sm" name="wilayah" v-model="form_data.wilayah">
                                             @foreach (config('app.wilayah') as $key => $value)
                                                 <option value="{{ $key }}">{{ $value }}</option>
                                             @endforeach
@@ -39,8 +38,7 @@
                                     <label>Tahun:</label>
 
                                     <div class="input-group">
-                                        <select class="form-control  form-control-sm" readonly name="tahun"
-                                            v-model="form_data.tahun">
+                                        <select class="form-control  form-control-sm" disabled name="tahun" v-model="form_data.tahun">
                                             @for ($i = date('Y'); $i >= 2023; $i--)
                                                 <option value="{{ $i }}">{{ $i }}</option>
                                             @endfor
@@ -53,8 +51,7 @@
                                 <div class="form-group">
                                     <label>Triwulan:</label>
                                     <div class="input-group">
-                                        <select class="form-control  form-control-sm" name="triwulan" readonly
-                                            v-model="form_data.triwulan">
+                                        <select class="form-control  form-control-sm" disabled name="triwulan" v-model="form_data.triwulan">
                                             @for ($i = 1; $i <= 4; $i++)
                                                 <option value="{{ $i }}">{{ $i }}</option>
                                             @endfor
@@ -76,8 +73,7 @@
                                         class="fa fa-file-excel-o"></i>&nbsp; Export Excel</button>
                             </div>
                             <div class="col-lg-6">
-                                <button type="submit" class="btn btn-primary float-right" name="action"
-                                    value="1">Simpan</button>
+                                <button type="submit" class="btn btn-primary float-right" name="action" value="1">Simpan</button>
                             </div>
                         </div>
                     </form>
@@ -97,8 +93,7 @@
                                     <th>@{{ form_data.tahun }}Q4</th>
                                 </tr>
 
-                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)"
-                                    :key="data.id">
+                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)" :key="data.id">
                                     <tr>
                                         <td>@{{ data.no_komponen }} @{{ data.nama_komponen }}</td>
 
@@ -116,8 +111,7 @@
 
                                     </tr>
 
-                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)"
-                                        :key="data2.id">
+                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)" :key="data2.id">
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp; @{{ data2.no_komponen }} @{{ data2.nama_komponen }}</td>
 
                                         <td v-if="datas['adhb'][0]==null"></td>
@@ -160,8 +154,7 @@
                                     <th>@{{ form_data.tahun }}Q4</th>
                                 </tr>
 
-                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)"
-                                    :key="data.id">
+                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)" :key="data.id">
                                     <tr>
                                         <td>@{{ data.no_komponen }} @{{ data.nama_komponen }}</td>
 
@@ -179,8 +172,7 @@
 
                                     </tr>
 
-                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)"
-                                        :key="data2.id">
+                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)" :key="data2.id">
                                         <td>&nbsp;&nbsp;&nbsp;&nbsp; @{{ data2.no_komponen }} @{{ data2.nama_komponen }}</td>
 
                                         <td v-if="datas['adhk'][0]==null"></td>

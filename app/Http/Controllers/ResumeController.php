@@ -7,15 +7,11 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ResumeExportAll;
 use App\Exports\ResumeExport;
-use App\Komponen;
 
 class ResumeController extends Controller
 {
     public function index() {
-        $komponen = DB::table('komponen')
-                    ->where('status_aktif', '=', 1)
-                    ->orderBy('no_komponen')
-                    ->get();
+        $komponen = $this->get_all_komponen();
 
         $tahun = DB::select('SELECT DISTINCT tahun FROM superi_pdrb_rev_view ORDER BY tahun');
 
@@ -65,10 +61,8 @@ class ResumeController extends Controller
         $periode = explode(',', $request->input('periode'));
         $kd_kab = explode(',', $request->input('kd_kab'));
 
-        $komponen = '';
-        foreach (str_split(str_replace('c_', '', $c)) as $char) {
-            $komponen .= $char . '.';
-        }
+        $komponen = $this->get_komponen($c);
+        if ($komponen == '') $komponen = 'pdrb';
 
         $pdrb = $this->resume($tabel, $c, $periode, $kd_kab);
 
@@ -85,10 +79,8 @@ class ResumeController extends Controller
         $columns = [];
         $pdrb_all = [];
         foreach ($c_all as $c) {
-            $komponen = '';
-            foreach (str_split(str_replace('c_', '', $c)) as $char) {
-                $komponen .= $char . '.';
-            }
+            $komponen = $this->get_komponen($c);
+            if ($komponen == '') $komponen = 'pdrb';
 
             $pdrb = $this->resume($tabel, $c, $periode, $kd_kab);
             $columns = $pdrb['columns'];
@@ -97,15 +89,117 @@ class ResumeController extends Controller
 
         return Excel::download(new ResumeExportAll($judul, $columns, $pdrb_all), 'All Resume' . $judul . '.xlsx');
     }
+
+    private function get_all_komponen() {
+        return [
+            (object) [
+                'no_komponen' => 'c_pdrb',
+                'no_komponen_show' => '',
+                'nama_komponen' => 'Total PDRB'
+            ],
+            (object) [
+                'no_komponen' => 'c_1',
+                'no_komponen_show' => '1.',
+                'nama_komponen' => 'Konsumsi Rumah Tangga'
+            ],
+            (object) [
+                'no_komponen' => 'c_1a + c_1b',
+                'no_komponen_show' => '1.a.',
+                'nama_komponen' => 'Makanan, Minuman, dan Rokok'
+            ],
+            (object) [
+                'no_komponen' => 'c_1c',
+                'no_komponen_show' => '1.b.',
+                'nama_komponen' => 'Pakaian dan Alas Kaki'
+            ],
+            (object) [
+                'no_komponen' => 'c_1d + c_1e',
+                'no_komponen_show' => '1.c.',
+                'nama_komponen' => 'Perumahan, Perkakas, Perlengkapan dan Penyelenggaraan Rumah Tangga'
+            ],
+            (object) [
+                'no_komponen' => 'c_1f + c_1j',
+                'no_komponen_show' => '1.d.',
+                'nama_komponen' => 'Kesehatan dan Pendidikan'
+            ],
+            (object) [
+                'no_komponen' => 'c_1g + c_1h + c_1i',
+                'no_komponen_show' => '1.e.',
+                'nama_komponen' => 'Trasportasi, Komunikasi, Rekreasi dan Budaya'
+            ],
+            (object) [
+                'no_komponen' => 'c_1k',
+                'no_komponen_show' => '1.f.',
+                'nama_komponen' => 'Hotel dan Restoran'
+            ],
+            (object) [
+                'no_komponen' => 'c_1l',
+                'no_komponen_show' => '1.g.',
+                'nama_komponen' => 'Lainnya'
+            ],
+            (object) [
+                'no_komponen' => 'c_2',
+                'no_komponen_show' => '2.',
+                'nama_komponen' => 'Pengeluaran Konsumsi LNPRT'
+            ],
+            (object) [
+                'no_komponen' => 'c_3',
+                'no_komponen_show' => '3.',
+                'nama_komponen' => 'Pengeluaran Konsumsi Pemerintah'
+            ],
+            (object) [
+                'no_komponen' => 'c_4',
+                'no_komponen_show' => '4.',
+                'nama_komponen' => 'Pembentukan Modal Tetap Bruto'
+            ],
+            (object) [
+                'no_komponen' => 'c_4a',
+                'no_komponen_show' => '4.a.',
+                'nama_komponen' => 'Bangunan'
+            ],
+            (object) [
+                'no_komponen' => 'c_4b',
+                'no_komponen_show' => '4.b.',
+                'nama_komponen' => 'Non-Bangunan'
+            ],
+            (object) [
+                'no_komponen' => 'c_5',
+                'no_komponen_show' => '5.',
+                'nama_komponen' => 'Perubahan Inventori'
+            ],
+            (object) [
+                'no_komponen' => 'c_6',
+                'no_komponen_show' => '6.',
+                'nama_komponen' => 'Ekspor'
+            ],
+            (object) [
+                'no_komponen' => 'c_7',
+                'no_komponen_show' => '7.',
+                'nama_komponen' => 'Impor'
+            ]
+        ];
+    }
+
+    private function get_komponen($c) {
+        $komponen = $this->get_all_komponen();
+        foreach ($komponen as $k) {
+            if ($k->no_komponen == $c) return $k->no_komponen_show;
+        }
+        return null;
+    }
+
+    private function get_komponen_desc($c) {
+        $komponen = $this->get_all_komponen();
+        foreach ($komponen as $k) {
+            if ($k->no_komponen == $c) return $k->nama_komponen;
+        }
+        return null;
+    }
+
     private function resume($tabel, $c, $periode, $kd_kab) {
         $pdrb = [];
 
-        if ($c == 'c_pdrb') {
-            $c_desc = 'Total PDRB';
-        } else {
-            $c_desc = DB::select('SELECT no_komponen, nama_komponen FROM superi_komponen WHERE REPLACE(no_komponen, ".", "") = "' . substr($c, 2) . '"');
-            $c_desc = $c_desc[0]->no_komponen . ' ' . $c_desc[0]->nama_komponen;
-        }
+        $c_desc = $this->get_komponen($c) . ' ' . $this->get_komponen_desc($c);
 
         $sql = 'SELECT CONCAT(kode_prov, kode_kab) AS kd_kab, "' . $c_desc . '" AS `Komponen`, ';
 

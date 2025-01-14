@@ -55,7 +55,7 @@
                                 <select name="komponen_filter" id="komponen_filter" class="form-control" onchange="lihat()">
                                     <option value="c_pdrb" selected>Semua Komponen PDRB</option>
                                     @foreach($komponen as $komponen_item)
-                                    <option value="{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}">{{ $komponen_item->no_komponen . ' ' . $komponen_item->nama_komponen }}</option>
+                                    <option value="{{ $komponen_item->no_komponen }}">{{ $komponen_item->no_komponen_show . ' ' . $komponen_item->nama_komponen }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -291,7 +291,7 @@
 
         var komponen = [];
         @foreach($komponen as $komponen_item)
-        komponen.push("{{ 'c_' . str_replace('.', '', $komponen_item->no_komponen) }}");
+        komponen.push("{{ $komponen_item->no_komponen }}");
         @endforeach
 
         var kd_kab = [];

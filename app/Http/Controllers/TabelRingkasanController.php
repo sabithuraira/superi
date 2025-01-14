@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\RingkasanExportAll;
 use App\Pdrb;
+use App\PdrbFinal;
 use App\SettingApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -121,7 +122,7 @@ class TabelRingkasanController extends Controller
 
     public $list_group_komponen = [
         ['column' => "c_pdrb", 'name' => 'PDRB'],
-        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
         ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
         ['column' => "c_3", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
         ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],
@@ -133,12 +134,12 @@ class TabelRingkasanController extends Controller
     public $list_detail_komponen = [
         ['id' => 'c_pdrb', 'alias' => 'PDRB',               'name' =>  'PDRB'],
         ['id' => 'c_1',   'alias' => '1. PKRT',             'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['id' => 'c_1a',  'alias' => '1a. PKRT-Mamin  ',    'name' =>  '1.a. Makanan dan Minuman, Selain Restoran'],
-        ['id' => 'c_1b',  'alias' => '1b. PKRT-Pakaian',    'name' =>  '1.b. Pakaian, Alas Kaki dan Jasa Perawatannya'],
-        ['id' => 'c_1c',  'alias' => '1c. PKRT-Perumahan',  'name' =>  '1.c. Perumahan dan Perlengkapan Rumahtangga'],
+        ['id' => 'c_1a',  'alias' => '1a. PKRT-Mamin  ',    'name' =>  '1.a. Makanan, Minuman dan Rokok '],
+        ['id' => 'c_1b',  'alias' => '1b. PKRT-Pakaian',    'name' =>  '1.b. Pakaian dan Alas Kaki'],
+        ['id' => 'c_1c',  'alias' => '1c. PKRT-Perumahan',  'name' =>  '1.c. Perumahan, Perkakas, Perlengkapan dan Penyelenggaraan Rumah Tangga'],
         ['id' => 'c_1d',  'alias' => '1d. PKRT-Kesehatan ', 'name' =>  '1.d. Kesehatan dan Pendidikan'],
-        ['id' => 'c_1e',  'alias' => '1e. PKRT-Tansport',   'name' =>  '1.e. Transportasi dan Komunikasi'],
-        ['id' => 'c_1f',  'alias' => '1f. PKRT-Restoran ',  'name' =>  '1.f. Restoran dan Hotel'],
+        ['id' => 'c_1e',  'alias' => '1e. PKRT-Tansport',   'name' =>  '1.e. Trasportasi, Komunikasi, Rekreasi dan Budaya'],
+        ['id' => 'c_1f',  'alias' => '1f. PKRT-Restoran ',  'name' =>  '1.f. Hotel dan Restoran'],
         ['id' => 'c_1g',  'alias' => '1g. PKRT-Lainnya',    'name' =>  '1.g. Lainnya'],
         ['id' => 'c_2',   'alias' => '2. PKLNPRT',          'name' => '2. Pengeluaran Konsumsi LNPRT'],
         ['id' => 'c_3',   'alias' => '3.PKP',               'name' => '3. Pengeluaran Konsumsi Pemerintah'],
@@ -304,8 +305,7 @@ class TabelRingkasanController extends Controller
         return view('pdrb_ringkasan.ringkasan6', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
     }
 
-    public function export_all(Request $request)
-    {
+    public function export_all(Request $request){
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $tahun_berlaku = $this->tahun_berlaku;
@@ -378,46 +378,79 @@ class TabelRingkasanController extends Controller
         return Excel::download(new RingkasanExportAll($table), 'All_Ringkasan.xlsx');
     }
 
-    public function get_rev($diskre, $kab, $thn, $q, $adhk, $status)
-    {
-        // $diskrepansi_prov itu 0 / 1
-        // jika 0 maka diskrepansi dimana kode_kab ==
-        // jika 1 maka diskrepansi dimana kode_kab !=
-        $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
-            ->when($diskre == 0, function ($query) use ($kab) {
-                return $query->where('kode_kab', '=', $kab);
-            }, function ($query) use ($kab) {
-                return $query->where('kode_kab', '!=', $kab);
-            })
-            ->where('tahun', $thn)
-            ->where('q', "LIKE", '%' . $q . '%')
-            ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', "LIKE", '%' . $status . '%')
-            ->groupBy('kode_kab', 'q')
-            ->get();
+    /**
+     * Get Last Revision Data Base On Kab, Tahun & Q
+     */
+    // public function get_rev($diskre, $kab, $thn, $q, $adhk, $status)
+    // {
+    //     // $diskrepansi_prov itu 0 / 1
+    //     // jika 0 maka diskrepansi dimana kode_kab ==
+    //     // jika 1 maka diskrepansi dimana kode_kab !=
+    //     $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+    //         ->when($diskre == 0, function ($query) use ($kab) {
+    //             return $query->where('kode_kab', '=', $kab);
+    //         }, function ($query) use ($kab) {
+    //             return $query->where('kode_kab', '!=', $kab);
+    //         })
+    //         ->where('tahun', $thn)
+    //         ->where('q', "LIKE", '%' . $q . '%')
+    //         ->where('adhb_or_adhk', $adhk)
+    //         ->where('status_data', "LIKE", '%' . $status . '%')
+    //         ->groupBy('kode_kab', 'q')
+    //         ->get();
 
-        return $rev;
-    }
+    //     return $rev;
+    // }
 
+    /**
+     * GET Data with report format
+     * Only Get last revisi_ke data
+     */
     public function get_data($kab, $thn, $q, $adhk, $status)
     {
-        $data = Pdrb::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+        $data = PdrbFinal::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
             ->where('kode_kab', $kab)
             ->where('tahun', $thn)
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
             ->where('status_data', "LIKE", '%' . $status . '%')
-            ->orderBy('revisi_ke', 'desc')
+            // ->orderBy('revisi_ke', 'desc')
             ->first();
         return $data;
     }
 
-    public function get_data_cumulative($diskre, $kab, $thn, $q, $adhk, $status, $rev)
+    /**
+     * Get cumulative data based on $diskre, $kab, $thn and $q
+     * Each data will check and get data from the last revision
+     */
+    public function get_data_cumulative($diskre, $kab, $thn, $q, $adhk, $status)
     {
         // $diskrepansi_prov itu 0 / 1
         // jika 0 maka diskrepansi dimana kode_kab ==
         // jika 1 maka diskrepansi dimana kode_kab !=
-        $data = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+        // $data = Pdrb::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+        //     ->when($diskre == 0, function ($query) use ($kab) {
+        //         return $query->where('kode_kab', '=', $kab);
+        //     }, function ($query) use ($kab) {
+        //         return $query->where('kode_kab', '!=', $kab);
+        //     })
+        //     ->where('tahun', $thn)
+        //     ->wherein('q', $q)
+        //     ->where('adhb_or_adhk', $adhk)
+        //     ->where('status_data', "LIKE", '%' . $status . '%')
+        //     ->where(function ($query) use ($rev) {
+        //         foreach ($rev as $r) {
+        //             $query->orWhere(function ($subquery) use ($r) {
+        //                 $subquery->where('kode_kab', $r->kode_kab)
+        //                     ->where('q', $r->q)
+        //                     ->where('revisi_ke', $r->max_revisi);
+        //             });
+        //         }
+        //     })
+        //     ->groupBy('kode_prov')
+        //     ->first();
+
+        $data = PdrbFinal::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
             ->when($diskre == 0, function ($query) use ($kab) {
                 return $query->where('kode_kab', '=', $kab);
             }, function ($query) use ($kab) {
@@ -427,15 +460,15 @@ class TabelRingkasanController extends Controller
             ->wherein('q', $q)
             ->where('adhb_or_adhk', $adhk)
             ->where('status_data', "LIKE", '%' . $status . '%')
-            ->where(function ($query) use ($rev) {
-                foreach ($rev as $r) {
-                    $query->orWhere(function ($subquery) use ($r) {
-                        $subquery->where('kode_kab', $r->kode_kab)
-                            ->where('q', $r->q)
-                            ->where('revisi_ke', $r->max_revisi);
-                    });
-                }
-            })
+            // ->where(function ($query) use ($rev) {
+            //     foreach ($rev as $r) {
+            //         $query->orWhere(function ($subquery) use ($r) {
+            //             $subquery->where('kode_kab', $r->kode_kab)
+            //                 ->where('q', $r->q);
+            //                 // ->where('revisi_ke', $r->max_revisi);
+            //         });
+            //     }
+            // })
             ->groupBy('kode_prov')
             ->first();
         return $data;
@@ -455,37 +488,37 @@ class TabelRingkasanController extends Controller
                 $arr_periode = explode("Q", $periode);
                 if ($id === '1.1') {
                     if (sizeof($arr_periode) > 1) {
-                        $rev_kab =  $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 2, 1);
-                        $rev_kab_1 =  $this->get_rev(1, '00', $arr_periode[0] - 1, $arr_periode[1], 2, 1);
+                        // $rev_kab =  $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 2, 1);
+                        // $rev_kab_1 =  $this->get_rev(1, '00', $arr_periode[0] - 1, $arr_periode[1], 2, 1);
 
-                        $data_kab_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1, $rev_kab);
-                        $data_kab_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [$arr_periode[1]], 2, 1, $rev_kab_1);
+                        $data_kab_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1);//, $rev_kab);
+                        $data_kab_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [$arr_periode[1]], 2, 1);//, $rev_kab_1);
                         $data_prov_y = $this->get_data('00', $arr_periode[0], $arr_periode[1], 2, 1);
                         $data_prov_y_1 = $this->get_data('00', $arr_periode[0] - 1, $arr_periode[1], 2, 1);
 
                         if ($arr_periode[1] != 1) {
                             $data_prov_q_1 = $this->get_data('00', $arr_periode[0], $arr_periode[1] - 1, 2, 1);
-                            $rev_kab_q_1 = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1] - 1, 2, 1);
-                            $data_kab_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1] - 1], 2, 1, $rev_kab_q_1);
+                            // $rev_kab_q_1 = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1] - 1, 2, 1);
+                            $data_kab_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1] - 1], 2, 1);//, $rev_kab_q_1);
                         } else {
                             $data_prov_q_1 = $this->get_data('00', $arr_periode[0] - 1, 4, 2, 1);
-                            $rev_kab_q_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, 4, 2, 1);
-                            $data_kab_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [4], 2, 1, $rev_kab_q_1);
+                            // $rev_kab_q_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, 4, 2, 1);
+                            $data_kab_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [4], 2, 1);//, $rev_kab_q_1);
                         }
-                        $rev_prov_c = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
-                        $rev_prov_c_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 2, 1);
-                        $rev_kab_c = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
-                        $rev_kab_c_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 2, 1);
+                        // $rev_prov_c = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
+                        // $rev_prov_c_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 2, 1);
+                        // $rev_kab_c = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
+                        // $rev_kab_c_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 2, 1);
 
                         $q = [];
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
                         }
 
-                        $data_kab_c = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 2, 1, $rev_kab_c);
-                        $data_kab_c_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, $q, 2, 1, $rev_kab_c_1);
-                        $data_prov_c = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 2, 1, $rev_prov_c);
-                        $data_prov_c_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, $q, 2, 1, $rev_prov_c_1);
+                        $data_kab_c = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 2, 1);//, $rev_kab_c);
+                        $data_kab_c_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, $q, 2, 1);//, $rev_kab_c_1);
+                        $data_prov_c = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 2, 1);//, $rev_prov_c);
+                        $data_prov_c_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, $q, 2, 1);//, $rev_prov_c_1);
 
                         $row[$periode . 'yoy_kab'] = (
                             $data_kab_y
@@ -528,15 +561,15 @@ class TabelRingkasanController extends Controller
                             $data_prov_c_1->$komp_id != 0)
                             ? ($data_prov_c->$komp_id - $data_prov_c_1->$komp_id) / $data_prov_c_1->$komp_id * 100 : null;
                     } else {
-                        $rev_kab_y = $this->get_rev(1, '00', $arr_periode[0], '', 2, 1);
-                        $rev_kab_y_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, '', 2, 1);
-                        $data_kab_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_kab_y);
-                        $data_kab_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_kab_y_1);
+                        // $rev_kab_y = $this->get_rev(1, '00', $arr_periode[0], '', 2, 1);
+                        // $rev_kab_y_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, '', 2, 1);
+                        $data_kab_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_kab_y);
+                        $data_kab_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_kab_y_1);
 
-                        $rev_prov_y = $this->get_rev(0, '00', $arr_periode[0], '', 2, 1);
-                        $rev_prov_y_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, '', 2, 1);
-                        $data_prov_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_prov_y);
-                        $data_prov_y_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_prov_y_1);
+                        // $rev_prov_y = $this->get_rev(0, '00', $arr_periode[0], '', 2, 1);
+                        // $rev_prov_y_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, '', 2, 1);
+                        $data_prov_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_prov_y);
+                        $data_prov_y_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_prov_y_1);
 
                         if (
                             $data_kab_y
@@ -570,62 +603,61 @@ class TabelRingkasanController extends Controller
                     }
                 } else if ($id === '1.2') {
                     if (sizeof($arr_periode) > 1) {
-                        $rev_kab_hb = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 1, 1);
-                        $rev_kab_hk = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 2, 1);
-                        $rev_kab_hb_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, $arr_periode[1], 1, 1);
-                        $rev_kab_hk_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, $arr_periode[1], 2, 1);
+                        // $rev_kab_hb = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 1, 1);
+                        // $rev_kab_hk = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 2, 1);
+                        // $rev_kab_hb_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, $arr_periode[1], 1, 1);
+                        // $rev_kab_hk_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, $arr_periode[1], 2, 1);
 
-                        $data_kab_hb_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 1, 1, $rev_kab_hb);
-                        $data_kab_hk_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1, $rev_kab_hk);
-                        $data_kab_hb_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [$arr_periode[1]], 1, 1, $rev_kab_hb_1);
-                        $data_kab_hk_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [$arr_periode[1]], 2, 1, $rev_kab_hk_1);
+                        $data_kab_hb_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 1, 1);//, $rev_kab_hb);
+                        $data_kab_hk_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1);//, $rev_kab_hk);
+                        $data_kab_hb_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [$arr_periode[1]], 1, 1);//, $rev_kab_hb_1);
+                        $data_kab_hk_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [$arr_periode[1]], 2, 1);//, $rev_kab_hk_1);
 
                         $data_prov_hb_y = $this->get_data('00', $arr_periode[0], $arr_periode[1], 1, 1);
                         $data_prov_hk_y = $this->get_data('00', $arr_periode[0], $arr_periode[1], 2, 1);
                         $data_prov_hb_y_1 = $this->get_data('00', $arr_periode[0] - 1, $arr_periode[1], 1, 1);
                         $data_prov_hk_y_1 = $this->get_data('00', $arr_periode[0] - 1, $arr_periode[1], 2, 1);
 
-
                         if ($arr_periode[1] != 1) {
                             // q2-q4
-                            $rev_kab_hb_q_1 = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1] - 1, 1, 1);
-                            $rev_kab_hk_q_1 = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1] - 1, 2, 1);
-                            $data_kab_hb_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1] - 1], 1, 1, $rev_kab_hb_1);
-                            $data_kab_hk_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1] - 1], 2, 1, $rev_kab_hk_1);
+                            // $rev_kab_hb_q_1 = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1] - 1, 1, 1);
+                            // $rev_kab_hk_q_1 = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1] - 1, 2, 1);
+                            $data_kab_hb_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1] - 1], 1, 1);//, $rev_kab_hb_1);
+                            $data_kab_hk_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1] - 1], 2, 1);//, $rev_kab_hk_1);
 
                             $data_prov_hb_q_1 = $this->get_data('00', $arr_periode[0], $arr_periode[1] - 1, 1, 1);
                             $data_prov_hk_q_1 = $this->get_data('00', $arr_periode[0], $arr_periode[1] - 1, 2, 1);
                         } else {
-                            $rev_kab_hb_q_1 =  $this->get_rev(1, '00', $arr_periode[0] - 1, 4, 1, 1);
-                            $rev_kab_hk_q_1 =  $this->get_rev(1, '00', $arr_periode[0] - 1, 4, 2, 1);
-                            $data_kab_hb_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [4], 1, 1, $rev_kab_hb_q_1);
-                            $data_kab_hk_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [4], 2, 1, $rev_kab_hk_q_1);
+                            // $rev_kab_hb_q_1 =  $this->get_rev(1, '00', $arr_periode[0] - 1, 4, 1, 1);
+                            // $rev_kab_hk_q_1 =  $this->get_rev(1, '00', $arr_periode[0] - 1, 4, 2, 1);
+                            $data_kab_hb_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [4], 1, 1);//, $rev_kab_hb_q_1);
+                            $data_kab_hk_q_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [4], 2, 1);//, $rev_kab_hk_q_1);
                             $data_prov_hb_q_1 = $this->get_data('00', $arr_periode[0] - 1, 4, 1, 1);
                             $data_prov_hk_q_1 = $this->get_data('00', $arr_periode[0] - 1, 4, 2, 1);
                         }
-                        $rev_kab_hb_c = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
-                        $rev_kab_hk_c = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
-                        $rev_kab_hb_c_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 1, 1);
-                        $rev_kab_hk_c_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 2, 1);
+                        // $rev_kab_hb_c = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
+                        // $rev_kab_hk_c = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
+                        // $rev_kab_hb_c_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 1, 1);
+                        // $rev_kab_hk_c_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 2, 1);
 
-                        $rev_prov_hb_c = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
-                        $rev_prov_hk_c = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
-                        $rev_prov_hb_c_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 1, 1);
-                        $rev_prov_hk_c_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 2, 1);
+                        // $rev_prov_hb_c = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
+                        // $rev_prov_hk_c = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
+                        // $rev_prov_hb_c_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 1, 1);
+                        // $rev_prov_hk_c_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 2, 1);
 
                         $q = [];
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
                         }
-                        $data_kab_hb_c = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 1, 1, $rev_kab_hb_c);
-                        $data_kab_hk_c = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 2, 1, $rev_kab_hk_c);
-                        $data_kab_hb_c_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, $q, 1, 1, $rev_kab_hb_c_1);
-                        $data_kab_hk_c_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, $q, 2, 1, $rev_kab_hk_c_1);
+                        $data_kab_hb_c = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 1, 1);//, $rev_kab_hb_c);
+                        $data_kab_hk_c = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 2, 1);//, $rev_kab_hk_c);
+                        $data_kab_hb_c_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, $q, 1, 1);//, $rev_kab_hb_c_1);
+                        $data_kab_hk_c_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, $q, 2, 1);//, $rev_kab_hk_c_1);
 
-                        $data_prov_hb_c = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 1, 1, $rev_prov_hb_c);
-                        $data_prov_hk_c = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 2, 1, $rev_prov_hk_c);
-                        $data_prov_hb_c_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, $q, 1, 1, $rev_prov_hb_c_1);
-                        $data_prov_hk_c_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, $q, 2, 1, $rev_prov_hk_c_1);
+                        $data_prov_hb_c = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 1, 1);//, $rev_prov_hb_c);
+                        $data_prov_hk_c = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 2, 1);//, $rev_prov_hk_c);
+                        $data_prov_hb_c_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, $q, 1, 1);//, $rev_prov_hb_c_1);
+                        $data_prov_hk_c_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, $q, 2, 1);//, $rev_prov_hk_c_1);
 
                         $implisit_kab_y     = $data_kab_hb_y && $data_kab_hk_y && isset($data_kab_hk_y->$komp_id) && $data_kab_hk_y->$komp_id != 0 ? $data_kab_hb_y->$komp_id / $data_kab_hk_y->$komp_id * 100 : null;
 
@@ -650,25 +682,25 @@ class TabelRingkasanController extends Controller
                         $row[$periode . 'ctc_kab']  = ($implisit_kab_c && $implisit_kab_c_1 && $implisit_kab_c_1 != 0)      ? ($implisit_kab_c - $implisit_kab_c_1) / $implisit_kab_c_1 * 100 : null;
                         $row[$periode . 'ctc_prov'] = ($implisit_prov_c && $implisit_prov_c_1 && $implisit_prov_c_1 != 0)   ? ($implisit_prov_c - $implisit_prov_c_1)  / $implisit_prov_c_1 * 100 : null;
                     } else {
-                        $rev_kab_hb_y = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
-                        $rev_kab_hk_y = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
-                        $rev_kab_hb_y_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 1, 1);
-                        $rev_kab_hk_y_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 2, 1);
+                        // $rev_kab_hb_y = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
+                        // $rev_kab_hk_y = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
+                        // $rev_kab_hb_y_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 1, 1);
+                        // $rev_kab_hk_y_1 = $this->get_rev(1, '00', $arr_periode[0] - 1, null, 2, 1);
 
-                        $data_kab_hb_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_kab_hb_y);
-                        $data_kab_hk_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_kab_hk_y);
-                        $data_kab_hb_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_kab_hb_y_1);
-                        $data_kab_hk_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_kab_hk_y_1);
+                        $data_kab_hb_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_kab_hb_y);
+                        $data_kab_hk_y = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_kab_hk_y);
+                        $data_kab_hb_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_kab_hb_y_1);
+                        $data_kab_hk_y_1 = $this->get_data_cumulative(1, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_kab_hk_y_1);
 
-                        $rev_prov_hb_y = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
-                        $rev_prov_hk_y = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
-                        $rev_prov_hb_y_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 1, 1);
-                        $rev_prov_hk_y_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 2, 1);
+                        // $rev_prov_hb_y = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
+                        // $rev_prov_hk_y = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
+                        // $rev_prov_hb_y_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 1, 1);
+                        // $rev_prov_hk_y_1 = $this->get_rev(0, '00', $arr_periode[0] - 1, null, 2, 1);
 
-                        $data_prov_hb_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_prov_hb_y);
-                        $data_prov_hk_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_prov_hk_y);
-                        $data_prov_hb_y_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_prov_hb_y_1);
-                        $data_prov_hk_y_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_prov_hk_y_1);
+                        $data_prov_hb_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_prov_hb_y);
+                        $data_prov_hk_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_prov_hk_y);
+                        $data_prov_hb_y_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_prov_hb_y_1);
+                        $data_prov_hk_y_1 = $this->get_data_cumulative(0, '00', $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_prov_hk_y_1);
 
                         $implisit_kab_y     = $data_kab_hb_y && $data_kab_hk_y && isset($data_kab_hk_y->$komp_id) && $data_kab_hk_y->$komp_id != 0 ? $data_kab_hb_y->$komp_id / $data_kab_hk_y->$komp_id * 100 : null;
                         $implisit_kab_y_1   = $data_kab_hb_y_1 && $data_kab_hk_y_1 && isset($data_kab_hk_y_1->$komp_id) && $data_kab_hk_y_1->$komp_id != 0 ? $data_kab_hb_y_1->$komp_id / $data_kab_hk_y_1->$komp_id * 100 : null;
@@ -716,13 +748,13 @@ class TabelRingkasanController extends Controller
                 for ($i = 1; $i <= $arr_periode[1]; $i++) {
                     $q[] = $i;
                 }
-                $rev_c = $this->get_rev(0, $wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
-                $rev_c_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, $arr_periode[1], 2, 1);
-                $rev_c_2 = $this->get_rev(0, $wil_id, $arr_periode[0] - 2, $arr_periode[1], 2, 1);
+                // $rev_c = $this->get_rev(0, $wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
+                // $rev_c_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, $arr_periode[1], 2, 1);
+                // $rev_c_2 = $this->get_rev(0, $wil_id, $arr_periode[0] - 2, $arr_periode[1], 2, 1);
 
-                $data_c = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [$arr_periode[1]], 2, 1, $rev_c);
-                $data_c_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [$arr_periode[1]], 2, 1, $rev_c_1);
-                $data_c_2 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 2, [$arr_periode[1]], 2, 1, $rev_c_2);
+                $data_c = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [$arr_periode[1]], 2, 1);//, $rev_c);
+                $data_c_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [$arr_periode[1]], 2, 1);//, $rev_c_1);
+                $data_c_2 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 2, [$arr_periode[1]], 2, 1);//, $rev_c_2);
 
                 $data_adhb_y = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1], 1, 1);
                 $data_adhb_y_1 = $this->get_data($wil_id, $arr_periode[0] - 1, $arr_periode[1], 1, 1);
@@ -739,18 +771,18 @@ class TabelRingkasanController extends Controller
                 $row['implisit_yoy'] = ($data_adhb_y && $data_y  && $data_adhb_y_1 && $data_y_1  && isset($data_y->c_pdrb) && $data_y->c_pdrb != 0  && isset($data_y_1->c_pdrb) && $data_y_1->c_pdrb != 0  && isset($data_adhb_y_1->c_pdrb) && $data_adhb_y_1->c_pdrb != 0) ? round((($data_adhb_y->c_pdrb / $data_y->c_pdrb * 100) - ($data_adhb_y_1->c_pdrb / $data_y_1->c_pdrb * 100)) / ($data_adhb_y_1->c_pdrb / $data_y_1->c_pdrb * 100) * 100, 2) : null;
                 $row['share_prov']  = ($data_y  && $data_prov && isset($data_prov->c_pdrb) && $data_prov->c_pdrb != 0) ? round($data_y->c_pdrb / $data_prov->c_pdrb * 100, 2) : null;
             } else {
-                $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
-                $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, $arr_periode[1], 2, 1);
-                $rev_y_2 = $this->get_rev(0, $wil_id, $arr_periode[0] - 2, $arr_periode[1], 2, 1);
-                $rev_prov = $this->get_rev(0, '00', $arr_periode[0], $arr_periode[1], 2, 1);
+                // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
+                // $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, $arr_periode[1], 2, 1);
+                // $rev_y_2 = $this->get_rev(0, $wil_id, $arr_periode[0] - 2, $arr_periode[1], 2, 1);
+                // $rev_prov = $this->get_rev(0, '00', $arr_periode[0], $arr_periode[1], 2, 1);
 
-                $data_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [$arr_periode[1]], 2, 1, $rev_y);
-                $data_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [$arr_periode[1]], 2, 1, $rev_y_1);
-                $data_y_2 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 2, [$arr_periode[1]], 2, 1, $rev_y_2);
-                $data_adhb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [$arr_periode[1]], 1, 1, $rev_y);
-                $data_adhb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [$arr_periode[1]], 1, 1, $rev_y_1);
+                $data_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [$arr_periode[1]], 2, 1);//, $rev_y);
+                $data_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [$arr_periode[1]], 2, 1);//, $rev_y_1);
+                $data_y_2 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 2, [$arr_periode[1]], 2, 1);//, $rev_y_2);
+                $data_adhb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [$arr_periode[1]], 1, 1);//, $rev_y);
+                $data_adhb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [$arr_periode[1]], 1, 1);//, $rev_y_1);
 
-                $data_prov_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [$arr_periode[1]], 2, 1, $rev_prov);
+                $data_prov_y = $this->get_data_cumulative(0, '00', $arr_periode[0], [$arr_periode[1]], 2, 1);//, $rev_prov);
 
                 $row['yoy_current'] = $data_y && $data_y_1 && isset($data_y_1->c_pdrb) && $data_y_1->c_pdrb != 0 ? round(($data_y->c_pdrb - $data_y_1->c_pdrb) / $data_y_1->c_pdrb * 100, 2) : null;
                 $row['yoy_prev'] = $data_y_1 && $data_y_2 && isset($data_y_2->c_pdrb) && $data_y_2->c_pdrb != 0 ? round(($data_y_1->c_pdrb - $data_y_2->c_pdrb) / $data_y_2->c_pdrb * 100, 2) : null;
@@ -782,10 +814,10 @@ class TabelRingkasanController extends Controller
                     $pdrb_y = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
                     $pdrb_y_1 = $this->get_data($wil_id, $arr_periode[0] - 1, $arr_periode[1], 2, 1);
                 } else {
-                    $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                    $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
-                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_y);
-                    $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_y_1);
+                    // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                    // $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
+                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_y);
+                    $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_y_1);
                 }
                 if ($pdrb_y && $pdrb_y_1) {
                     foreach ($komponens as $komp) {
@@ -809,10 +841,10 @@ class TabelRingkasanController extends Controller
                         }
                     }
                 } else {
-                    $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                    $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
-                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_y);
-                    $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_y_1);
+                    // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                    // $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
+                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_y);
+                    $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_y_1);
                     if ($pdrb_y && $pdrb_y_1) {
                         foreach ($komponens as $komp) {
                             $komp_id = $komp['id'];
@@ -830,10 +862,10 @@ class TabelRingkasanController extends Controller
                 } else {
                     $q = [1, 2, 3, 4];
                 }
-                $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
-                $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], $q, 2, 1, $rev_y);
-                $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, $q, 2, 1, $rev_y_1);
+                // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                // $rev_y_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
+                $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], $q, 2, 1);//, $rev_y);
+                $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, $q, 2, 1);//, $rev_y_1);
                 if ($pdrb_y && $pdrb_y_1) {
                     foreach ($komponens as $komp) {
                         $komp_id = $komp['id'];
@@ -845,8 +877,8 @@ class TabelRingkasanController extends Controller
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
                 } else {
-                    $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_y);
+                    // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_y);
                 }
                 if ($pdrb_y) {
                     foreach ($komponens as $komp) {
@@ -859,8 +891,8 @@ class TabelRingkasanController extends Controller
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1], 1, 1);
                 } else {
-                    $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
-                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_y);
+                    // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
+                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_y);
                 }
                 if ($pdrb_y) {
                     foreach ($komponens as $komp) {
@@ -876,14 +908,14 @@ class TabelRingkasanController extends Controller
                     $pdrb_hb_1 = $this->get_data($wil_id, $arr_periode[0] - 1, $arr_periode[1], 1, 1);
                     $pdrb_hk_1 = $this->get_data($wil_id, $arr_periode[0] - 1, $arr_periode[1], 2, 1);
                 } else {
-                    $rev_hb = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
-                    $rev_hk = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                    $rev_hb_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 1, 1);
-                    $rev_hk_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
-                    $pdrb_hb = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb);
-                    $pdrb_hk = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk);
-                    $pdrb_hb_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_hb_1);
-                    $pdrb_hk_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1,  [1, 2, 3, 4], 2, 1, $rev_hk_1);
+                    // $rev_hb = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
+                    // $rev_hk = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                    // $rev_hb_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 1, 1);
+                    // $rev_hk_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
+                    $pdrb_hb = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb);
+                    $pdrb_hk = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk);
+                    $pdrb_hb_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_hb_1);
+                    $pdrb_hk_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1,  [1, 2, 3, 4], 2, 1);//, $rev_hk_1);
                 }
                 if ($pdrb_hb && $pdrb_hk && $pdrb_hb_1 && $pdrb_hk_1) {
                     foreach ($komponens as $komp) {
@@ -910,14 +942,14 @@ class TabelRingkasanController extends Controller
                         $pdrb_hk_1 = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1] - 1, 2, 1);
                     }
                 } else {
-                    $rev_hb = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
-                    $rev_hk = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                    $rev_hb_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 1, 1);
-                    $rev_hk_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
-                    $pdrb_hb = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb);
-                    $pdrb_hk = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk);
-                    $pdrb_hb_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_hb_1);
-                    $pdrb_hk_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1,  [1, 2, 3, 4], 2, 1, $rev_hk_1);
+                    // $rev_hb = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
+                    // $rev_hk = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                    // $rev_hb_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 1, 1);
+                    // $rev_hk_1 = $this->get_rev(0, $wil_id, $arr_periode[0] - 1, null, 2, 1);
+                    $pdrb_hb = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb);
+                    $pdrb_hk = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk);
+                    $pdrb_hb_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_hb_1);
+                    $pdrb_hk_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1,  [1, 2, 3, 4], 2, 1);//, $rev_hk_1);
                 }
                 if ($pdrb_hb && $pdrb_hk && $pdrb_hb_1 && $pdrb_hk_1) {
                     foreach ($komponens as $komp) {
@@ -936,8 +968,8 @@ class TabelRingkasanController extends Controller
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1], 1, 1);
                 } else {
-                    $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
-                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_y);
+                    // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 1, 1);
+                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_y);
                 }
                 if ($pdrb_y) {
                     foreach ($komponens as $komp) {
@@ -950,8 +982,8 @@ class TabelRingkasanController extends Controller
                 if (sizeof($arr_periode) > 1) {
                     $pdrb_y = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1], 2, 1);
                 } else {
-                    $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
-                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_y);
+                    // $rev_y = $this->get_rev(0, $wil_id, $arr_periode[0], null, 2, 1);
+                    $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_y);
                 }
                 if ($pdrb_y) {
                     foreach ($komponens as $komp) {
@@ -982,19 +1014,19 @@ class TabelRingkasanController extends Controller
                         // jika ada Q, misal 2024Q1'
                         $data_hb_prov = $this->get_data('00', $arr_periode[0], $arr_periode[1], 1, 1);
                         $data_hk_prov = $this->get_data('00', $arr_periode[0], $arr_periode[1], 2, 1);
-                        $rev_hb_kab = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 1, 1);
-                        $rev_hk_kab = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 2, 1);
-                        $data_hb_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 1, 1, $rev_hb_kab);
-                        $data_hk_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1, $rev_hk_kab);
+                        // $rev_hb_kab = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 1, 1);
+                        // $rev_hk_kab = $this->get_rev(1, '00', $arr_periode[0], $arr_periode[1], 2, 1);
+                        $data_hb_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 1, 1);//, $rev_hb_kab);
+                        $data_hk_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1);//, $rev_hk_kab);
                     } else {
-                        $rev_hb_kab = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
-                        $rev_hk_kab = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
-                        $data_hb_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb_kab);
-                        $data_hk_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk_kab);
-                        $rev_hb_prov = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
-                        $rev_hk_prov = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
-                        $data_hb_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb_prov);
-                        $data_hk_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk_prov);
+                        // $rev_hb_kab = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
+                        // $rev_hk_kab = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
+                        $data_hb_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb_kab);
+                        $data_hk_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk_kab);
+                        // $rev_hb_prov = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
+                        // $rev_hk_prov = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
+                        $data_hb_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb_prov);
+                        $data_hk_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk_prov);
                     }
                 } else if ($id == '1.12') {
                     $q = [];
@@ -1005,14 +1037,14 @@ class TabelRingkasanController extends Controller
                     } else {
                         $q = [1, 2, 3, 4];
                     }
-                    $rev_hb_prov = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
-                    $rev_hk_prov = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
-                    $data_hb_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 1, 1, $rev_hb_prov);
-                    $data_hk_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 2, 1, $rev_hk_prov);
-                    $rev_hb_kab = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
-                    $rev_hk_kab = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
-                    $data_hb_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 1, 1, $rev_hb_kab);
-                    $data_hk_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 2, 1, $rev_hk_kab);
+                    // $rev_hb_prov = $this->get_rev(0, '00', $arr_periode[0], null, 1, 1);
+                    // $rev_hk_prov = $this->get_rev(0, '00', $arr_periode[0], null, 2, 1);
+                    $data_hb_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 1, 1);//, $rev_hb_prov);
+                    $data_hk_prov = $this->get_data_cumulative(0, '00', $arr_periode[0], $q, 2, 1);//, $rev_hk_prov);
+                    // $rev_hb_kab = $this->get_rev(1, '00', $arr_periode[0], null, 1, 1);
+                    // $rev_hk_kab = $this->get_rev(1, '00', $arr_periode[0], null, 2, 1);
+                    $data_hb_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 1, 1);//, $rev_hb_kab);
+                    $data_hk_kab = $this->get_data_cumulative(1, '00', $arr_periode[0], $q, 2, 1);//, $rev_hk_kab);
                 }
                 $row[$periode . 'adhb'] = $data_hb_kab && isset($data_hb_kab->$komp_id) && $data_hb_prov && isset($data_hb_prov->$komp_id) && $data_hb_prov->$komp_id != 0 ?  ($data_hb_kab->$komp_id - $data_hb_prov->$komp_id) / $data_hb_prov->$komp_id * 100 : null;
                 $row[$periode . 'adhk'] = $data_hk_kab && isset($data_hk_kab->$komp_id) && $data_hk_prov && isset($data_hk_prov->$komp_id) && $data_hk_prov->$komp_id != 0 ?  ($data_hk_kab->$komp_id - $data_hk_prov->$komp_id) / $data_hk_prov->$komp_id * 100 : null;
@@ -1053,15 +1085,15 @@ class TabelRingkasanController extends Controller
                 for ($i = 1; $i <= $arr_periode[1]; $i++) {
                     $q[] = $i;
                 }
-                $rev_hb_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
-                $rev_hk_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
-                $rev_hb_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
-                $rev_hk_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                // $rev_hb_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
+                // $rev_hk_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
+                // $rev_hb_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
+                // $rev_hk_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
 
-                $data_hb_c = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], $q, 1, 1, $rev_hb_y);
-                $data_hk_c = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], $q, 2, 1, $rev_hk_y);
-                $data_hb_c_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, $q, 1, 1, $rev_hb_y_1);
-                $data_hk_c_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $rev_hk_y_1);
+                $data_hb_c = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], $q, 1, 1);//, $rev_hb_y);
+                $data_hk_c = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], $q, 2, 1);//, $rev_hk_y);
+                $data_hb_c_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, $q, 1, 1);//, $rev_hb_y_1);
+                $data_hk_c_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, $q, 2, 1);//, $rev_hk_y_1);
 
                 $row['yoy'] = $data_hk_y && $data_hk_y_1 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_y_1->$komp_id) / $data_hk_y_1->$komp_id * 100 : null;
                 $row['qtq'] = $data_hk_y && $data_hk_q_1 && isset($data_hk_q_1->$komp_id) && $data_hk_q_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_q_1->$komp_id) / $data_hk_q_1->$komp_id * 100 : null;
@@ -1070,15 +1102,15 @@ class TabelRingkasanController extends Controller
                 $row['implisit_qtq'] = $data_hb_y && $data_hk_y && $data_hb_q_1 && $data_hk_q_1  && isset($data_hk_y->$komp_id) && $data_hk_y->$komp_id != 0   && isset($data_hb_q_1->$komp_id) && $data_hb_q_1->$komp_id != 0   && isset($data_hk_q_1->$komp_id) && $data_hk_q_1->$komp_id != 0   ? (($data_hb_y->$komp_id / $data_hk_y->$komp_id * 100)  - ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100)) / ($data_hb_q_1->$komp_id / $data_hk_q_1->$komp_id * 100) * 100 : null;
                 $row['implisit_ctc'] = $data_hb_c && $data_hk_c && $data_hb_c_1 && $data_hk_c_1  && isset($data_hk_c->$komp_id) && $data_hk_c->$komp_id != 0   && isset($data_hb_c_1->$komp_id) && $data_hb_c_1->$komp_id != 0   && isset($data_hk_c_1->$komp_id) && $data_hk_c_1->$komp_id != 0   ? (($data_hb_c->$komp_id / $data_hk_c->$komp_id * 100)  - ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100)) / ($data_hb_c_1->$komp_id / $data_hk_c_1->$komp_id * 100) * 100 : null;
             } else {
-                $rev_hb_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
-                $rev_hk_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
-                $rev_hb_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
-                $rev_hk_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                // $rev_hb_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
+                // $rev_hk_y = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
+                // $rev_hb_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
+                // $rev_hk_y_1 = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
 
-                $data_hb_y = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb_y);
-                $data_hk_y = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk_y);
-                $data_hb_y_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_hb_y_1);
-                $data_hk_y_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_hk_y_1);
+                $data_hb_y = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb_y);
+                $data_hk_y = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk_y);
+                $data_hb_y_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_hb_y_1);
+                $data_hk_y_1 = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_hk_y_1);
 
 
                 $row['yoy'] = $data_hk_y && $data_hk_y_1 && isset($data_hk_y_1->$komp_id) && $data_hk_y_1->$komp_id != 0 ? ($data_hk_y->$komp_id - $data_hk_y_1->$komp_id) / $data_hk_y_1->$komp_id * 100 : null;
@@ -1131,25 +1163,25 @@ class TabelRingkasanController extends Controller
                     $q[] = $i;
                 }
 
-                $rev_hb_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
-                $rev_hk_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
-                $rev_hb_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, null);
-                $rev_hk_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, null);
+                // $rev_hb_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
+                // $rev_hk_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
+                // $rev_hb_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, null);
+                // $rev_hk_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, null);
 
-                $rev_hb_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
-                $rev_hk_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                $rev_hb_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, null);
-                $rev_hk_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, null);
+                // $rev_hb_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
+                // $rev_hk_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                // $rev_hb_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, null);
+                // $rev_hk_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, null);
 
-                $data_hb_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb_y_rilis);
-                $data_hk_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk_y_rilis);
-                $data_hb_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, null, $rev_hb_y_revisi);
-                $data_hk_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, null, $rev_hk_y_revisi);
+                $data_hb_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb_y_rilis);
+                $data_hk_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk_y_rilis);
+                $data_hb_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, null);//, $rev_hb_y_revisi);
+                $data_hk_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, null);//, $rev_hk_y_revisi);
 
-                $data_hb_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_hb_y_1_rilis);
-                $data_hk_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_hk_y_1_rilis);
-                $data_hb_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, null, $rev_hb_y_1_revisi);
-                $data_hk_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, null, $rev_hk_y_1_revisi);
+                $data_hb_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_hb_y_1_rilis);
+                $data_hk_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_hk_y_1_rilis);
+                $data_hb_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, null);//, $rev_hb_y_1_revisi);
+                $data_hk_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, null);//, $rev_hk_y_1_revisi);
 
 
                 $row['yoy_rilis']   = $data_hk_y_rilis  && $data_hk_y_1_rilis   && isset($data_hk_y_1_rilis->$komp_id)  && $data_hk_y_1_rilis->$komp_id != 0    ? ($data_hk_y_rilis->$komp_id -     $data_hk_y_1_rilis->$komp_id)   / $data_hk_y_1_rilis->$komp_id  * 100 : null;
@@ -1236,25 +1268,25 @@ class TabelRingkasanController extends Controller
                     (($data_hb_c_revisi->$komp_id / $data_hk_c_revisi->$komp_id * 100) - ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100)) / ($data_hb_c_1_revisi->$komp_id / $data_hk_c_1_revisi->$komp_id * 100) * 100
                     : null;
             } else {
-                $rev_hb_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
-                $rev_hk_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
-                $rev_hb_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, null);
-                $rev_hk_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, null);
+                // $rev_hb_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, 1);
+                // $rev_hk_y_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, 1);
+                // $rev_hb_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 1, null);
+                // $rev_hk_y_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0], null, 2, null);
 
-                $rev_hb_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
-                $rev_hk_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                $rev_hb_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, null);
-                $rev_hk_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, null);
+                // $rev_hb_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
+                // $rev_hk_y_1_rilis = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                // $rev_hb_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 1, null);
+                // $rev_hk_y_1_revisi = $this->get_rev(0, $wilayah_filter, $arr_periode[0] - 1, null, 2, null);
 
-                $data_hb_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $rev_hb_y_rilis);
-                $data_hk_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $rev_hk_y_rilis);
-                $data_hb_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, null, $rev_hb_y_revisi);
-                $data_hk_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, null, $rev_hk_y_revisi);
+                $data_hb_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1);//, $rev_hb_y_rilis);
+                $data_hk_c_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_hk_y_rilis);
+                $data_hb_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, null);//, $rev_hb_y_revisi);
+                $data_hk_c_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, null);//, $rev_hk_y_revisi);
 
-                $data_hb_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $rev_hb_y_1_rilis);
-                $data_hk_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $rev_hk_y_1_rilis);
-                $data_hb_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, null, $rev_hb_y_1_revisi);
-                $data_hk_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, null, $rev_hk_y_1_revisi);
+                $data_hb_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);//, $rev_hb_y_1_rilis);
+                $data_hk_c_1_rilis = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_hk_y_1_rilis);
+                $data_hb_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, null);//, $rev_hb_y_1_revisi);
+                $data_hk_c_1_revisi = $this->get_data_cumulative(0, $wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, null);//, $rev_hk_y_1_revisi);
 
                 $row['yoy_rilis']   = $data_hk_c_rilis  && $data_hk_c_1_rilis   && isset($data_hk_c_1_rilis->$komp_id)  && $data_hk_c_1_rilis->$komp_id != 0    ? ($data_hk_c_rilis->$komp_id   - $data_hk_c_1_rilis->$komp_id)     / $data_hk_c_1_rilis->$komp_id  * 100 : null;
                 $row['yoy_revisi']  = $data_hk_c_revisi && $data_hk_c_1_revisi  && isset($data_hk_c_1_revisi->$komp_id) && $data_hk_c_1_revisi->$komp_id != 0   ? ($data_hk_c_revisi->$komp_id  - $data_hk_c_1_revisi->$komp_id)    / $data_hk_c_1_revisi->$komp_id * 100 : null;

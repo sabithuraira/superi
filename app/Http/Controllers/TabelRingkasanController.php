@@ -6,6 +6,7 @@ use App\Exports\RingkasanExportAll;
 use App\Pdrb;
 use App\PdrbFinal;
 use App\SettingApp;
+use App\Helpers\AssetData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -120,53 +121,13 @@ class TabelRingkasanController extends Controller
         ],
     ];
 
-    public $list_group_komponen = [
-        ['column' => "c_pdrb", 'name' => 'PDRB'],
-        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['column' => "c_3", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],
-        ['column' => "c_5", 'name' => '5. Perubahan Inventori'],
-        ['column' => "c_6", 'name' => '6. Ekspor Luar Negeri'],
-        ['column' => "c_7", 'name' => '7. Impor Luar Negeri']
-    ];
-
-    public $list_detail_komponen = [
-        ['id' => 'c_pdrb', 'alias' => 'PDRB',               'name' =>  'PDRB'],
-        ['id' => 'c_1',   'alias' => '1. PKRT',             'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['id' => 'c_1a',  'alias' => '1a. PKRT-Mamin  ',    'name' =>  '1.a. Makanan, Minuman dan Rokok '],
-        ['id' => 'c_1b',  'alias' => '1b. PKRT-Pakaian',    'name' =>  '1.b. Pakaian dan Alas Kaki'],
-        ['id' => 'c_1c',  'alias' => '1c. PKRT-Perumahan',  'name' =>  '1.c. Perumahan, Perkakas, Perlengkapan dan Penyelenggaraan Rumah Tangga'],
-        ['id' => 'c_1d',  'alias' => '1d. PKRT-Kesehatan ', 'name' =>  '1.d. Kesehatan dan Pendidikan'],
-        ['id' => 'c_1e',  'alias' => '1e. PKRT-Tansport',   'name' =>  '1.e. Trasportasi, Komunikasi, Rekreasi dan Budaya'],
-        ['id' => 'c_1f',  'alias' => '1f. PKRT-Restoran ',  'name' =>  '1.f. Hotel dan Restoran'],
-        ['id' => 'c_1g',  'alias' => '1g. PKRT-Lainnya',    'name' =>  '1.g. Lainnya'],
-        ['id' => 'c_2',   'alias' => '2. PKLNPRT',          'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['id' => 'c_3',   'alias' => '3.PKP',               'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        // ['id' => 'c_3a',  'alias' => '3a.PKP-Kol',          'name' =>  '  3.a. Konsumsi Kolektif'],
-        // ['id' => 'c_3b',  'alias' => '3b.PKP-Ind',          'name' =>  '  3.b. Konsumsi Individu'],
-        ['id' => 'c_4',   'alias' => '4. PMTB',             'name' => '4. Pembentukan Modal Tetap Bruto'],
-        ['id' => 'c_4a',  'alias' => '4a. PMTB-Bang',       'name' =>  '  4.a. Bangunan'],
-        ['id' => 'c_4b',  'alias' => '4b. PMTB-NB',         'name' =>  '  4.b. Non Bangunan'],
-        ['id' => 'c_5',   'alias' => '5. PI',               'name' => '5. Perubahan Inventori'],
-        ['id' => 'c_6',   'alias' => '6. X LN',             'name' => '6. Ekspor Luar Negeri'],
-        // ['id' => 'c_6a',  'alias' => '6a. XB LN',           'name' =>  '  6.a. Ekspor Barang'],
-        // ['id' => 'c_6b',  'alias' => '6b. XJ LN',           'name' =>  '  6.b. Ekspor Jasa'],
-        ['id' => 'c_7',   'alias' => '7. M LN',             'name' => '7. Impor Luar Negeri'],
-        // ['id' => 'c_7a',  'alias' => '7a. MB LN',           'name' =>  '  7.a. Impor Barang'],
-        // ['id' => 'c_7b',  'alias' => '7b. MJ LN',           'name' =>  '  7.b. Impor Jasa'],
-        // ['id' => 'c_8',   'alias' => '8. Net Ekspor',       'name' => '  8. Net Ekspor Antar Daerah'],
-        // ['id' => 'c_8a',  'alias' => '8a. X AP',            'name' =>  '  8.a. Ekspor Antar Daerah'],
-        // ['id' => 'c_8b',  'alias' => '8b. M AP',            'name' =>  '  8.b. Impor Antar Daerah']
-    ];
-
     public function ringkasan1(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $tahun_berlaku = $this->tahun_berlaku;
-        $list_group_komponen = $this->list_group_komponen;
-        $list_detail_komponen = $this->list_detail_komponen;
+        $list_group_komponen = AssetData::getGroupKomponen();
+        $list_detail_komponen = AssetData::getDetailKomponen();
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter :  array_map(function ($item) {
@@ -212,8 +173,8 @@ class TabelRingkasanController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
-        $list_detail_komponen = $this->list_detail_komponen;
+        $list_group_komponen = AssetData::getGroupKomponen();
+        $list_detail_komponen = AssetData::getDetailKomponen();
         $list_wilayah = $this->list_wilayah;
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.4';
         $tahun_berlaku = $this->tahun_berlaku;
@@ -241,8 +202,8 @@ class TabelRingkasanController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
-        $list_detail_komponen = $this->list_detail_komponen;
+        $list_group_komponen = AssetData::getGroupKomponen();
+        $list_detail_komponen = AssetData::getDetailKomponen();
         $list_wilayah = $this->list_wilayah;
         $tahun_berlaku = $this->tahun_berlaku;
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.11';
@@ -275,7 +236,7 @@ class TabelRingkasanController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_detail_komponen = $this->list_detail_komponen;
+        $list_detail_komponen = AssetData::getDetailKomponen();
         $list_wilayah = $this->list_wilayah;
 
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.13';
@@ -292,7 +253,7 @@ class TabelRingkasanController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_detail_komponen = $this->list_detail_komponen;
+        $list_detail_komponen = AssetData::getDetailKomponen();
         $list_wilayah = $this->list_wilayah;
 
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.14';
@@ -310,8 +271,8 @@ class TabelRingkasanController extends Controller
         $list_periode = $this->list_periode;
         $tahun_berlaku = $this->tahun_berlaku;
         $triwulan_berlaku = $this->triwulan_berlaku;
-        $list_group_komponen = $this->list_group_komponen;
-        $list_detail_komponen = $this->list_detail_komponen;
+        $list_group_komponen = AssetData::getGroupKomponen();
+        $list_detail_komponen = AssetData::getDetailKomponen();
         $list_wilayah = $this->list_wilayah;
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
@@ -347,7 +308,7 @@ class TabelRingkasanController extends Controller
                     ? $request->periode_filter : $tahun_berlaku . 'Q' . $triwulan_berlaku;
                 $row['periode_filter'] = $periode;
                 $triwulan_berlaku;
-                $row['komponens'] = $this->list_detail_komponen;
+                $row['komponens'] = AssetData::getDetailKomponen();
                 $rumus = $this->rumus_3($list_wilayah, $komponens, $periode, $tbl['id']);
                 $row['data'] = $rumus;
             } elseif (in_array($tbl['id'], ['1.11', '1.12'], true)) {
@@ -408,7 +369,14 @@ class TabelRingkasanController extends Controller
      */
     public function get_data($kab, $thn, $q, $adhk, $status)
     {
-        $data = PdrbFinal::select('kode_kab', DB::raw('c_1 , c_1a + c_1b as c_1a, c_1c as c_1b , c_1d + c_1e as c_1c, c_1f+c_1j as c_1d, c_1g+c_1h+c_1i as c_1e, c_1k as c_1f, c_1l as c_1g, c_2, c_3, c_3a, c_3b, c_4, c_4a, c_4b, c_5, c_6, c_6a, c_6b, c_7, c_7a, c_7b, c_8, c_8a, c_8b, c_pdrb'))
+        $str_sql_select = "";
+        $list_detail_komponen = AssetData::getDetailKomponen();
+        foreach($list_detail_komponen as $item){
+            $str_sql_select .= $item['select_id']." as ".$item['id'].",";
+        }
+        $str_sql_select = substr($str_sql_select,0, -1);
+
+        $data = PdrbFinal::select('kode_kab', DB::raw($str_sql_select))
             ->where('kode_kab', $kab)
             ->where('tahun', $thn)
             ->where('q', "LIKE", '%' . $q . '%')
@@ -450,7 +418,14 @@ class TabelRingkasanController extends Controller
         //     ->groupBy('kode_prov')
         //     ->first();
 
-        $data = PdrbFinal::select('kode_prov', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_3a) as c_3a, sum(c_3b) as c_3b, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_6a) c_6a, sum(c_6b) as c_6b, sum(c_7) as c_7, sum(c_7a) as c_7a, sum(c_7b) as c_7b, sum(c_8) as c_8 , sum(c_8a) as c_8a, sum(c_8b) as c_8b, sum(c_pdrb) as c_pdrb'))
+        $str_sql_select = "";
+        $list_detail_komponen = AssetData::getDetailKomponen();
+        foreach($list_detail_komponen as $item){
+            $str_sql_select .= "SUM(".$item['select_id'].") as ".$item['id'].",";
+        }
+        $str_sql_select = substr($str_sql_select,0, -1);
+
+        $data = PdrbFinal::select('kode_prov', DB::raw($str_sql_select))
             ->when($diskre == 0, function ($query) use ($kab) {
                 return $query->where('kode_kab', '=', $kab);
             }, function ($query) use ($kab) {
@@ -819,12 +794,14 @@ class TabelRingkasanController extends Controller
                     $pdrb_y = $this->get_data_cumulative(0, $wil_id, $arr_periode[0], [1, 2, 3, 4], 2, 1);//, $rev_y);
                     $pdrb_y_1 = $this->get_data_cumulative(0, $wil_id, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);//, $rev_y_1);
                 }
+
                 if ($pdrb_y && $pdrb_y_1) {
                     foreach ($komponens as $komp) {
                         $komp_id = $komp['id'];
                         $row[$komp_id] = isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id * 100 : null;
                     }
                 }
+
                 $data[] = $row;
             } else if ($id == "1.5") {
                 if (sizeof($arr_periode) > 1) {
@@ -834,6 +811,7 @@ class TabelRingkasanController extends Controller
                     } else {
                         $pdrb_q_1 = $this->get_data($wil_id, $arr_periode[0], $arr_periode[1] - 1, 2, 1);
                     }
+                    
                     if ($pdrb_y && $pdrb_q_1) {
                         foreach ($komponens as $komp) {
                             $komp_id = $komp['id'];
@@ -852,6 +830,7 @@ class TabelRingkasanController extends Controller
                         }
                     }
                 }
+
                 $data[] = $row;
             } else if ($id == "1.6") {
                 $q = [];

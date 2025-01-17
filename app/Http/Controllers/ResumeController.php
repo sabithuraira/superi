@@ -247,7 +247,7 @@ class ResumeController extends Controller
                     $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                     $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                 } else {
-                    $q = substr($p, 5, 1);
+                    $q = substr($p, 5, 1);
                     if ($q == '1') {
                         $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_rev_view')[0]->prov;
                         $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';

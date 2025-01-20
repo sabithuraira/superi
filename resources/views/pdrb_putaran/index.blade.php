@@ -102,7 +102,28 @@
 
                                                 @foreach ($periode_filter as $periode)
                                                     <td class="text-right">
-                                                        {{ array_key_exists($periode, $dt) && $dt[$periode] ? number_format(round($dt[$periode], 2), 2, ',', '.') : '' }}
+                                                        @if(count(explode("Q", $periode))>1)
+                                                            {{ array_key_exists($periode, $dt) && $dt[$periode] ? number_format(round($dt[$periode], 2), 2, ',', '.') : '' }}
+                                                        @else 
+                                                            @php 
+                                                                $is_all_year = 1;
+                                                                $sum_year = 0;
+                                                            @endphp 
+                                                            @for ($i=1; $i<=4;$i++)
+                                                                @if(array_key_exists($periode."Q".$i, $dt) && $dt[$periode."Q".$i])
+                                                                    @php 
+                                                                        $sum_year += $dt[$periode."Q".$i];
+                                                                    @endphp 
+                                                                @else 
+                                                                    @php 
+                                                                        $is_all_year = 0;
+                                                                    @endphp 
+                                                                @endif
+                                                            @endfor
+                                                            @if($is_all_year==1)
+                                                                {{ number_format(round($sum_year, 2), 2, ',', '.') }}
+                                                            @endif
+                                                        @endif 
                                                     </td>
                                                 @endforeach
                                             </tr>

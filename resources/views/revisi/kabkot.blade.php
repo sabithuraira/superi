@@ -137,7 +137,7 @@
                                                     <td class="text-right">
                                                         {{ $revisi != null ? number_format(round($revisi, 2), 2, ',', '.') : '' }}
                                                     </td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         @if ($rilis < $revisi)
                                                             <div class="text-danger">▼</div>
                                                         @elseif ($rilis > $revisi)

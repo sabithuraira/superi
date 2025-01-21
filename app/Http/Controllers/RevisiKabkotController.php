@@ -18,12 +18,12 @@ class RevisiKabkotController extends Controller
     public $select_7pkrt = [];
     public $select_rilis = [];
 
-
     public function __construct()
     {
         $this->list_wilayah = config("app.wilayah");
         $this->tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first()->setting_value;
         $this->triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first()->setting_value;
+
         for ($i = 1; $i <= $this->triwulan_berlaku; $i++) {
             array_push($this->list_periode, "{$this->tahun_berlaku}Q{$i}");
         }
@@ -88,6 +88,7 @@ class RevisiKabkotController extends Controller
         ['column' => "8., 8.a., 8.b.",                  'name' => '8. Net Ekspor Antar Daerah'],
         ['column' => "pdrb",                            'name' => '9. PDRB'],
     ];
+
     public $list_group_7pkrt = [
         ['column' => "1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g.", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
         ['column' => "2.",                              'name' => '2. Pengeluaran Konsumsi LNPRT'],
@@ -99,6 +100,7 @@ class RevisiKabkotController extends Controller
         ['column' => "8., 8.a., 8.b.",                  'name' => '8. Net Ekspor Antar Daerah'],
         ['column' => "pdrb",                            'name' => '9. PDRB'],
     ];
+    
     public $list_group_rilis = [
         ['column' => "1.", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
         ['column' => "2.", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
@@ -107,6 +109,9 @@ class RevisiKabkotController extends Controller
         ['column' => "pdrb", 'name' => '5. PDRB'],
     ];
 
+    /**
+     * get last revisi data base on kab, tahun, q, adhk & status
+     */
     public function get_rev($kab, $thn, $q, $adhk, $status)
     {
         $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
@@ -121,6 +126,11 @@ class RevisiKabkotController extends Controller
         return $rev;
     }
 
+    /**
+     * get data base on kab, tahun, q, adhk, status
+     * only get "select" property
+     * and get last revisi data
+     */
     public function get_data($kab, $thn, $q, $adhk, $status, $select)
     {
         $data = Pdrb::select($select)
@@ -156,7 +166,6 @@ class RevisiKabkotController extends Controller
             ->first();
         return $data;
     }
-
 
     public function rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select)
     {
@@ -480,6 +489,7 @@ class RevisiKabkotController extends Controller
 
         return view('revisi.kabkot', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_wilayah', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'wilayah_filter', 'komponen_filter', 'data'));
     }
+
     public function revisi_7pkrt(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
@@ -493,7 +503,6 @@ class RevisiKabkotController extends Controller
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4'];
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g.', '2.', '3., 3.a., 3.b.', '4., 4.a., 4.b.', '5.', '6., 6.a., 6.b.', '7., 7.a., 7.b.', '8., 8.a., 8.b.', 'pdrb'];
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
-
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);
         return view('revisi.kabkot', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_wilayah', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'wilayah_filter', 'komponen_filter', 'data'));

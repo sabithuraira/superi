@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Komponen;
 use App\SettingApp;
 use App\Pdrb;
+use App\PdrbFinal;
+use App\Helpers\AssetData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -27,11 +29,36 @@ class RevisiKabkotController extends Controller
         for ($i = 1; $i <= $this->triwulan_berlaku; $i++) {
             array_push($this->list_periode, "{$this->tahun_berlaku}Q{$i}");
         }
-        $this->select_12pkrt =  ['kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a) as c_1a, sum(c_1b) as c_1b,sum(c_1c) as c_1c, sum(c_1d) as c_1d, sum(c_1e) as c_1e, sum(c_1f) as c_1f, sum(c_1g) as c_1g, sum(c_1h) as c_1h, sum(c_1i) as c_1i , sum(c_1j) as c_1j, sum(c_1k) as c_1k, sum(c_1l) as c_1l, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_7) as c_7, sum(c_pdrb) as c_pdrb')];
 
-        $this->select_7pkrt =  ['kode_kab', DB::raw('sum(c_1) as c_1, sum(c_1a + C_1b) as c_1a, sum(c_1c) as c_1b, sum(c_1d + c_1e) as c_1c, sum(c_1f + c_1j) as c_1d, sum(c_1g + c_1h + c_1i) as c_1e, sum(c_1k) as c_1f, sum(c_1l) as c_1g, sum(c_2) as c_2, sum(c_3) as c_3, sum(c_4) c_4, sum(c_4a) c_4a, sum(c_4b) c_4b, sum(c_5) as c_5, sum(c_6) as c_6, sum(c_7) as c_7, sum(c_pdrb) as c_pdrb')];
+        $this->setSelectVariable();
+    }
 
-        $this->select_rilis = ['kode_kab', DB::raw('sum(c_1) as c_1 , sum(c_3) as c_2, sum(c_4) as c_3, sum(c_6 - c_7 + c_5 + c_2) as c_4, sum(c_pdrb) as c_pdrb')];
+    private function setSelectVariable(){
+        $str_sql_select = "";
+        $list_komp = AssetData::getDetailKomponen();
+        foreach($list_komp as $item){
+            $str_sql_select .= "SUM(".$item['select_id'].") as ".$item['id'].",";
+        }
+        $this->select_7pkrt = ['kode_kab', DB::raw(substr($str_sql_select,0, -1))];
+
+        //////////////////////
+
+        $str_sql_select12 = "";
+        $list_komp_12 = AssetData::$list_detail_komponen_12_pkrt;
+        foreach($list_komp_12 as $item){
+            $str_sql_select12 .= "SUM(".$item['id'].") as ".$item['id'].",";
+        }
+
+        $this->select_12pkrt =  ['kode_kab', DB::raw(substr($str_sql_select12,0, -1))];
+
+        ///////////////////
+        $str_sql_select_rilis = "";
+        $list_komp_rilis = AssetData::$list_detail_komponen_rilis;
+        foreach($list_komp_rilis as $item){
+            $str_sql_select_rilis .= "SUM(".$item['select_id'].") as ".$item['id'].",";
+        }
+
+        $this->select_rilis =  ['kode_kab', DB::raw(substr($str_sql_select_rilis,0, -1))];
     }
 
     public $list_tabel = [
@@ -77,54 +104,22 @@ class RevisiKabkotController extends Controller
         ],
     ];
 
-    public $list_group_komponen = [
-        ['column' => "1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g., 1.h., 1.i., 1.j., 1.k., 1.l.", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['column' => "2.",                              'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['column' => "3., 3.a., 3.b.",                  'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        ['column' => "4., 4.a., 4.b.",                  'name' => '4. Pembentukan Modal tetap Bruto'],
-        ['column' => "5.",                              'name' => '5. Perubahan Inventori'],
-        ['column' => "6., 6.a., 6.b.",                  'name' => '6. Ekspor Luar Negeri'],
-        ['column' => "7., 7.a., 7.b.",                  'name' => '7. Impor Luar Negeri'],
-        ['column' => "8., 8.a., 8.b.",                  'name' => '8. Net Ekspor Antar Daerah'],
-        ['column' => "pdrb",                            'name' => '9. PDRB'],
-    ];
-
-    public $list_group_7pkrt = [
-        ['column' => "1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g.", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['column' => "2.",                              'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['column' => "3., 3.a., 3.b.",                  'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        ['column' => "4., 4.a., 4.b.",                  'name' => '4. Pembentukan Modal tetap Bruto'],
-        ['column' => "5.",                              'name' => '5. Perubahan Inventori'],
-        ['column' => "6., 6.a., 6.b.",                  'name' => '6. Ekspor Luar Negeri'],
-        ['column' => "7., 7.a., 7.b.",                  'name' => '7. Impor Luar Negeri'],
-        ['column' => "8., 8.a., 8.b.",                  'name' => '8. Net Ekspor Antar Daerah'],
-        ['column' => "pdrb",                            'name' => '9. PDRB'],
-    ];
-    
-    public $list_group_rilis = [
-        ['column' => "1.", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['column' => "2.", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['column' => "3.", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        ['column' => "4.", 'name' => '4. Pembentukan Modal tetap Bruto'],
-        ['column' => "pdrb", 'name' => '5. PDRB'],
-    ];
-
     /**
      * get last revisi data base on kab, tahun, q, adhk & status
      */
-    public function get_rev($kab, $thn, $q, $adhk, $status)
-    {
-        $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
-            ->where('kode_kab', $kab)
-            ->where('tahun', $thn)
-            ->where('q', "LIKE", '%' . $q . '%')
-            ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', "LIKE", '%' . $status . '%')
-            ->groupBy('kode_kab', 'q')
-            ->get();
+    // public function get_rev($kab, $thn, $q, $adhk, $status)
+    // {
+    //     $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+    //         ->where('kode_kab', $kab)
+    //         ->where('tahun', $thn)
+    //         ->where('q', "LIKE", '%' . $q . '%')
+    //         ->where('adhb_or_adhk', $adhk)
+    //         ->where('status_data', "LIKE", '%' . $status . '%')
+    //         ->groupBy('kode_kab', 'q')
+    //         ->get();
 
-        return $rev;
-    }
+    //     return $rev;
+    // }
 
     /**
      * get data base on kab, tahun, q, adhk, status
@@ -133,35 +128,35 @@ class RevisiKabkotController extends Controller
      */
     public function get_data($kab, $thn, $q, $adhk, $status, $select)
     {
-        $data = Pdrb::select($select)
+        $data = PdrbFinal::select($select)
             ->where('kode_kab', $kab)
             ->where('tahun', $thn)
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
             ->where('status_data', "LIKE", '%' . $status . '%')
-            ->orderBy('revisi_ke', 'desc')
+            // ->orderBy('revisi_ke', 'desc')
             ->groupby('kode_kab')
             ->first();
         return $data;
     }
 
-    public function get_data_cumulative($kab, $thn, $q, $adhk, $status, $rev, $select)
+    public function get_data_cumulative($kab, $thn, $q, $adhk, $status, $select) //$rev, $select)
     {
-        $data = Pdrb::select($select)
+        $data = PdrbFinal::select($select)
             ->where('kode_kab', $kab)
             ->where('tahun', $thn)
             ->wherein('q', $q)
             ->where('adhb_or_adhk', $adhk)
             ->where('status_data', "LIKE", '%' . $status . '%')
-            ->where(function ($query) use ($rev) {
-                foreach ($rev as $r) {
-                    $query->orWhere(function ($subquery) use ($r) {
-                        $subquery->where('kode_kab', $r->kode_kab)
-                            ->where('q', $r->q)
-                            ->where('revisi_ke', $r->max_revisi);
-                    });
-                }
-            })
+            // ->where(function ($query) use ($rev) {
+            //     foreach ($rev as $r) {
+            //         $query->orWhere(function ($subquery) use ($r) {
+            //             $subquery->where('kode_kab', $r->kode_kab)
+            //                 ->where('q', $r->q)
+            //                 ->where('revisi_ke', $r->max_revisi);
+            //         });
+            //     }
+            // })
             ->groupBy('kode_kab')
             ->first();
         return $data;
@@ -271,15 +266,15 @@ class RevisiKabkotController extends Controller
                     } else {
                         $q = [1, 2, 3, 4];
                     }
-                    $rev_rilis_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
-                    $rev_revisi_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, null);
-                    $rev_rilis_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                    $rev_revisi_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, null);
+                    // $rev_rilis_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
+                    // $rev_revisi_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, null);
+                    // $rev_rilis_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                    // $rev_revisi_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, null);
 
-                    $rilis_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $rev_rilis_y, $select);
-                    $revisi_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, null, $rev_revisi_y, $select);
-                    $rilis_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $rev_rilis_y_1, $select);
-                    $revisi_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, null, $rev_revisi_y_1, $select);
+                    $rilis_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $select);//$rev_rilis_y, $select);//
+                    $revisi_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, null, $select);//$rev_revisi_y, $select);
+                    $rilis_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $select);//$rev_rilis_y_1, $select);
+                    $revisi_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, null, $select);//$rev_revisi_y_1, $select);
 
                     $row[$periode . "_rilis"] = $rilis_c && $rilis_c_1 && isset($rilis_c_1->$komp_id) && $rilis_c_1->$komp_id != 0 ? ($rilis_c->$komp_id - $rilis_c_1->$komp_id) / $rilis_c_1->$komp_id * 100 : null;
                     $row[$periode . "_revisi"] = $revisi_c && $revisi_c_1 && isset($revisi_c_1->$komp_id) && $revisi_c_1->$komp_id != 0 ? ($revisi_c->$komp_id - $revisi_c_1->$komp_id) / $revisi_c_1->$komp_id * 100 : null;
@@ -434,15 +429,15 @@ class RevisiKabkotController extends Controller
                         $q = [1, 2, 3, 4];
                     }
 
-                    $rev_rilis_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
-                    $rev_revisi_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, null);
-                    $rev_rilis_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                    $rev_revisi_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, null);
+                    // $rev_rilis_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
+                    // $rev_revisi_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, null);
+                    // $rev_rilis_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                    // $rev_revisi_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, null);
 
-                    $rilis_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $rev_rilis_y, $select);
-                    $revisi_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, null, $rev_revisi_y, $select);
-                    $rilis_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $rev_rilis_y_1, $select);
-                    $revisi_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, null, $rev_revisi_y_1, $select);
+                    $rilis_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $select);//$rev_rilis_y, $select);
+                    $revisi_c = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, null, $select);//$rev_revisi_y, $select);
+                    $rilis_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $select);//$rev_rilis_y_1, $select);
+                    $revisi_c_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, null, $select);//$rev_revisi_y_1, $select);
 
                     $laju_pert_rilis =  $rilis_c && $rilis_c_1 && isset($rilis_c_1->c_pdrb) && $rilis_c_1->c_pdrb != 0 ? ($rilis_c->c_pdrb - $rilis_c_1->c_pdrb) / $rilis_c_1->c_pdrb * 100 : null;
                     $laju_pert_rev =  $revisi_c && $revisi_c_1 && isset($revisi_c_1->c_pdrb) && $revisi_c_1->c_pdrb != 0 ? ($revisi_c->c_pdrb - $revisi_c_1->c_pdrb) / $revisi_c_1->c_pdrb * 100 : null;
@@ -475,14 +470,19 @@ class RevisiKabkotController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_komponen;
+        $list_group_komponen = AssetData::$list_group_12_pkrt; //$this->list_group_komponen;
         $list_wilayah = $this->list_wilayah;
         $tahun_berlaku = $this->tahun_berlaku;
         $select = $this->select_12pkrt;
 
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '301';
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4'];
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g., 1.h., 1.i., 1.j., 1.k., 1.l.', '2.', '3., 3.a., 3.b.', '4., 4.a., 4.b.', '5.', '6., 6.a., 6.b.', '7., 7.a., 7.b.', '8., 8.a., 8.b.', 'pdrb'];
+        
+        $default_filter = [];
+        foreach($list_group_komponen as $val){
+            $default_filter[] = $val['column_alias'];
+        }
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : $default_filter; //['1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g., 1.h., 1.i., 1.j., 1.k., 1.l.', '2.', '3., 3.a., 3.b.', '4., 4.a., 4.b.', '5.', '6., 6.a., 6.b.', '7., 7.a., 7.b.', '8., 8.a., 8.b.', 'pdrb'];
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);
@@ -494,14 +494,19 @@ class RevisiKabkotController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_7pkrt;
+        $list_group_komponen =  AssetData:: getGroupKomponen(); //$this->list_group_7pkrt;
         $list_wilayah = $this->list_wilayah;
         $tahun_berlaku = $this->tahun_berlaku;
         $select = $this->select_7pkrt;
 
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '301';
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4'];
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g.', '2.', '3., 3.a., 3.b.', '4., 4.a., 4.b.', '5.', '6., 6.a., 6.b.', '7., 7.a., 7.b.', '8., 8.a., 8.b.', 'pdrb'];
+        
+        $default_filter = [];
+        foreach($list_group_komponen as $val){
+            $default_filter[] = $val['column_alias'];
+        }
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : $default_filter;
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);
@@ -512,14 +517,19 @@ class RevisiKabkotController extends Controller
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = $this->list_group_rilis;
+        $list_group_komponen =  AssetData::$list_group_rilis_komponen; //$this->list_group_rilis;
         $list_wilayah = $this->list_wilayah;
         $tahun_berlaku = $this->tahun_berlaku;
         $select = $this->select_rilis;
 
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '301';
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4'];
-        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['1.', '2.', '3.', '4.', 'pdrb'];
+        
+        $default_filter = [];
+        foreach($list_group_komponen as $val){
+            $default_filter[] = $val['column_alias'];
+        }
+        $komponen_filter = $request->komponen_filter ? $request->komponen_filter : $default_filter;
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);

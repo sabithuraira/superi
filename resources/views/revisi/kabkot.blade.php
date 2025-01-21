@@ -117,12 +117,14 @@
                                     <tbody>
                                         @foreach ($data as $dt)
                                             @php
-                                                $shouldBold = strlen($dt['id']) < 4 || $dt['id'] == 'c_pdrb';
+                                                $shouldBold = strlen($dt['id']) < 4 || $dt['id'] == 'c_pdrb' || $dt['id'] == 'pdrb';
                                             @endphp
                                             <tr style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
-
                                                 <td>
-                                                    {{ $dt['id'] }} {{ $dt['name'] }}
+                                                    @if($dt['id']!='pdrb')
+                                                        {{ $dt['id'] }} 
+                                                    @endif
+                                                    {{ $dt['name'] }}
                                                 </td>
 
                                                 @foreach ($periode_filter as $periode)
@@ -173,10 +175,10 @@
                                     </select>
                                     @foreach ($list_group_komponen as $i => $kmp)
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['column'] }}"
+                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['column_alias'] }}"
                                                 name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
                                                 @foreach ($komponen_filter as $kom_fil)
-                                                    @if ($kom_fil == $kmp['column'])
+                                                    @if ($kom_fil == $kmp['column_alias'])
                                                     checked
                                                     @endif @endforeach>
                                             <label class="form-check-label" for="{{ 'komponen_filter' . $i }}">

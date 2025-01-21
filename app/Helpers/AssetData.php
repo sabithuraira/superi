@@ -27,27 +27,78 @@ class AssetData{
 
     public static function getGroupKomponen(){
         return [
-            ['column' => 'c_pdrb',                                          'name' => 'PDRB'],
-            ['column' => 'c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g',   'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-            ['column' => 'c_2',                                             'name' => '2. Pengeluaran Konsumsi LNPRT'],
-            ['column' => 'c_3',                                             'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-            ['column' => 'c_4, c_4a, c_4b',                                 'name' => '4. Pembentukan Modal tetap Bruto'],
-            ['column' => 'c_5',                                             'name' => '5. Perubahan Inventori'],
-            ['column' => 'c_6',                                             'name' => '6. Ekspor Luar Negeri'],
-            ['column' => 'c_7',                                             'name' => '7. Impor Luar Negeri']
+            [
+                'column' => 'c_pdrb',     'column_alias' => "pdrb",                                       
+                'name' => 'PDRB'
+            ],
+            [
+                'column' => 'c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g',   
+                'column_alias' => "1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g.",
+                'name' => '1. Pengeluaran Konsumsi Rumah Tangga'
+            ],
+            [
+                'column' => 'c_2',   'column_alias' => "2.",                                           
+                'name' => '2. Pengeluaran Konsumsi LNPRT'
+            ],
+            [
+                'column' => 'c_3',   'column_alias' => "3.",                                          
+                'name' => '3. Pengeluaran Konsumsi Pemerintah'
+            ],
+            [
+                'column' => 'c_4, c_4a, c_4b',      'column_alias' => "4., 4.a., 4.b.",                            
+                'name' => '4. Pembentukan Modal tetap Bruto'
+            ],
+            [
+                'column' => 'c_5',    'column_alias' => "5.",                                          
+                'name' => '5. Perubahan Inventori'
+            ],
+            [
+                'column' => 'c_6',      'column_alias' => "6.",                                       
+                'name' => '6. Ekspor Luar Negeri'
+            ],
+            [
+                'column' => 'c_7',    'column_alias' => "7.",                                           
+                'name' => '7. Impor Luar Negeri'
+            ]
         ];
     }
 
     public static $list_group_12_pkrt = [
-        ['column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['column' => "c_3", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        ['column' => "c_4, c_4a, c_4b", 'name' => '4. Pembentukan Modal tetap Bruto'],
-        ['column' => "c_5", 'name' => '5. Perubahan Inventori'],
-        ['column' => "c_6", 'name' => '6. Ekspor Luar Negeri'],
-        ['column' => "c_7", 'name' => '7. Impor Luar Negeri'],
+        [
+            'column' => "c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l", 
+            'column_alias' => "1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g., 1.h., 1.i., 1.j., 1.k., 1.l.", 
+            'name' => '1. Pengeluaran Konsumsi Rumah Tangga'
+        ],
+        [
+            'column' => "c_2", 
+            'column_alias' => "2.",
+            'name' => '2. Pengeluaran Konsumsi LNPRT'
+        ],
+        [
+            'column' => "c_3", 'column_alias' => "3.", 
+            'name' => '3. Pengeluaran Konsumsi Pemerintah'
+        ],
+        [
+            'column' => "c_4, c_4a, c_4b", 'column_alias' => "4., 4.a., 4.b.", 
+            'name' => '4. Pembentukan Modal tetap Bruto'
+        ],
+        [
+            'column' => "c_5", 'column_alias' => "5.", 
+            'name' => '5. Perubahan Inventori'
+        ],
+        [
+            'column' => "c_6", 'column_alias' => "6.", 
+            'name' => '6. Ekspor Luar Negeri'
+        ],
+        [
+            'column' => "c_7", 'column_alias' => "7.",
+            'name' => '7. Impor Luar Negeri'
+        ],
         // ['column' => "c_8, c_8a, c_8b", 'name' => '8. Net Ekspor Antar Daerah'],
-        ['column' => "c_pdrb", 'name' => '8 PDRB'],
+        [
+            'column' => "c_pdrb", 'column_alias' => "pdrb",
+            'name' => '8 PDRB'
+        ],
     ];
 
     public static $list_detail_komponen_12_pkrt = [
@@ -85,11 +136,11 @@ class AssetData{
     ];
 
     public static $list_group_rilis_komponen = [
-        ['column' => "c_1", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
-        ['column' => "c_2", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
-        ['column' => "c_3", 'name' => '3. Pengeluaran Konsumsi Pemerintah'],
-        ['column' => "c_4", 'name' => '4. Pembentukan Modal tetap Bruto'],
-        ['column' => "c_pdrb", 'name' => '5. PDRB'],
+        ['column' => "c_1",'column_alias' => "1.", 'name' => '1. Pengeluaran Konsumsi Rumah Tangga'],
+        ['column' => "c_2",'column_alias' => "2.", 'name' => '2. Pengeluaran Konsumsi LNPRT'],
+        ['column' => "c_3",'column_alias' => "3.",  'name' => '3. Pengeluaran Konsumsi Pemerintah'],
+        ['column' => "c_4",'column_alias' => "4.",  'name' => '4. Pembentukan Modal tetap Bruto'],
+        ['column' => "c_pdrb", 'column_alias' => "pdrb", 'name' => '5. PDRB'],
     ];
     
     public static $list_detail_komponen_rilis = [

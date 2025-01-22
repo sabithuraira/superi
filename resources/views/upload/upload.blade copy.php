@@ -101,15 +101,9 @@
                             
                             <!-- WHEN TRIWULAN=4-->
                             <template v-if="form_data.triwulan==4">
-                                <template v-for="(data, index) in komponen" :key="data.id">
+                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)" :key="data.id">
                                     <tr>
-                                        <td>
-                                            <span v-if="data.no_komponen.length>=4 && data.no_komponen!='pdrb'">&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                                            <span v-if="data.no_komponen!='pdrb'">
-                                                @{{ data.no_komponen }} 
-                                            </span>
-                                            @{{ data.nama_komponen }}
-                                        </td>
+                                        <td>@{{ data.no_komponen }} @{{ data.nama_komponen }}</td>
 
                                         <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                             <template v-for="n in 4">
@@ -119,21 +113,36 @@
                                             </template>
                                         </template>
                                     </tr>
+    
+                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)" :key="data2.id">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp; @{{ data2.no_komponen }} @{{ data2.nama_komponen }}</td>
+                                        
+                                        <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
+                                            <template v-for="n in 4">
+                                                <td class="text-right">
+                                                    <span v-if="datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                                </td>
+                                            </template>
+                                        </template>
+                                    </tr>
                                 </template>
                                 
+                                <td><b>PDRB</b></td>
+                                
+                                <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
+                                    <template v-for="n in 4">
+                                        <td class="text-right">
+                                            <b><span v-if="datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]['c_pdrb'] }}</span></b>
+                                        </td>
+                                    </template>
+                                </template>
                             </template>
 
                             <!-- WHEN TRIWULAN <=4--> 
                             <template v-else>
-                                <template v-for="(data, index) in komponen" :key="data.id">
+                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)" :key="data.id">
                                     <tr>
-                                        <td>
-                                            <span v-if="data.no_komponen.length>=4 && data.no_komponen!='pdrb'">&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                                            <span v-if="data.no_komponen!='pdrb'">
-                                            @{{ data.no_komponen }} 
-                                            </span>
-                                            @{{ data.nama_komponen }}
-                                        </td>
+                                        <td>@{{ data.no_komponen }} @{{ data.nama_komponen }}</td>
                                         
                                         <td class="text-right">
                                             <span v-if="datas['adhb'][0]!=null">@{{ datas['adhb'][0]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
@@ -151,8 +160,45 @@
                                             </td>
                                         </template>
                                     </tr>
+    
+                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)" :key="data2.id">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp; @{{ data2.no_komponen }} @{{ data2.nama_komponen }}</td>
+                                        
+                                        <td class="text-right">
+                                            <span v-if="datas['adhb'][0]!=null">@{{ datas['adhb'][0]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                        </td>
+                                        
+                                        <template v-if="form_data.triwulan>=2">
+                                            <td class="text-right">
+                                                <span v-if="datas['adhb'][1]!=null">@{{ datas['adhb'][1]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                            </td>
+                                        </template>
+                                        
+                                        <template v-if="form_data.triwulan>=3">
+                                            <td class="text-right">
+                                                <span v-if="datas['adhb'][2]!=null">@{{ datas['adhb'][2]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                            </td>
+                                        </template>
+                                    </tr>
                                 </template>
                                 
+                                <td><b>PDRB</b></td>
+                                        
+                                <td class="text-right">
+                                    <b><span v-if="datas['adhb'][0]!=null">@{{ datas['adhb'][0]['c_pdrb'] }}</span></b>
+                                </td>
+                                
+                                <template v-if="form_data.triwulan>=2">
+                                    <td class="text-right">
+                                        <b><span v-if="datas['adhb'][1]!=null">@{{ datas['adhb'][1]['c_pdrb'] }}</span></b>
+                                    </td>
+                                </template>
+                            
+                                <template v-if="form_data.triwulan>=3">
+                                    <td class="text-right">
+                                        <b><span v-if="datas['adhb'][2]!=null">@{{ datas['adhb'][2]['c_pdrb'] }}</span></b>
+                                    </td>
+                                </template>
                             </template>
                         </table>
                     </div>
@@ -175,15 +221,9 @@
                             
                             <!-- WHEN TRIWULAN==4-->
                             <template v-if="form_data.triwulan==4">
-                                <template v-for="(data, index) in komponen" :key="data.id">
+                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)" :key="data.id">
                                     <tr>
-                                        <td>
-                                            <span v-if="data.no_komponen.length>=4 && data.no_komponen!='pdrb'">&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                                            <span v-if="data.no_komponen!='pdrb'">
-                                            @{{ data.no_komponen }} 
-                                            </span>
-                                            @{{ data.nama_komponen }}
-                                        </td>
+                                        <td>@{{ data.no_komponen }} @{{ data.nama_komponen }}</td>
                                         
                                         <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                             <template v-for="n in 4">
@@ -193,21 +233,36 @@
                                             </template>
                                         </template>
                                     </tr>
+                                    
+                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)" :key="data2.id">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp; @{{ data2.no_komponen }} @{{ data2.nama_komponen }}</td>
+                                        
+                                        <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
+                                            <template v-for="n in 4">
+                                                <td class="text-right">
+                                                    <span v-if="datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                                </td>
+                                            </template>
+                                        </template>
+                                    </tr>
                                 </template>
                                  
+                                <td><b>PDRB</b></td>
+                                
+                                <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
+                                    <template v-for="n in 4">
+                                        <td class="text-right">
+                                            <b><span v-if="datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]['c_pdrb'] }}</span></b>
+                                        </td>
+                                    </template>
+                                </template>
                             </template>
 
                             <!-- WHEN TRIWULAN <=4--> 
                             <template v-else>
-                                <template v-for="(data, index) in komponen" :key="data.id">
+                                <template v-for="(data, index) in komponen.filter(x=>x.parent_id==null)" :key="data.id">
                                     <tr>
-                                        <td>
-                                            <span v-if="data.no_komponen.length>=4 && data.no_komponen!='pdrb'">&nbsp;&nbsp;&nbsp;&nbsp; </span>
-                                            <span v-if="data.no_komponen!='pdrb'">
-                                            @{{ data.no_komponen }} 
-                                            </span>
-                                            @{{ data.nama_komponen }}
-                                        </td>
+                                        <td>@{{ data.no_komponen }} @{{ data.nama_komponen }}</td>
                                         
                                         <td class="text-right">
                                             <span v-if="datas['adhk'][0]!=null">@{{ datas['adhk'][0]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
@@ -225,8 +280,45 @@
                                             </td>
                                         </template>
                                     </tr>
+    
+                                    <tr v-for="(data2, index2) in komponen.filter(y=>y.parent_id==data.no_komponen)" :key="data2.id">
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp; @{{ data2.no_komponen }} @{{ data2.nama_komponen }}</td>
+                                        
+                                        <td class="text-right">
+                                            <span v-if="datas['adhk'][0]!=null">@{{ datas['adhk'][0]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                        </td>
+                                        
+                                        <template v-if="form_data.triwulan>=2">
+                                            <td class="text-right">
+                                                <span v-if="datas['adhk'][1]!=null">@{{ datas['adhk'][1]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                            </td>
+                                        </template>
+                                        
+                                        <template v-if="form_data.triwulan>=3">
+                                            <td class="text-right">
+                                                <span v-if="datas['adhk'][2]!=null">@{{ datas['adhk'][2]['c_'+data2.no_komponen.replaceAll('.', '')] }}</span>
+                                            </td>
+                                        </template>
+                                    </tr>
                                 </template>
                                  
+                                <td><b>PDRB</b></td>
+                                        
+                                <td class="text-right">
+                                    <b><span v-if="datas['adhk'][0]!=null">@{{ datas['adhk'][0]['c_pdrb'] }}</span></b>
+                                </td>
+                                
+                                <template v-if="form_data.triwulan>=2">
+                                    <td class="text-right">
+                                        <b><span v-if="datas['adhk'][1]!=null">@{{ datas['adhk'][1]['c_pdrb'] }}</span></b>
+                                    </td>
+                                </template>
+                                
+                                <template v-if="form_data.triwulan>=3">
+                                    <td class="text-right">
+                                        <b><span v-if="datas['adhk'][2]!=null">@{{ datas['adhk'][2]['c_pdrb'] }}</span></b>
+                                    </td>
+                                </template>
                             </template>
                         </table>
                     </div>
@@ -287,12 +379,7 @@
                     }).done(function(data) {
                         self.datas = data.datas;
                         self.komponen = data.komponen;
-                        self.komponen.push({
-                            'id': '', 'no_komponen': 'pdrb', 'nama_komponen' : 'PDRB', 'status_aktif': '',
-                            'update_at': '', 'updated_by': '', 'create_at': '', 'created_by': ''
-                        });
 
-                        // console.log(self.komponen);
                         $('#wait_progres').modal('hide');
                     }).fail(function(msg) {
                         console.log(JSON.stringify(msg));

@@ -64,7 +64,7 @@ class UploadController extends Controller
         $model = new \App\Pdrb();
         $datas = $model->getPdrb($wilayah, $tahun, $triwulan);
 
-        $komponen = \App\Komponen::where('status_aktif', 1)->get();
+        $komponen = \App\Komponen::where('status_aktif', 1)->orderBy('no_komponen')->get();
         
         return response()->json(['success'=>'1', 'datas'=>$datas, 'komponen' => $komponen]);
     }

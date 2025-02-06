@@ -6,15 +6,35 @@ use App\Komponen;
 use App\Pdrb;
 use App\PdrbFinal;
 use Illuminate\Http\Request;
+use App\SettingApp;
 
 class PdrbPutaranController extends Controller
 {
     //
     public $list_wilayah;
+    public $tahun_berlaku;
+    public $triwulan_berlaku;
+    public $list_periode = [];
+    // public $list_periode = [
+    //     '2024Q1', '2024Q2', '2024Q3', '2024Q4'
+    // ];
 
     public function __construct()
     {
         $this->list_wilayah = config("app.wilayah");
+        $this->tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first()->setting_value;
+        $this->triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first()->setting_value;
+        for ($i = 2010; $i <= $this->tahun_berlaku; $i++) {
+            if ($i > 2017) {
+                array_push($this->list_periode, "{$i}Q1");
+                array_push($this->list_periode, "{$i}Q2");
+                array_push($this->list_periode, "{$i}Q3");
+                array_push($this->list_periode, "{$i}Q4");
+                array_push($this->list_periode, "{$i}");
+            } else {
+                array_push($this->list_periode, "{$i}");
+            }
+        }
     }
 
     public $list_tabel = [
@@ -28,13 +48,11 @@ class PdrbPutaranController extends Controller
         ],
     ];
 
-    public $list_periode = [
-        '2024Q1', '2024Q2', '2024Q3', '2024Q4'
-    ];
-
     public function index(Request $request, $id){
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
+        $tahun_berlaku = $this->tahun_berlaku;
+
         $list_detail_komponen = Komponen::where('status_aktif', 1)
                                     ->orderby('no_komponen')->get();
         $list_wilayah = $this->list_wilayah;
@@ -119,6 +137,7 @@ class PdrbPutaranController extends Controller
         //     }
         // }
         return view('pdrb_putaran.index', compact('list_tabel', 'list_periode', 'list_wilayah', 
-            'tabel_filter', 'periode_filter', 'wilayah_filter', 'putaran_filter', 'data'));
+            'tabel_filter', 'periode_filter', 'wilayah_filter', 'putaran_filter', 'data',
+            'tahun_berlaku'));
     }
 }

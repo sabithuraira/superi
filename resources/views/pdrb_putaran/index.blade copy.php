@@ -133,6 +133,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="modal fade" id="periodeModal" tabindex="-1" role="dialog">
@@ -146,96 +147,51 @@
                                     <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
                                         @foreach ($list_tabel as $key => $tbl)
                                             <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] === $tabel_filter) selected @endif>
+                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
                                                 {{ $tbl['name'] }}
                                             </option>
                                         @endforeach
                                     </select>
-                                    <div class="row">
-                                        @foreach ($list_periode as $li_per)
-                                            @if ($li_per < 2018)
-                                                <div class="col-8"></div>
-                                                <div class="form-check col-4">
+                                    @for ($i = 2021; $i <= 2024; $i++)
+                                        <div class ="row">
+                                            @for ($q = 1; $q <= 4; $q++)
+                                                <div class="form-check col-2">
                                                     <input class="form-check-input" type="checkbox"
-                                                        value="{{ $li_per }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                        value="{{ $i . 'Q' . $q }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $i . 'Q' . $q }}"
                                                         @foreach ($periode_filter as $per_fil)
-                                                @if ($per_fil === $li_per)
-                                                checked
-                                                @endif @endforeach>
-                                                    <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $li_per }}">
-                                                        {{ $li_per }}
-                                                    </label>
-                                                </div>
-                                            @else
-                                                <div
-                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $li_per }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $li_per }}"
-                                                        @foreach ($periode_filter as $per_fil)
-                                                    @if ($per_fil === $li_per)
+                                                    @if ($per_fil === $i . 'Q' . $q)
                                                     checked
                                                     @endif @endforeach>
                                                     <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $li_per }}">
-                                                        {{ $li_per }}
+                                                        for="{{ 'periode_filter_' . $i . 'Q' . $q }}">
+                                                        {{ $i . 'Q' . $q }}
                                                     </label>
                                                 </div>
-                                            @endif
-                                        @endforeach
-                                    </div>
+                                            @endfor
+                                            <div class="form-check col-2">
+                                                <input class="form-check-input" type="checkbox" value="{{ $i }}"
+                                                    name="periode_filter[]" id="{{ 'periode_filter_' . $i }}"
+                                                    @foreach ($periode_filter as $per_fil)
+                                                    @if ($per_fil === (string) $i)
+                                                    checked
+                                                    @endif @endforeach>
+                                                <label class="form-check-label" for="{{ 'periode_filter_' . $i }}">
+                                                    {{ $i }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endfor
                                 </div>
                                 <div class="modal-footer">
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            data-toggle="dropdown" aria-expanded="false">
-                                            Pilihan
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <button class="dropdown-item" id="modal_periode_semua" type="button">
-                                                Semua Periode
-                                            </button>
-                                            <button class="dropdown-item" id="modal_periode_q1" type="button">
-                                                Semua Q1
-                                            </button>
-                                            <button class="dropdown-item" id="modal_periode_q2" type="button">
-                                                Semua Q2
-                                            </button>
-                                            <button class="dropdown-item" id="modal_periode_q3" type="button">
-                                                Semua Q3
-                                            </button>
-                                            <button class="dropdown-item" id="modal_periode_q4" type="button">
-                                                Semua Q4
-                                            </button>
-                                            <button class="dropdown-item" id="modal_periode_tahun" type="button">
-                                                Semua Tahun
-                                            </button>
-                                            <div class="dropdown-submenu">
-                                                <button class="dropdown-item dropdown-toggle" type="button">
-                                                    Tahun
-                                                </button>
-                                                <div class="dropdown-menu">
-                                                    @for ($i = 3; $i >= 0; $i--)
-                                                        <button class="dropdown-item tahun-selector"
-                                                            id="{{ 'modal_tahun_' . ($tahun_berlaku - $i) }}"
-                                                            type="button">{{ $tahun_berlaku - $i }}</button>
-                                                    @endfor
-                                                </div>
-                                            </div>
-                                            <button class="dropdown-item" id="modal_periode_hapus" type="button">
-                                                Hapus Semua</button>
-                                        </div>
-                                    </div>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-success">OK</button>
                                 </div>
+
                             </form>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -278,77 +234,5 @@
                 '</html>'
             window.location.href = location + window.btoa(excelTemplate);
         }
-
-        
-        document.getElementById('modal_periode_semua').addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll("input[id^='periode_filter']");
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = true;
-            });
-        });
-
-        document.getElementById('modal_periode_hapus').addEventListener('click', () => {
-            const checkboxes = document.querySelectorAll("input[id^='periode_filter']");
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-        });
-
-        document.getElementById('modal_periode_q1').addEventListener('click', () => {
-            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
-            allCheckboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-            const q1Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q1']");
-            q1Checkboxes.forEach((checkbox) => {
-                checkbox.checked = true;
-            });
-        });
-
-        document.getElementById('modal_periode_q2').addEventListener('click', () => {
-            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
-            allCheckboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-            const q2Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q2']");
-            q2Checkboxes.forEach((checkbox) => {
-                checkbox.checked = true;
-            });
-        });
-
-        document.getElementById('modal_periode_q3').addEventListener('click', () => {
-            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
-            allCheckboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-            const q3Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q3']");
-            q3Checkboxes.forEach((checkbox) => {
-                checkbox.checked = true;
-            });
-        });
-
-        document.getElementById('modal_periode_q4').addEventListener('click', () => {
-            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
-            allCheckboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-            const q4Checkboxes = document.querySelectorAll("input[id^='periode_filter_'][id$='Q4']");
-            q4Checkboxes.forEach((checkbox) => {
-                checkbox.checked = true;
-            });
-        });
-
-        document.getElementById('modal_periode_tahun').addEventListener('click', () => {
-            const allCheckboxes = document.querySelectorAll("input[id^='periode_filter']");
-            allCheckboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-            allCheckboxes.forEach((checkbox) => {
-                const id = checkbox.id;
-                if (/periode_filter_\d{4}$/.test(id)) {
-                    checkbox.checked = true;
-                }
-            });
-        });
     </script>
 @endsection

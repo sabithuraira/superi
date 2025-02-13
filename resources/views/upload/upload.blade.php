@@ -115,7 +115,7 @@
                                         <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                             <template v-for="n in 4">
                                                 <td class="text-right">
-                                                    <span v-if="datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                                    <span v-if="datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                                 </td>
                                             </template>
                                         </template>
@@ -137,18 +137,18 @@
                                         </td>
                                         
                                         <td class="text-right">
-                                            <span v-if="datas['adhb'][0]!=null">@{{ datas['adhb'][0]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                            <span v-if="datas['adhb'][0]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhb'][0]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                         </td>
                                         
                                         <template v-if="form_data.triwulan>=2">
                                             <td class="text-right">
-                                                <span v-if="datas['adhb'][1]!=null">@{{ datas['adhb'][1]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                                <span v-if="datas['adhb'][1]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhb'][1]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                             </td>
                                         </template>
                                         
                                         <template v-if="form_data.triwulan>=3">
                                             <td class="text-right">
-                                                <span v-if="datas['adhb'][2]!=null">@{{ datas['adhb'][2]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                                <span v-if="datas['adhb'][2]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhb'][2]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                             </td>
                                         </template>
                                     </tr>
@@ -190,7 +190,7 @@
                                         <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                             <template v-for="n in 4">
                                                 <td class="text-right">
-                                                    <span v-if="datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                                    <span v-if="datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                                 </td>
                                             </template>
                                         </template>
@@ -212,18 +212,18 @@
                                         </td>
                                         
                                         <td class="text-right">
-                                            <span v-if="datas['adhk'][0]!=null">@{{ datas['adhk'][0]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                            <span v-if="datas['adhk'][0]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhk'][0]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                         </td>
                                         
                                         <template v-if="form_data.triwulan>=2">
                                             <td class="text-right">
-                                                <span v-if="datas['adhk'][1]!=null">@{{ datas['adhk'][1]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                                <span v-if="datas['adhk'][1]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhk'][1]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                             </td>
                                         </template>
                                         
                                         <template v-if="form_data.triwulan>=3">
                                             <td class="text-right">
-                                                <span v-if="datas['adhk'][2]!=null">@{{ datas['adhk'][2]['c_'+data.no_komponen.replaceAll('.', '')] }}</span>
+                                                <span v-if="datas['adhk'][2]!=null">@{{ Intl.NumberFormat('id-ID').format(datas['adhk'][2]['c_'+data.no_komponen.replaceAll('.', '')]) }}</span>
                                             </td>
                                         </template>
                                     </tr>

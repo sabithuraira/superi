@@ -169,21 +169,32 @@
                 for (const j in json[i]) {
                     var cell = row.insertCell(-1);
                     if (json[i]['Komponen'].includes("BOLD")) {
-                        if (json[i][j]) if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning font-weight-bold'>" + json[i][j].replace("WARNING", "").replace("BOLD", "") + "</td>";
-                        else if (json[i][j]) if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center' style='background-color:#f2f2f2'>" + json[i][j].replace("CENTER", "").replace("BOLD", "") + "</td>";
-                        else cell.outerHTML = "<td class='font-weight-bold' style='background-color:#f2f2f2'>" + json[i][j].replace("BOLD", "") + "</td>";
+                        if (json[i][j]){
+                            if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning font-weight-bold'>" + json[i][j].replace("WARNING", "").replace("BOLD", "") + "</td>";
+                            if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center' style='background-color:#f2f2f2'>" + json[i][j].replace("CENTER", "").replace("BOLD", "") + "</td>";
+                            else{
+                                if(isNaN(json[i][j].replace("BOLD", ""))) cell.outerHTML = "<td class='font-weight-bold' style='background-color:#f2f2f2'>" + json[i][j].replace("BOLD", "") + "</td>";
+                                else cell.outerHTML = "<td class='font-weight-bold' style='background-color:#f2f2f2'>" + Intl.NumberFormat('id-ID').format(json[i][j].replace("BOLD", "")) + "</td>";   
+                            }
+                        }
                     }
                     else {
-                        if (json[i][j]) if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning'>" + json[i][j].replace("WARNING", "") + "</td>";
-                        else if (json[i][j]) if (json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center'>" + json[i][j].replace("CENTER", "") + "</td>";
-                        else cell.outerHTML = "<td>" + json[i][j] + "</td>";
-
+                        if(json[i][j]){
+                            if (json[i][j].includes("WARNING")) cell.outerHTML = "<td class='bg-warning'>" + json[i][j].replace("WARNING", "") + "</td>";
+                            else if(json[i][j].includes("CENTER")) cell.outerHTML = "<td class='text-center'>" + json[i][j].replace("CENTER", "") + "</td>";
+                            else{ 
+                                if(isNaN(json[i][j])) cell.outerHTML = "<td>" + json[i][j] + "</td>";
+                                else cell.outerHTML = "<td>" + Intl.NumberFormat('id-ID').format(json[i][j]) + "</td>";   
+                            }
+                        }
                     }
                 }
             }
         });
     }
+    
     lihat();
+
     function exportToExcel() {
         var url = "{{ url("/revisi/total/export") }}";
 
@@ -220,6 +231,7 @@
             }).click();
         });
     }
+
     function exportAllToExcel() {
         var url = "{{ url("/revisi/total/exportall") }}";
 

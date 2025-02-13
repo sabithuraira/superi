@@ -151,34 +151,40 @@
             modal_history_kab[e] = document.getElementById("kabkot_filter_" + e).checked;
         });
     }
+
     function modal_clicked_periode() {
         modal_history_periode = {};
         @foreach($periode as $periode_item)
         modal_history_periode["{{ $periode_item->periode }}"] = document.getElementById("periode_filter_{{ $periode_item->periode }}").checked;
         @endforeach
     }
+
     function modal_cancel_kab() {
         kab.forEach(e => {
             document.getElementById("kabkot_filter_" + e).checked = modal_history_kab[e];
         });
         modal_history_kab = {};
     }
+
     function modal_cancel_periode() {
         @foreach($periode as $periode_item)
         document.getElementById("periode_filter_{{ $periode_item->periode }}").checked = modal_history_periode["{{ $periode_item->periode }}"];
         @endforeach
         modal_history_periode = {};
     }
+    
     function check_all_kab(checked) {
         kab.forEach(e => {
             document.getElementById("kabkot_filter_" + e).checked = checked;
         });
     }
+
     function check_all_periode(checked) {
         @foreach($periode as $periode_item)
         document.getElementById("periode_filter_{{ $periode_item->periode }}").checked = checked;
         @endforeach
     }
+
     function lihat() {
         var url = "{{ url("/tabel/resume") }}";
 
@@ -225,18 +231,26 @@
                 var cell = table_column.insertCell(-1);
                 cell.outerHTML = "<th>" + (json.columns[i] == "kd_kab" ? "Kabupaten/Kota" : json.columns[i]) + "</th>";
             }
+            
             for (const i in json.pdrb) {
                 var table_data = document.getElementById("table_data");
                 var row = table_data.insertRow(-1);
                 for (const j in json.pdrb[i]) {
                     var cell = row.insertCell(-1);
-                    if (j == 0) cell.innerHTML = kab_desc[json.pdrb[i][j]];
-                    else cell.innerHTML = json.pdrb[i][j];
+                    if (j == 0){
+                        cell.innerHTML = kab_desc[json.pdrb[i][j]];
+                    }
+                    else{
+                        if(isNaN(json.pdrb[i][j])) cell.innerHTML = json.pdrb[i][j];
+                        else cell.innerHTML = Intl.NumberFormat('id-ID').format(json.pdrb[i][j]);
+                    }
                 }
             }
         });
     }
+
     lihat();
+
     function exportToExcel() {
         var url = "{{ url("/tabel/resume/export") }}";
 
@@ -281,6 +295,7 @@
             }).click();
         });
     }
+
     function exportAllToExcel() {
         var url = "{{ url("/tabel/resume/exportall") }}";
 

@@ -72,15 +72,15 @@ class RevisiKabkotController extends Controller
         ],
         [
             'id' => '303',
-            'name' => 'Tabel 303. Pertumbuhan PDRB (Q-TO-Q)'
+            'name' => 'Tabel 303. Pertumbuhan PDRB (Q-TO-Q), (persen)'
         ],
         [
             'id' => '304',
-            'name' => 'Tabel 304. Pertumbuhan PDRB (Y-ON-Y)'
+            'name' => 'Tabel 304. Pertumbuhan PDRB (Y-ON-Y), (persen)'
         ],
         [
             'id' => '305',
-            'name' => 'Tabel 305. Pertumbuhan PDRB (C-TO-C)'
+            'name' => 'Tabel 305. Pertumbuhan PDRB (C-TO-C), (persen)'
         ],
         [
             'id' => '306',
@@ -88,19 +88,19 @@ class RevisiKabkotController extends Controller
         ],
         [
             'id' => '307',
-            'name' => 'Tabel 307. Pertumbuhan Indeks Implisit (Y-on-Y)'
+            'name' => 'Tabel 307. Pertumbuhan Indeks Implisit (Y-on-Y), (persen)'
         ],
         [
             'id' => '308',
-            'name' => 'Tabel 308. Sumber Pertumbuhan (Q-to-Q)'
+            'name' => 'Tabel 308. Sumber Pertumbuhan (Q-to-Q), (persen)'
         ],
         [
             'id' => '309',
-            'name' => 'Tabel 309. Sumber Pertumbuhan (Y-on-Y)'
+            'name' => 'Tabel 309. Sumber Pertumbuhan (Y-on-Y), (persen)'
         ],
         [
             'id' => '310',
-            'name' => 'Tabel 310. Sumber Pertumbuhan (C-to-C)'
+            'name' => 'Tabel 310. Sumber Pertumbuhan (C-to-C), (persen)'
         ],
     ];
 

@@ -29,25 +29,25 @@
                             <div class="col-6 mb-2">
                                 <label for="tabel_filter" class="label">Tabel</label>
                                 <select name="tabel_filter" id="tabel_filter" class="form-control" onchange="lihat()">
-                                    <option value="Tabel 2.1">Tabel 2.1. PDRB ADHB</option>
-                                    <option value="Tabel 2.2">Tabel 2.2. PDRB ADHK</option>
-                                    <option value="Tabel 2.3">Tabel 2.3. Distribusi Terhadap Provinsi</option>
-                                    <option value="Tabel 2.4">Tabel 2.4. Distribusi Komponen Terhadap PDRB ADHB</option>
-                                    <option value="Tabel 2.5">Tabel 2.5. Distribusi Komponen Terhadap PDRB ADHK</option>
+                                    <option value="Tabel 2.1">Tabel 2.1. PDRB ADHB (dalam juta rupiah)</option>
+                                    <option value="Tabel 2.2">Tabel 2.2. PDRB ADHK (dalam juta rupiah)</option>
+                                    <option value="Tabel 2.3">Tabel 2.3. Distribusi Terhadap Provinsi (dalam persen)</option>
+                                    <option value="Tabel 2.4">Tabel 2.4. Distribusi Komponen Terhadap PDRB ADHB (dalam persen)</option>
+                                    <option value="Tabel 2.5">Tabel 2.5. Distribusi Komponen Terhadap PDRB ADHK (dalam persen)</option>
                                     <option value="Tabel 2.6">Tabel 2.6. Indeks Implisit</option>
                                     <option value="Tabel 2.7">Tabel 2.7. Indeks Implisit Kumulatif</option>
-                                    <option value="Tabel 2.8">Tabel 2.8. Pertumbuhan PDRB (Q-TO-Q)</option>
-                                    <option value="Tabel 2.9">Tabel 2.9. Pertumbuhan PDRB (Y-ON-Y)</option>
-                                    <option value="Tabel 2.10">Tabel 2.10. Pertumbuhan PDRB (C-TO-C)</option>
-                                    <option value="Tabel 2.11">Tabel 2.11. Pertumbuhan Indeks Implisit PDRB (Q-TO-Q)</option>
-                                    <option value="Tabel 2.12">Tabel 2.12. Pertumbuhan Indeks Implisit PDRB (Y-ON-Y)</option>
-                                    <option value="Tabel 2.13">Tabel 2.13. Pertumbuhan Indeks Implisit PDRB (C-TO-C)</option>
-                                    <option value="Tabel 2.14">Tabel 2.14. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Q-TO-Q)</option>
-                                    <option value="Tabel 2.15">Tabel 2.15. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Y-ON-Y)</option>
-                                    <option value="Tabel 2.16">Tabel 2.16. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (C-TO-C)</option>
-                                    <option value="Tabel 2.17">Tabel 2.17. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q)</option>
-                                    <option value="Tabel 2.18">Tabel 2.18. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y)</option>
-                                    <option value="Tabel 2.19">Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C)</option>
+                                    <option value="Tabel 2.8">Tabel 2.8. Pertumbuhan PDRB (Q-TO-Q) (dalam persen)</option>
+                                    <option value="Tabel 2.9">Tabel 2.9. Pertumbuhan PDRB (Y-ON-Y) (dalam persen)</option>
+                                    <option value="Tabel 2.10">Tabel 2.10. Pertumbuhan PDRB (C-TO-C) (dalam persen)</option>
+                                    <option value="Tabel 2.11">Tabel 2.11. Pertumbuhan Indeks Implisit PDRB (Q-TO-Q) (dalam persen)</option>
+                                    <option value="Tabel 2.12">Tabel 2.12. Pertumbuhan Indeks Implisit PDRB (Y-ON-Y) (dalam persen)</option>
+                                    <option value="Tabel 2.13">Tabel 2.13. Pertumbuhan Indeks Implisit PDRB (C-TO-C) (dalam persen)</option>
+                                    <option value="Tabel 2.14">Tabel 2.14. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Q-TO-Q) (dalam persen)</option>
+                                    <option value="Tabel 2.15">Tabel 2.15. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Y-ON-Y) (dalam persen)</option>
+                                    <option value="Tabel 2.16">Tabel 2.16. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (C-TO-C) (dalam persen)</option>
+                                    <option value="Tabel 2.17">Tabel 2.17. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q) (dalam persen)</option>
+                                    <option value="Tabel 2.18">Tabel 2.18. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y) (dalam persen)</option>
+                                    <option value="Tabel 2.19">Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C) (dalam persen)</option>
                                 </select>
                             </div>
                             <div class="col-6 mb-2">

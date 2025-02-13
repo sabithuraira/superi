@@ -62,7 +62,7 @@
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
                                 @if ($tabel['id'] === $tabel_filter)
-                                    <p>{{ $tabel['name'] }}</p>
+                                    <p>{{ $tabel['name'] }}  <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
                         </div>

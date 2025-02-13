@@ -10,8 +10,6 @@ use App\Helpers\AssetData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Calculation\Financial\CashFlow\Constant\Periodic\Cumulative;
-use SebastianBergmann\CodeUnitReverseLookup\Wizard;
 
 class TabelRingkasanController extends Controller
 {

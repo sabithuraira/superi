@@ -85,6 +85,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane show active" id="adhb">
+                        <span class="text-muted font-italic">*dalam juta rupiah</span>
                         <table class="table table-bordered m-b-0" style="min-width:100%">
                             <tr class="text-center">
                                 <th>Komponen</th>
@@ -159,6 +160,7 @@
 
                     <!-- ADHK -->
                     <div class="tab-pane" id="adhk">
+                        <span class="text-muted font-italic">*dalam juta rupiah</span>
                         <table class="table table-bordered m-b-0" style="min-width:100%">
                             <tr class="text-center">
                                 <th>Komponen</th>

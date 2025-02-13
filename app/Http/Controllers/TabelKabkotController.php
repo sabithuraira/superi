@@ -78,15 +78,15 @@ class TabelKabkotController extends Controller
         ],
         [
             'id' => '3.3',
-            'name' => 'Tabel 3.3. Pertumbuhan PDRB (Q-TO-Q)'
+            'name' => 'Tabel 3.3. Pertumbuhan PDRB (Q-TO-Q), (dalam persen)'
         ],
         [
             'id' => '3.4',
-            'name' => 'Tabel 3.4. Pertumbuhan PDRB (Y-ON-Y)'
+            'name' => 'Tabel 3.4. Pertumbuhan PDRB (Y-ON-Y), (dalam persen)'
         ],
         [
             'id' => '3.5',
-            'name' => 'Tabel 3.5. Pertumbuhan PDRB (C-TO-C)'
+            'name' => 'Tabel 3.5. Pertumbuhan PDRB (C-TO-C), (dalam persen)'
         ],
         [
             'id' => '3.6',
@@ -94,19 +94,19 @@ class TabelKabkotController extends Controller
         ],
         [
             'id' => '3.7',
-            'name' => 'Tabel 3.7. Pertumbuhan Indeks Implisit (Y-on-Y)'
+            'name' => 'Tabel 3.7. Pertumbuhan Indeks Implisit (Y-on-Y), (dalam persen)'
         ],
         [
             'id' => '3.8',
-            'name' => 'Tabel 3.8. Sumber Pertumbuhan (Q-to-Q)'
+            'name' => 'Tabel 3.8. Sumber Pertumbuhan (Q-to-Q), (dalam persen)'
         ],
         [
             'id' => '3.9',
-            'name' => 'Tabel 3.9. Sumber Pertumbuhan (Y-on-Y)'
+            'name' => 'Tabel 3.9. Sumber Pertumbuhan (Y-on-Y), (dalam persen)'
         ],
         [
             'id' => '3.10',
-            'name' => 'Tabel 3.10. Sumber Pertumbuhan (C-to-C)'
+            'name' => 'Tabel 3.10. Sumber Pertumbuhan (C-to-C), (dalam persen)'
         ],
 
     ];

@@ -33,6 +33,9 @@ class UploadController extends Controller
         $tahun = date('Y');
         $triwulan = 1;
         
+        $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
+        if($tahun_berlaku!=null) $tahun = $tahun_berlaku->setting_value;
+
         $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
         if($triwulan_berlaku!=null) $triwulan = $triwulan_berlaku->setting_value;
 
@@ -89,13 +92,15 @@ class UploadController extends Controller
         $wilayah = '00';
         $tahun = date('Y');
         $triwulan = 1;
+
+        $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
+        if($tahun_berlaku!=null) $tahun = $tahun_berlaku->setting_value;
         
         $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
         if($triwulan_berlaku!=null) $triwulan = $triwulan_berlaku->setting_value;
 
         if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
-        if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');
-
+        if (strlen($request->get('tahun')) > 0) $tahun = $request->get('tahun');        
 
         if($request->get('action')==1){
             Excel::import(new FenomenaImport($wilayah, $tahun, $triwulan), $request->file('excel_file'));

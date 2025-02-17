@@ -55,11 +55,13 @@
                                 </a>
                             </li>
                         @endcan
-                        @can('tabel_resume')
-                            <li class="{{ request()->is('tabel/resume') ? 'active' : '' }}">
-                                <a href="{{ url('tabel/resume') }}">Tabel Resume</a>
-                            </li>
-                        @endcan
+                        @if (Auth::user()->kdkab == '00')
+                            @can('tabel_resume')
+                                <li class="{{ request()->is('tabel/resume') ? 'active' : '' }}">
+                                    <a href="{{ url('tabel/resume') }}">Tabel Resume</a>
+                                </li>
+                            @endcan
+                        @endif
 
                         @can('tabel_kabkot')
                             <li class="{{ request()->is('pdrb_kabkot*') ? 'active' : '' }}">

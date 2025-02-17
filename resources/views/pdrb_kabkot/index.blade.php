@@ -64,9 +64,11 @@
                                         <select name="wilayah_filter" id="wilayah_filter" class="form-control"
                                             onchange="updateFormActionWilayah()">
                                             @foreach ($list_wilayah as $key => $wil)
-                                                <option value="{{ $key }}" data-id="{{ $key }}"
-                                                    @if ($key == $wilayah_filter) selected @endif>
-                                                    16{{ $key }} - {{ $wil }}</option>
+                                                @if(Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
+                                                    <option value="{{ $key }}" data-id="{{ $key }}"
+                                                        @if ($key == $wilayah_filter) selected @endif>
+                                                        16{{ $key }} - {{ $wil }}</option>
+                                                @endif 
                                             @endforeach
                                         </select>
                                     </div>

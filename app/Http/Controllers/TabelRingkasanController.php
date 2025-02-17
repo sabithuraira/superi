@@ -10,6 +10,7 @@ use App\Helpers\AssetData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class TabelRingkasanController extends Controller
 {
@@ -33,94 +34,125 @@ class TabelRingkasanController extends Controller
             } else {
                 array_push($this->list_periode, "{$i}");
             }
+        }      
+    }
+
+    public $list_tabel = [];
+
+    public function setListTable(){
+        if(Auth::user()->kdkab!='00'){
+            $this->list_tabel = [
+                [
+                    'id' => '1.11',
+                    'name' => 'Tabel 1.11. Perbandingan Diskrepansi Nasional dan Regional Menurut Komponen',
+                    'url' => 'pdrb_ringkasan4'
+                ],
+                [
+                    'id' => '1.12',
+                    'name' => 'Tabel 1.12. Perbandingan Diskrepansi Kumulatif Nasional dan Regional Menurut Komponen ',
+                    'url' => 'pdrb_ringkasan4'
+                ],
+                [
+                    'id' => '1.13',
+                    'name' => 'Tabel 1.13. Ringkasan Pertumbuhan Ekstrem Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan5'
+                ],
+                [
+                    'id' => '1.14',
+                    'name' => 'Tabel 1.14. Ringkasan Revisi Pertumbuhan Ekstrem dan Balik Arah  Kabupaten Kota ',
+                    'url' => 'pdrb_ringkasan6'
+                ],
+            ];
+        }
+        else{
+            $this->list_tabel = [
+                [
+                    'id' => '1.1',
+                    'name' => 'Tabel 1.1. Pertumbuhan Ekonomi Provinsi Menurut Komponen',
+                    'url' => 'pdrb_ringkasan1'
+                ],
+                [
+                    'id' => '1.2',
+                    'name' => 'Tabel 1.2.  Pertumbuhan Implisit Provinsi Menurut Komponen',
+                    'url' => 'pdrb_ringkasan1'
+                ],
+                [
+                    'id' => '1.3',
+                    'name' => 'Tabel 1.3. Ringkasan Pertumbuhan Ekonomi Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan2'
+                ],
+                [
+                    'id' => '1.4',
+                    'name' => 'Tabel 1.4. Pertumbuhan Ekonomi (Y-on-Y) Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.5',
+                    'name' => 'Tabel 1.5. Pertumbuhan Ekonomi (Q-to-Q) Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.6',
+                    'name' => 'Tabel 1.6. Pertumbuhan Ekonomi (C-to-C) Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.7',
+                    'name' => 'Tabel 1.7. Distribusi Konstan Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.8',
+                    'name' => 'Tabel 1.8. Distribusi Berlaku Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.9',
+                    'name' => 'Tabel 1.9. Pertumbuhan Implisit (Y-on-Y) Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.10',
+                    'name' => 'Tabel 1.10. Pertumbuhan Implisit (Q-to-Q) Kabupaten Kota ',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.11',
+                    'name' => 'Tabel 1.11. Perbandingan Diskrepansi Nasional dan Regional Menurut Komponen',
+                    'url' => 'pdrb_ringkasan4'
+                ],
+                [
+                    'id' => '1.12',
+                    'name' => 'Tabel 1.12. Perbandingan Diskrepansi Kumulatif Nasional dan Regional Menurut Komponen ',
+                    'url' => 'pdrb_ringkasan4'
+                ],
+                [
+                    'id' => '1.13',
+                    'name' => 'Tabel 1.13. Ringkasan Pertumbuhan Ekstrem Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan5'
+                ],
+                [
+                    'id' => '1.14',
+                    'name' => 'Tabel 1.14. Ringkasan Revisi Pertumbuhan Ekstrem dan Balik Arah  Kabupaten Kota ',
+                    'url' => 'pdrb_ringkasan6'
+                ],
+                [
+                    'id' => '1.15',
+                    'name' => 'Tabel 1.15. PDRB ADHB Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+                [
+                    'id' => '1.16',
+                    'name' => 'Tabel 1.16. PDRB ADHK Per Komponen/Sub Komponen Kabupaten Kota',
+                    'url' => 'pdrb_ringkasan3'
+                ],
+            ];
         }
     }
 
-    public $list_tabel = [
-        [
-            'id' => '1.1',
-            'name' => 'Tabel 1.1. Pertumbuhan Ekonomi Provinsi Menurut Komponen',
-            'url' => 'pdrb_ringkasan1'
-        ],
-        [
-            'id' => '1.2',
-            'name' => 'Tabel 1.2.  Pertumbuhan Implisit Provinsi Menurut Komponen',
-            'url' => 'pdrb_ringkasan1'
-        ],
-        [
-            'id' => '1.3',
-            'name' => 'Tabel 1.3. Ringkasan Pertumbuhan Ekonomi Kabupaten Kota',
-            'url' => 'pdrb_ringkasan2'
-        ],
-        [
-            'id' => '1.4',
-            'name' => 'Tabel 1.4. Pertumbuhan Ekonomi (Y-on-Y) Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.5',
-            'name' => 'Tabel 1.5. Pertumbuhan Ekonomi (Q-to-Q) Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.6',
-            'name' => 'Tabel 1.6. Pertumbuhan Ekonomi (C-to-C) Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.7',
-            'name' => 'Tabel 1.7. Distribusi Konstan Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.8',
-            'name' => 'Tabel 1.8. Distribusi Berlaku Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.9',
-            'name' => 'Tabel 1.9. Pertumbuhan Implisit (Y-on-Y) Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.10',
-            'name' => 'Tabel 1.10. Pertumbuhan Implisit (Q-to-Q) Kabupaten Kota ',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.11',
-            'name' => 'Tabel 1.11. Perbandingan Diskrepansi Nasional dan Regional Menurut Komponen',
-            'url' => 'pdrb_ringkasan4'
-        ],
-        [
-            'id' => '1.12',
-            'name' => 'Tabel 1.12. Perbandingan Diskrepansi Kumulatif Nasional dan Regional Menurut Komponen ',
-            'url' => 'pdrb_ringkasan4'
-        ],
-        [
-            'id' => '1.13',
-            'name' => 'Tabel 1.13. Ringkasan Pertumbuhan Ekstrem Kabupaten Kota',
-            'url' => 'pdrb_ringkasan5'
-        ],
-        [
-            'id' => '1.14',
-            'name' => 'Tabel 1.14. Ringkasan Revisi Pertumbuhan Ekstrem dan Balik Arah  Kabupaten Kota ',
-            'url' => 'pdrb_ringkasan6'
-        ],
-        [
-            'id' => '1.15',
-            'name' => 'Tabel 1.15. PDRB ADHB Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-        [
-            'id' => '1.16',
-            'name' => 'Tabel 1.16. PDRB ADHK Per Komponen/Sub Komponen Kabupaten Kota',
-            'url' => 'pdrb_ringkasan3'
-        ],
-    ];
-
     public function ringkasan1(Request $request, $id)
     {
+        $this->setListTable();
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $tahun_berlaku = $this->tahun_berlaku;
@@ -154,6 +186,7 @@ class TabelRingkasanController extends Controller
 
     public function ringkasan2(Request $request, $id)
     {
+        $this->setListTable();
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_wilayah = $this->list_wilayah;
@@ -169,6 +202,7 @@ class TabelRingkasanController extends Controller
 
     public function ringkasan3(Request $request, $id)
     {
+        $this->setListTable();
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_group_komponen = AssetData::getGroupKomponen();
@@ -198,6 +232,7 @@ class TabelRingkasanController extends Controller
 
     public function ringkasan4(Request $request, $id)
     {
+        $this->setListTable();
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_group_komponen = AssetData::getGroupKomponen();
@@ -232,6 +267,7 @@ class TabelRingkasanController extends Controller
 
     public function ringkasan5(Request $request, $id)
     {
+        $this->setListTable();
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_detail_komponen = AssetData::getDetailKomponen();
@@ -249,6 +285,7 @@ class TabelRingkasanController extends Controller
 
     public function ringkasan6(Request $request, $id)
     {
+        $this->setListTable();
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_detail_komponen = AssetData::getDetailKomponen();

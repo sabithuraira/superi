@@ -8,6 +8,7 @@ use App\SettingApp;
 use App\Helpers\AssetData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TabelKabkotController extends Controller
 {
@@ -348,7 +349,7 @@ class TabelKabkotController extends Controller
 
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g, c_1h, c_1i, c_1j, c_1k, c_1l', 'c_2', 'c_3', 'c_4, c_4a, c_4b', 'c_5', 'c_6', 'c_7', 'c_pdrb'];
 
         $array_komp_filter = [];
@@ -384,7 +385,7 @@ class TabelKabkotController extends Controller
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b, c_1c, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3', 'c_4, c_4a, c_4b', 'c_5', 'c_6', 'c_7', 'c_pdrb'];
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
 
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
@@ -419,7 +420,7 @@ class TabelKabkotController extends Controller
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_2', 'c_3', 'c_4', 'c_pdrb'];
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
@@ -450,7 +451,7 @@ class TabelKabkotController extends Controller
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
         $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1, c_1a, c_1b, c_1d, c_1e, c_1f, c_1g', 'c_2', 'c_3, c_3a, c_3b', 'c_4, c_4a, c_4b', 'c_5', 'c_6, c_6a, c_6b', 'c_7, c_7a, c_7b', 'c_8, c_8a, c_8b', 'c_pdrb'];
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
         $array_komp_filter = [];
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));

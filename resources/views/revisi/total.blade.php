@@ -54,7 +54,9 @@
                                 <label for="kab_filter" class="label">Kabupaten/Kota</label>
                                 <select name="kab_filter" id="kab_filter" class="form-control" onchange="lihat()">
                                     @foreach(config("app.wilayah") as $kd_kab => $nm_kab)
-                                    <option value="{{ '16' . $kd_kab }}">{{ $nm_kab }}</option>
+                                        @if(Auth::user()->kdkab == '00' || Auth::user()->kdkab == $kd_kab)
+                                            <option value="{{ '16' . $kd_kab }}">{{ $nm_kab }}</option>
+                                        @endif 
                                     @endforeach
                                 </select>
                             </div>

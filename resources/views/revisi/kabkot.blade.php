@@ -59,9 +59,11 @@
                                         <select name="wilayah_filter" id="wilayah_filter" class="form-control"
                                             onchange="updateFormActionWilayah()">
                                             @foreach ($list_wilayah as $key => $wil)
-                                                <option value="{{ $key }}" data-id="{{ $key }}"
-                                                    @if ($key == $wilayah_filter) selected @endif>
-                                                    16{{ $key }} - {{ $wil }}</option>
+                                                @if(Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
+                                                    <option value="{{ $key }}" data-id="{{ $key }}"
+                                                        @if ($key == $wilayah_filter) selected @endif>
+                                                        16{{ $key }} - {{ $wil }}</option>
+                                                @endif 
                                             @endforeach
                                         </select>
                                     </div>
@@ -321,6 +323,8 @@
         }
 
         function updateFormActionWilayah() {
+            var url = "{{ url("/revisi_kabkot") }}";
+            
             var form = document.getElementById('form_filter');
             var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
                 .selectedIndex];
@@ -330,7 +334,7 @@
                 .selectedIndex];
             var wilayah = wilayah_option.getAttribute('data-id');
 
-            form.action = APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
+            form.action = url + '/' + data_id + '?wilayah_filter=' + wilayah;  //APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
         }

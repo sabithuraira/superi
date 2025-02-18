@@ -7,6 +7,7 @@ use App\Pdrb;
 use App\PdrbFinal;
 use Illuminate\Http\Request;
 use App\SettingApp;
+use Illuminate\Support\Facades\Auth;
 
 class PdrbPutaranController extends Controller
 {
@@ -58,7 +59,7 @@ class PdrbPutaranController extends Controller
         $list_wilayah = $this->list_wilayah;
         $tabel_filter = $id; //$request->tabel_filter ? $request->tabel_filter : '3.1';
         $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
         $putaran_filter = $request->putaran_filter ? $request->putaran_filter : '1';
 
         $adhb_or_adhk = ($id === '3.1') ? 1 : 2;

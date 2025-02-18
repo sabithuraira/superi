@@ -9,6 +9,7 @@ use App\PdrbFinal;
 use App\Helpers\AssetData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class RevisiKabkotController extends Controller
 {
@@ -483,7 +484,7 @@ class RevisiKabkotController extends Controller
             $default_filter[] = $val['column_alias'];
         }
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : $default_filter; //['1., 1.a., 1.b., 1.c., 1.d., 1.e., 1.f., 1.g., 1.h., 1.i., 1.j., 1.k., 1.l.', '2.', '3., 3.a., 3.b.', '4., 4.a., 4.b.', '5.', '6., 6.a., 6.b.', '7., 7.a., 7.b.', '8., 8.a., 8.b.', 'pdrb'];
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);
 
@@ -507,7 +508,7 @@ class RevisiKabkotController extends Controller
             $default_filter[] = $val['column_alias'];
         }
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : $default_filter;
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);
         return view('revisi.kabkot', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_wilayah', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'wilayah_filter', 'komponen_filter', 'data'));
@@ -530,7 +531,7 @@ class RevisiKabkotController extends Controller
             $default_filter[] = $val['column_alias'];
         }
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : $default_filter;
-        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
+        $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
 
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponen_filter, $select);
         return view('revisi.kabkot', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_wilayah', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'wilayah_filter', 'komponen_filter', 'data'));

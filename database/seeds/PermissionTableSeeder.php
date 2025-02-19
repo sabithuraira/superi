@@ -26,5 +26,8 @@ class PermissionTableSeeder extends Seeder
         
         $role->syncPermissions($arr);
         $role2->syncPermissions(array_slice($arr,2));
+        
+        Role::create(['name' => 'approval_provinsi']);
+        Role::create(['name' => 'approval_admin']);
     }
 }

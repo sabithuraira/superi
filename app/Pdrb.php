@@ -9,6 +9,12 @@ class Pdrb extends Model
 {
     protected $table = 'pdrb';
 
+    public $statusDataLabel = [
+        1 => 'Aktif',
+        2 => 'Approved By Provinsi',
+        3 => 'Approved By Admin',
+    ];
+
     public function getPdrb($wilayah, $tahun, $triwulan){
         $datas = [
             'adhb' => $this->queryPdrb($wilayah, $tahun, $triwulan, 1),
@@ -29,7 +35,7 @@ class Pdrb extends Model
                         kode_kab='$wilayah' AND 
                         tahun='$x' AND 
                         adhb_or_adhk=$adhb_or_adhk AND 
-                        status_data=1
+                        status_data>=1
                     ORDER BY  q ASC, revisi_ke DESC";
 
                 $result = DB::select(DB::raw($sql));
@@ -51,7 +57,7 @@ class Pdrb extends Model
                     kode_kab='$wilayah' AND 
                     tahun='$tahun' AND 
                     adhb_or_adhk=$adhb_or_adhk AND 
-                    status_data=1
+                    status_data>=1
                 ORDER BY  q ASC, revisi_ke DESC";
 
             $datas = [null, null, null, null];

@@ -9,6 +9,7 @@ use App\Imports\FenomenaImport;
 use App\Exports\PdrbExport;
 use App\Exports\FenomenaExport;
 use App\SettingApp;
+use PDO;
 
 class UploadController extends Controller
 {
@@ -44,6 +45,30 @@ class UploadController extends Controller
 
         if($request->get('action')==1){
             Excel::import(new PdrbImport($wilayah, $tahun, $triwulan), $request->file('excel_file'));
+            return redirect('upload/import')->with('success', 'Data berhasil disimpan');
+        }
+        else if($request->get('action')==3 || $request->get('action')==4){
+            $model = new \App\Pdrb();
+            $datas = $model->getPdrb($wilayah, $tahun, $triwulan);
+
+            foreach($datas['adhb'] as $item){
+                $curData = \App\Pdrb::where('id', $item->id)->first();
+                if($curData){
+                    if($request->get('action')==3) $curData->status_data = 2; //approve by provinsi
+                    else $curData->status_data = 1;
+                    $curData->save();
+                }
+            }
+            
+            foreach($datas['adhk'] as $item){
+                $curData = \App\Pdrb::where('id', $item->id)->first();
+                if($curData){
+                    if($request->get('action')==3) $curData->status_data = 2; //approve by provinsi
+                    else $curData->status_data = 1;
+                    $curData->save();
+                }
+            }
+            
             return redirect('upload/import')->with('success', 'Data berhasil disimpan');
         }
         else{

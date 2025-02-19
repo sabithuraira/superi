@@ -74,7 +74,14 @@
                             <button name="action" class="btn btn-success float-left" type="submit" value="2"><i class="fa fa-file-excel-o"></i>&nbsp; Export Excel</button>
                         </div>
                         <div class="col-lg-6">
-                            <button type="submit" class="btn btn-primary float-right" name="action" value="1">Simpan</button>
+                            <button v-if="!isApproveProvinsi" type="submit" class="btn btn-primary mx-1 float-right" name="action" value="1">Simpan</button>
+                            
+                            @hasrole('approval_provinsi')
+                                <button v-if="!isApproveProvinsi" type="submit" class="btn btn-success mx-1 float-right" name="action" value="3"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Provinsi</button>
+                                <button v-else type="button" class="btn btn-secondary mx-1 float-right"><i class="fa fa-thumbs-o-up"></i>&nbsp; Sudah Approve Provinsi</button>                                
+                                
+                                <button v-if="isApproveProvinsi && !isApproveAdmin" type="submit" class="btn btn-danger mx-1 float-right" name="action" value="4"><i class="fa fa-thumbs-o-down"></i>&nbsp; Batalkan Approve Provinsi</button>
+                            @endhasrole
                         </div>
                     </div>
                 </form>
@@ -256,6 +263,8 @@
                     tahun: {!! json_encode($tahun) !!},
                     triwulan: {!! json_encode($triwulan) !!},
                 },
+                isApproveProvinsi: true,
+                isApproveAdmin: true,
                 datas: [],
                 komponen: [],
             },
@@ -287,6 +296,9 @@
                             tahun: self.form_data.tahun,
                         },
                     }).done(function(data) {
+                        self.isApproveAdmin = true;
+                        self.isApproveProvinsi = true;
+
                         self.datas = data.datas;
                         self.komponen = data.komponen;
                         self.komponen.push({
@@ -294,6 +306,29 @@
                             'update_at': '', 'updated_by': '', 'create_at': '', 'created_by': ''
                         });
 
+                        for (const el of self.datas['adhb']) { 
+                            if(el!=null && el['status_data']==1){
+                                self.isApproveProvinsi = false;
+                                self.isApproveAdmin = false;
+                            }
+                            
+                            if(el!=null && el['status_data']==2){
+                                self.isApproveAdmin = false;
+                            }
+                        }
+
+                        for (const el of self.datas['adhk']) { 
+                            if(el!=null && el['status_data']==1){
+                                self.isApproveProvinsi = false;
+                                self.isApproveAdmin = false;
+                            }
+                            
+                            if(el!=null && el['status_data']==2){
+                                self.isApproveAdmin = false;
+                            }
+                        }
+
+                        // console.log(self.datas);
                         // console.log(self.komponen);
                         $('#wait_progres').modal('hide');
                     }).fail(function(msg) {

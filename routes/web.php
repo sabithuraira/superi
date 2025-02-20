@@ -103,5 +103,6 @@ Route::group(['middleware' => ['permission:fenomena_kabkota']], function () {});
 
 Route::group(['middleware' => 'auth'], function () {
     Route::post('upload/pdrb', 'UploadController@pdrb');
+    Route::post('upload/is_all_approve', 'UploadController@isAllApprove');
     Route::post('upload/fenomena', 'UploadController@fenomena');
 });

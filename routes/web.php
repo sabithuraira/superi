@@ -106,3 +106,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('upload/is_all_approve', 'UploadController@isAllApprove');
     Route::post('upload/fenomena', 'UploadController@fenomena');
 });
+
+
+Route::group(['middleware' => ['role:approval_admin']], function () {
+    Route::post('upload/approve_admin', 'UploadController@approve_admin');
+});

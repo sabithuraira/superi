@@ -57,16 +57,18 @@
                 <button v-if="isAllApproveProvinsi && !isAllApproveAdmin" type="button" class="btn btn-outline-success mx-1" >Semua Data Di Approve Provinsi</button>
                 <button v-if="!isAllApproveProvinsi" type="button" class="btn btn-outline-secondary mx-1">Menunggu Approve Provinsi</button>
 
-                
-                <form method="post" action="{{ url('upload/approve_admin') }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="row clearfix">
-                        <div class="col-lg-6">
-                            <button v-if="isAllApproveProvinsi && !isAllApproveAdmin" class="btn btn-success float-left" type="submit" name="action" value="1"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Admin</button>
-                            <button v-if="isAllApproveAdmin" class="btn btn-danger float-left" type="submit" name="action" value="2"><i class="fa fa-thumbs-o-down"></i>&nbsp; Batalkan Approve Admin</button>
+                @hasrole('approval_admin')
+                    <form method="post" action="{{ url('upload/approve_admin') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row clearfix">
+                            <div class="col-lg-12">
+                                <button v-if="isAllApproveProvinsi && !isAllApproveAdmin" class="btn btn-success float-left" type="submit" name="action" value="1"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Admin</button>
+                                <button v-if="isAllApproveAdmin" type="button" class="btn btn-outline-success mx-1 float-left" >Sudah Approve Admin</button>
+                                <button v-if="isAllApproveAdmin" class="btn btn-danger float-left" type="submit" name="action" value="2"><i class="fa fa-thumbs-o-down"></i>&nbsp; Batalkan Approve Admin</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                @endhasrole
             </div>
         </div>
 
@@ -99,6 +101,7 @@
             data: {
                 isAllApproveProvinsi: false,
                 isAllApproveAdmin: false,
+                isDataKosong: false,
             },
             methods: {
                 setDatas: function(event) {
@@ -120,6 +123,8 @@
                     }).done(function(data) {
                         self.isAllApproveProvinsi = data.resultProvinsi;
                         self.isAllApproveAdmin = data.resultAdmin;
+                        self.isDataKosong = data.isDataKosong;
+
                         $('#wait_progres').modal('hide');
                     }).fail(function(msg) {
                         console.log(JSON.stringify(msg));

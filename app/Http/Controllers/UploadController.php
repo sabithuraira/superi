@@ -52,20 +52,24 @@ class UploadController extends Controller
             $datas = $model->getPdrb($wilayah, $tahun, $triwulan);
 
             foreach($datas['adhb'] as $item){
-                $curData = \App\Pdrb::where('id', $item->id)->first();
-                if($curData){
-                    if($request->get('action')==3) $curData->status_data = 2; //approve by provinsi
-                    else $curData->status_data = 1;
-                    $curData->save();
+                if($item!=null){
+                    $curData = \App\Pdrb::where('id', $item->id)->first();
+                    if($curData){
+                        if($request->get('action')==3) $curData->status_data = 2; //approve by provinsi
+                        else $curData->status_data = 1;
+                        $curData->save();
+                    }
                 }
             }
             
             foreach($datas['adhk'] as $item){
-                $curData = \App\Pdrb::where('id', $item->id)->first();
-                if($curData){
-                    if($request->get('action')==3) $curData->status_data = 2; //approve by provinsi
-                    else $curData->status_data = 1;
-                    $curData->save();
+                if($item!=null){
+                    $curData = \App\Pdrb::where('id', $item->id)->first();
+                    if($curData){
+                        if($request->get('action')==3) $curData->status_data = 2; //approve by provinsi
+                        else $curData->status_data = 1;
+                        $curData->save();
+                    }
                 }
             }
             
@@ -102,7 +106,7 @@ class UploadController extends Controller
                         $curData->putaran = $curData->putaran + 1;
                     }
                     else{
-                        $curData->status_data = 1;
+                        $curData->status_data = 2; //back to approve provinsi
                         $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
                     }
                     $curData->save();
@@ -117,7 +121,7 @@ class UploadController extends Controller
                         $curData->putaran = $curData->putaran + 1;
                     }
                     else{
-                        $curData->status_data = 1;
+                        $curData->status_data = 2;
                         $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
                     }
                     $curData->save();
@@ -152,6 +156,7 @@ class UploadController extends Controller
     public function isAllApprove(Request $request){
         $resultProvinsi = true;
         $resultAdmin = true;
+        // $isDataKosong = false;
         
         $datas=array();
         $tahun = date('Y');
@@ -170,22 +175,24 @@ class UploadController extends Controller
 
             $datas = $model->getPdrb($idx, $tahun, $triwulan);
             foreach($datas['adhb'] as $val2){
-                if($val2!=null && $val2->status_data<2) $resultProvinsi = false;
-                if($val2!=null && $val2->status_data<3) $resultAdmin = false;
-                if(!$resultProvinsi && !$resultAdmin) break;
+                // if($val2==null) $isDataKosong = true;
+                if($val2==null || $val2->status_data<2) $resultProvinsi = false;
+                if($val2==null || $val2->status_data<3) $resultAdmin = false;
+                // if(!$resultProvinsi && !$resultAdmin) break;
             }
 
             foreach($datas['adhk'] as $val2){
-                if($val2!=null && $val2->status_data<2) $resultProvinsi = false;
-                if($val2!=null && $val2->status_data<3) $resultAdmin = false;
-                if(!$resultProvinsi && !$resultAdmin) break;
+                // if($val2==null) $isDataKosong = true;
+                if($val2==null || $val2->status_data<2) $resultProvinsi = false;
+                if($val2==null || $val2->status_data<3) $resultAdmin = false;
+                // if(!$resultProvinsi && !$resultAdmin) break;
             }
         }
         
         return response()->json([
             'success'=>'1', 
             'resultProvinsi'=> $resultProvinsi,
-            'resultAdmin'=> $resultAdmin
+            'resultAdmin'=> $resultAdmin,
         ]);
     }
     

@@ -77,8 +77,10 @@
                             <button v-if="!isApproveProvinsi" type="submit" class="btn btn-primary mx-1 float-right" name="action" value="1">Simpan</button>
                             
                             @hasrole('approval_provinsi')
-                                <button v-if="!isApproveProvinsi" type="submit" class="btn btn-success mx-1 float-right" name="action" value="3"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Provinsi</button>
-                                <button v-else type="button" class="btn btn-secondary mx-1 float-right"><i class="fa fa-thumbs-o-up"></i>&nbsp; Sudah Approve Provinsi</button>                                
+                                <button v-if="!isApproveProvinsi && isDataLengkap" type="submit" class="btn btn-success mx-1 float-right" name="action" value="3"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Provinsi</button>
+                                <button v-if="isApproveProvinsi" type="button" class="btn btn-outline-success mx-1 float-right"><i class="fa fa-thumbs-o-up"></i>&nbsp; Sudah Approve Provinsi</button>          
+                                
+                                <button v-if="isApproveAdmin" type="button" class="btn btn-outline-success mx-1 float-right"><i class="fa fa-thumbs-o-up"></i>&nbsp; Sudah Approve Admin</button>                             
                                 
                                 <button v-if="isApproveProvinsi && !isApproveAdmin" type="submit" class="btn btn-danger mx-1 float-right" name="action" value="4"><i class="fa fa-thumbs-o-down"></i>&nbsp; Batalkan Approve Provinsi</button>
                             @endhasrole
@@ -264,6 +266,7 @@
                 },
                 isApproveProvinsi: true,
                 isApproveAdmin: true,
+                isDataLengkap: true,
                 datas: [],
                 komponen: [],
             },
@@ -281,9 +284,7 @@
                     $('#wait_progres').modal('show');
 
                     $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                        }
+                        headers:{ 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content') }
                     })
 
                     $.ajax({
@@ -297,6 +298,7 @@
                     }).done(function(data) {
                         self.isApproveAdmin = true;
                         self.isApproveProvinsi = true;
+                        self.isDataLengkap = true;
 
                         self.datas = data.datas;
                         self.komponen = data.komponen;
@@ -304,27 +306,28 @@
                             'id': '', 'no_komponen': 'pdrb', 'nama_komponen' : 'PDRB', 'status_aktif': '',
                             'update_at': '', 'updated_by': '', 'create_at': '', 'created_by': ''
                         });
-
+                        
                         for (const el of self.datas['adhb']) { 
-                            if(el!=null && el['status_data']==1){
+                            if(el==null) self.isDataLengkap = false;
+
+                            if(el==null || el['status_data']==1){
                                 self.isApproveProvinsi = false;
                                 self.isApproveAdmin = false;
                             }
                             
-                            if(el!=null && el['status_data']==2){
-                                self.isApproveAdmin = false;
-                            }
+                            if(el==null || el['status_data']==2) self.isApproveAdmin = false;
+                            // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
                         }
 
                         for (const el of self.datas['adhk']) { 
-                            if(el!=null && el['status_data']==1){
+                            if(el==null) self.isDataLengkap = false;
+                            if(el==null || el['status_data']==1){
                                 self.isApproveProvinsi = false;
                                 self.isApproveAdmin = false;
                             }
                             
-                            if(el!=null && el['status_data']==2){
-                                self.isApproveAdmin = false;
-                            }
+                            if(el==null || el['status_data']==2) self.isApproveAdmin = false;
+                            // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
                         }
 
                         // console.log(self.datas);

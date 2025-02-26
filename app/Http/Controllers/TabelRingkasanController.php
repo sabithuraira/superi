@@ -416,7 +416,7 @@ class TabelRingkasanController extends Controller
             ->where('tahun', $thn)
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', "LIKE", '%' . $status . '%')
+            ->where('status_data', ">=", 3)
             // ->orderBy('revisi_ke', 'desc')
             ->first();
         return $data;
@@ -469,7 +469,8 @@ class TabelRingkasanController extends Controller
             ->where('tahun', $thn)
             ->wherein('q', $q)
             ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', "LIKE", '%' . $status . '%')
+            // ->where('status_data',">=", $status)
+            ->where('status_data',">=", 3)
             // ->where(function ($query) use ($rev) {
             //     foreach ($rev as $r) {
             //         $query->orWhere(function ($subquery) use ($r) {

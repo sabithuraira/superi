@@ -80,7 +80,7 @@ class PdrbPutaranController extends Controller
                     $condition_arr[] = ['tahun', '=', $arr_periode[0]];
                     $condition_arr[] = ['q', '=', $arr_periode[1]];
                     $condition_arr[] = ['adhb_or_adhk', $adhb_or_adhk];
-                    $condition_arr[] = ['status_data', 1];
+                    $condition_arr[] = ['status_data', 3];
     
                     $data_y = PdrbFinal::where($condition_arr)
                         ->orderby('revisi_ke', 'desc')

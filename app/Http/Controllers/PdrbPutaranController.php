@@ -54,6 +54,8 @@ class PdrbPutaranController extends Controller
         $list_periode = $this->list_periode;
         $tahun_berlaku = $this->tahun_berlaku;
 
+        $max_putaran = PdrbFinal::where('tahun', $tahun_berlaku)->max('putaran');
+
         $list_detail_komponen = Komponen::where('status_aktif', 1)
                                     ->orderby('no_komponen')->get();
         $list_wilayah = $this->list_wilayah;
@@ -83,62 +85,16 @@ class PdrbPutaranController extends Controller
                     $condition_arr[] = ['status_data', 3];
     
                     $data_y = PdrbFinal::where($condition_arr)
-                        ->orderby('revisi_ke', 'desc')
+                        // ->orderby('revisi_ke', 'desc')
                         ->first();
                     $row[$periode] = $data_y ? $data_y->$komp_id : null;
                 }
             }
             $data[] = $row;
-            
         }
 
-        /////////
-        // if ($id === '3.1') {
-        //     foreach ($list_detail_komponen as $komponen) {
-        //         $row = [];
-        //         $row = [
-        //             'id' => $komponen['no_komponen'],
-        //             'name' => $komponen['nama_komponen'],
-        //         ];
-        //         $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
-        //         foreach ($periode_filter as $periode) {
-        //             $arr_periode = explode("Q", $periode);
-
-        //             $data_y = Pdrb::where('kode_kab', $wilayah_filter)
-        //                 ->where('tahun', $arr_periode[0])
-        //                 ->where('q', $arr_periode[1])
-        //                 ->where('adhb_or_adhk', 1)
-        //                 ->where('status_data', 1)
-        //                 ->orderby('revisi_ke', 'desc')
-        //                 ->first();
-        //             $row[$periode] = $data_y ? $data_y->$komp_id : null;
-        //         }
-        //         $data[] = $row;
-        //     }
-        // } else if ($id === '3.2') {
-        //     foreach ($list_detail_komponen as $komponen) {
-        //         $row = [];
-        //         $row = [
-        //             'id' => $komponen['no_komponen'],
-        //             'name' => $komponen['nama_komponen'],
-        //         ];
-        //         $komp_id = $komponen['no_komponen'];
-        //         foreach ($periode_filter as $periode) {
-        //             $arr_periode = explode("Q", $periode);
-        //             $data_y = Pdrb::where('kode_kab', $wilayah_filter)
-        //                 ->where('tahun', $arr_periode[0])
-        //                 ->where('q', $arr_periode[1])
-        //                 ->where('adhb_or_adhk', 2)
-        //                 ->where('status_data', 1)
-        //                 ->orderby('revisi_ke', 'desc')
-        //                 ->first();
-        //             $row[$periode] = $data_y ? $data_y->$komp_id : null;
-        //         }
-        //         $data[] = $row;
-        //     }
-        // }
         return view('pdrb_putaran.index', compact('list_tabel', 'list_periode', 'list_wilayah', 
             'tabel_filter', 'periode_filter', 'wilayah_filter', 'putaran_filter', 'data',
-            'tahun_berlaku'));
+            'tahun_berlaku', 'max_putaran'));
     }
 }

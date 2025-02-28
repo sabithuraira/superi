@@ -33,8 +33,9 @@
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
                                         <select name="putaran_filter" id="putaran_filter" class="form-control">
-                                            <option value="1">Putaran 1</option>
-                                            <option value="2">Putaran 2</option>
+                                            @for($i=1;$i<=$max_putaran;++$i)
+                                                <option value="{{ $i }}">Putaran {{ $i }}</option>
+                                            @endfor
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2   ">

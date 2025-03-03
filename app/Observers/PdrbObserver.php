@@ -89,16 +89,16 @@ class PdrbObserver
      * @return void
      */
     public function updated(Pdrb $pdrb){
-        if($pdrb->status_data==3){
+        $pdrb_final = PdrbFinal::where('tahun', $pdrb->tahun)
+                        ->where('q', $pdrb->q)
+                        ->where('kode_prov', $pdrb->kode_prov)
+                        ->where('kode_kab', $pdrb->kode_kab)
+                        ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
+                        ->first();
+
+        if($pdrb->status_data==2){
             $new_pdrb_final = new PdrbFinal;
 
-            $pdrb_final = PdrbFinal::where('tahun', $pdrb->tahun)
-                            ->where('q', $pdrb->q)
-                            ->where('kode_prov', $pdrb->kode_prov)
-                            ->where('kode_kab', $pdrb->kode_kab)
-                            ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
-                            ->first();
-            
             if($pdrb_final!=null){
                 $new_pdrb_final = $pdrb_final;
             }
@@ -157,6 +157,11 @@ class PdrbObserver
             $new_pdrb_final->c_pdrb     = $pdrb->c_pdrb;
             $new_pdrb_final->save();
         }
+        // elseif($pdrb->status_data==1){
+        //     if($pdrb_final!=null){
+        //         $pdrb_final->delete();
+        //     }
+        // }
     }
 
     /**

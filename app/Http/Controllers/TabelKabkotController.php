@@ -145,7 +145,7 @@ class TabelKabkotController extends Controller
             ->where('tahun', $thn)
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', ">=", 3)
+            ->where('status_data', ">=", 2)
             // ->where('status_data', "LIKE", '%' . $status . '%')
             // ->orderBy('revisi_ke', 'desc')
             ->groupby('kode_kab')
@@ -160,7 +160,7 @@ class TabelKabkotController extends Controller
             ->where('tahun', $thn)
             ->wherein('q', $q)
             ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', ">=", 3)
+            ->where('status_data', ">=", 2)
             // ->where('status_data', "LIKE", '%' . $status . '%')
             // ->where(function ($query) use ($rev) {
             //     foreach ($rev as $r) {

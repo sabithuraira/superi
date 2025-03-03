@@ -99,32 +99,36 @@ class UploadController extends Controller
             $datas = $model->getPdrb($idx, $tahun, $triwulan);
 
             foreach($datas['adhb'] as $item){
-                $curData = \App\Pdrb::where('id', $item->id)->first();
-                if($curData){
-                    if($request->get('action')==1){
-                        $curData->status_data = 3; //approve by admin
-                        $curData->putaran = $curData->putaran + 1;
+                if($item!=null){
+                    $curData = \App\Pdrb::where('id', $item->id)->first();
+                    if($curData){
+                        if($request->get('action')==1){
+                            $curData->status_data = 3; //approve by admin
+                            $curData->putaran = $curData->putaran + 1;
+                        }
+                        else{
+                            $curData->status_data = 2; //back to approve provinsi
+                            $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
+                        }
+                        $curData->save();
                     }
-                    else{
-                        $curData->status_data = 2; //back to approve provinsi
-                        $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
-                    }
-                    $curData->save();
                 }
             }
             
             foreach($datas['adhk'] as $item){
-                $curData = \App\Pdrb::where('id', $item->id)->first();
-                if($curData){
-                    if($request->get('action')==1){
-                        $curData->status_data = 3; //approve by admin
-                        $curData->putaran = $curData->putaran + 1;
+                if($item!=null){
+                    $curData = \App\Pdrb::where('id', $item->id)->first();
+                    if($curData){
+                        if($request->get('action')==1){
+                            $curData->status_data = 3; //approve by admin
+                            $curData->putaran = $curData->putaran + 1;
+                        }
+                        else{
+                            $curData->status_data = 2;
+                            $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
+                        }
+                        $curData->save();
                     }
-                    else{
-                        $curData->status_data = 2;
-                        $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
-                    }
-                    $curData->save();
                 }
             }
         }
@@ -174,19 +178,38 @@ class UploadController extends Controller
             if(!$resultProvinsi && !$resultAdmin) break;
 
             $datas = $model->getPdrb($idx, $tahun, $triwulan);
-            foreach($datas['adhb'] as $val2){
-                // if($val2==null) $isDataKosong = true;
-                if($val2==null || $val2->status_data<2) $resultProvinsi = false;
-                if($val2==null || $val2->status_data<3) $resultAdmin = false;
-                // if(!$resultProvinsi && !$resultAdmin) break;
-            }
 
-            foreach($datas['adhk'] as $val2){
-                // if($val2==null) $isDataKosong = true;
-                if($val2==null || $val2->status_data<2) $resultProvinsi = false;
-                if($val2==null || $val2->status_data<3) $resultAdmin = false;
+            
+            /////////////
+            $total_data = $triwulan;
+            if($triwulan==4) $total_data = 12;
+
+            for($i=0;$i<$total_data;++$i){
+                $el_adhb = $datas['adhb'][$i];
+                $el_adhk = $datas['adhk'][$i];
+
+                if($el_adhb==null || $el_adhk==null) $isDataKosong = true;
+                if($el_adhb==null || $el_adhk==null || $el_adhb->status_data<2 || $el_adhk->status_data<2) $resultProvinsi = false;
+                if($el_adhb==null || $el_adhk==null || $el_adhb->status_data<3 || $el_adhk->status_data<3) $resultAdmin = false;
                 // if(!$resultProvinsi && !$resultAdmin) break;
+                
+                // if(el_adhb==null || el_adhk==null || el_adhb['status_data']==2 || el_adhk['status_data']==2) self.isApproveAdmin = false;
             }
+            ////////////
+
+            // foreach($datas['adhb'] as $val2){
+            //     // if($val2==null) $isDataKosong = true;
+            //     if($val2==null || $val2->status_data<2) $resultProvinsi = false;
+            //     if($val2==null || $val2->status_data<3) $resultAdmin = false;
+            //     // if(!$resultProvinsi && !$resultAdmin) break;
+            // }
+
+            // foreach($datas['adhk'] as $val2){
+            //     // if($val2==null) $isDataKosong = true;
+            //     if($val2==null || $val2->status_data<2) $resultProvinsi = false;
+            //     if($val2==null || $val2->status_data<3) $resultAdmin = false;
+            //     // if(!$resultProvinsi && !$resultAdmin) break;
+            // }
         }
         
         return response()->json([

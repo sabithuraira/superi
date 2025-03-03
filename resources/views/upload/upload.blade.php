@@ -306,31 +306,52 @@
                             'id': '', 'no_komponen': 'pdrb', 'nama_komponen' : 'PDRB', 'status_aktif': '',
                             'update_at': '', 'updated_by': '', 'create_at': '', 'created_by': ''
                         });
-                        
-                        for (const el of self.datas['adhb']) { 
-                            if(el==null) self.isDataLengkap = false;
+                        ///
+                        let total_data = self.form_data.triwulan;
+                        if(self.form_data.triwulan==4) total_data = 12;
 
-                            if(el==null || el['status_data']==1){
+                        for(let i=0;i<total_data;++i){
+                        // for (const el of self.datas['adhb']) {
+                            let el_adhb = self.datas['adhb'][i];
+                            let el_adhk = self.datas['adhk'][i];
+
+                            if(el_adhb==null || el_adhk==null){
+                                self.isDataLengkap = false;
+                            }
+
+                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']==1 || el_adhk['status_data']==1){
                                 self.isApproveProvinsi = false;
                                 self.isApproveAdmin = false;
                             }
                             
-                            if(el==null || el['status_data']==2) self.isApproveAdmin = false;
-                            // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
+                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']==2 || el_adhk['status_data']==2) self.isApproveAdmin = false;
                         }
 
-                        for (const el of self.datas['adhk']) { 
-                            if(el==null) self.isDataLengkap = false;
-                            if(el==null || el['status_data']==1){
-                                self.isApproveProvinsi = false;
-                                self.isApproveAdmin = false;
-                            }
+                        ///
+                        // for (const el of self.datas['adhb']) { 
+                        //     if(el==null) self.isDataLengkap = false;
+
+                        //     if(el==null || el['status_data']==1){
+                        //         self.isApproveProvinsi = false;
+                        //         self.isApproveAdmin = false;
+                        //     }
                             
-                            if(el==null || el['status_data']==2) self.isApproveAdmin = false;
-                            // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
-                        }
+                        //     if(el==null || el['status_data']==2) self.isApproveAdmin = false;
+                        //     // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
+                        // }
 
-                        // console.log(self.datas);
+                        // for (const el of self.datas['adhk']) { 
+                        //     if(el==null) self.isDataLengkap = false;
+                        //     if(el==null || el['status_data']==1){
+                        //         self.isApproveProvinsi = false;
+                        //         self.isApproveAdmin = false;
+                        //     }
+                            
+                        //     if(el==null || el['status_data']==2) self.isApproveAdmin = false;
+                        //     // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
+                        // }
+
+                        console.log(self.datas);
                         // console.log(self.komponen);
                         $('#wait_progres').modal('hide');
                     }).fail(function(msg) {

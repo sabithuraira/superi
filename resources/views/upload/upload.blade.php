@@ -74,10 +74,10 @@
                             <button name="action" class="btn btn-success float-left" type="submit" value="2"><i class="fa fa-file-excel-o"></i>&nbsp; Export Excel</button>
                         </div>
                         <div class="col-lg-6">
-                            <button v-if="!isApproveProvinsi" type="submit" class="btn btn-primary mx-1 float-right" name="action" value="1">Simpan</button>
+                            <button v-if="!isApproveProvinsi && !isApproveAdmin" type="submit" class="btn btn-primary mx-1 float-right" name="action" value="1">Simpan</button>
                             
                             @hasrole('approval_provinsi')
-                                <button v-if="!isApproveProvinsi && isDataLengkap" type="submit" class="btn btn-success mx-1 float-right" name="action" value="3"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Provinsi</button>
+                                <button v-if="!isApproveProvinsi && !isApproveAdmin && !isDataReject && isDataLengkap" type="submit" class="btn btn-success mx-1 float-right" name="action" value="3"><i class="fa fa-thumbs-o-up"></i>&nbsp; Approve Provinsi</button>
                                 <button v-if="isApproveProvinsi" type="button" class="btn btn-outline-success mx-1 float-right"><i class="fa fa-thumbs-o-up"></i>&nbsp; Sudah Approve Provinsi</button>          
                                 
                                 <button v-if="isApproveAdmin" type="button" class="btn btn-outline-success mx-1 float-right"><i class="fa fa-thumbs-o-up"></i>&nbsp; Sudah Approve Admin</button>                             
@@ -267,6 +267,7 @@
                 isApproveProvinsi: true,
                 isApproveAdmin: true,
                 isDataLengkap: true,
+                isDataReject: true,
                 datas: [],
                 komponen: [],
             },
@@ -299,6 +300,7 @@
                         self.isApproveAdmin = true;
                         self.isApproveProvinsi = true;
                         self.isDataLengkap = true;
+                        self.isDataReject = true;
 
                         self.datas = data.datas;
                         self.komponen = data.komponen;
@@ -315,16 +317,11 @@
                             let el_adhb = self.datas['adhb'][i];
                             let el_adhk = self.datas['adhk'][i];
 
-                            if(el_adhb==null || el_adhk==null){
-                                self.isDataLengkap = false;
-                            }
+                            if(el_adhb==null || el_adhk==null) self.isDataLengkap = false;
 
-                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']==1 || el_adhk['status_data']==1){
-                                self.isApproveProvinsi = false;
-                                self.isApproveAdmin = false;
-                            }
-                            
-                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']==2 || el_adhk['status_data']==2) self.isApproveAdmin = false;
+                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']!=2 || el_adhk['status_data']!=2) self.isApproveProvinsi = false;
+                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']!=3 || el_adhk['status_data']!=3) self.isApproveAdmin = false;
+                            if(el_adhb==null || el_adhk==null || el_adhb['status_data']!=4 || el_adhk['status_data']!=4) self.isDataReject = false;
                         }
 
                         ///
@@ -351,7 +348,7 @@
                         //     // if(!self.isApproveProvinsi && !self.isApproveAdmin) break;
                         // }
 
-                        console.log(self.datas);
+                        // console.log(self.datas); 
                         // console.log(self.komponen);
                         $('#wait_progres').modal('hide');
                     }).fail(function(msg) {

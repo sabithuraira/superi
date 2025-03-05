@@ -13,6 +13,7 @@ class Pdrb extends Model
         1 => 'Aktif',
         2 => 'Approved By Provinsi',
         3 => 'Approved By Admin',
+        4 => 'Reject By Admin',
     ];
 
     public function getPdrb($wilayah, $tahun, $triwulan){

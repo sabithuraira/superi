@@ -38,11 +38,14 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $year = $split_header[0];
             $q = $split_header[1];
 
+            $putaran = 0;
+
             $model = Pdrb::where('tahun', $year) //self::$tahun)
                 ->where('q', $q)
                 ->where('adhb_or_adhk', $is_adhb)
                 ->where('kode_prov', '16')
                 ->where('kode_kab', self::$wilayah)
+                ->orderBy('id', 'desc')
                 ->first();
 
             $new_model = new Pdrb;
@@ -58,8 +61,17 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $new_model->updated_by = 1;
             /////////////////////
 
-            if($model==null) $new_model->revisi_ke = 0;
-            else $new_model->revisi_ke = 1;
+            if($model==null){
+                $new_model->revisi_ke = 0;
+            }
+            else{
+                $new_model->revisi_ke = 1;
+                
+                if($model->status_data==4) $putaran = $model->putaran + 1;
+                else $putaran = $model->putaran;
+            }
+
+            $new_model->putaran = $putaran;
             
             // dd($rows[3]);die();
 

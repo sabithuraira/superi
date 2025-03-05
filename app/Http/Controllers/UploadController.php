@@ -104,11 +104,15 @@ class UploadController extends Controller
                     if($curData){
                         if($request->get('action')==1){
                             $curData->status_data = 3; //approve by admin
-                            $curData->putaran = $curData->putaran + 1;
+                            // $curData->putaran = $curData->putaran + 1;
+                        }
+                        else if($request->get('action')==3){
+                            $curData->status_data = 4; //reject by admin
+                            // $curData->putaran = $curData->putaran + 1;
                         }
                         else{
                             $curData->status_data = 2; //back to approve provinsi
-                            $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
+                            // $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
                         }
                         $curData->save();
                     }
@@ -121,11 +125,15 @@ class UploadController extends Controller
                     if($curData){
                         if($request->get('action')==1){
                             $curData->status_data = 3; //approve by admin
-                            $curData->putaran = $curData->putaran + 1;
+                            // $curData->putaran = $curData->putaran + 1;
+                        }
+                        else if($request->get('action')==3){
+                            $curData->status_data = 4; //reject by admin
+                            // $curData->putaran = $curData->putaran + 1;
                         }
                         else{
                             $curData->status_data = 2;
-                            $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
+                            // $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
                         }
                         $curData->save();
                     }
@@ -189,8 +197,8 @@ class UploadController extends Controller
                 $el_adhk = $datas['adhk'][$i];
 
                 if($el_adhb==null || $el_adhk==null) $isDataKosong = true;
-                if($el_adhb==null || $el_adhk==null || $el_adhb->status_data<2 || $el_adhk->status_data<2) $resultProvinsi = false;
-                if($el_adhb==null || $el_adhk==null || $el_adhb->status_data<3 || $el_adhk->status_data<3) $resultAdmin = false;
+                if($el_adhb==null || $el_adhk==null || $el_adhb->status_data!=2 || $el_adhk->status_data!=2) $resultProvinsi = false;
+                if($el_adhb==null || $el_adhk==null || $el_adhb->status_data!=3 || $el_adhk->status_data!=3) $resultAdmin = false;
                 // if(!$resultProvinsi && !$resultAdmin) break;
                 
                 // if(el_adhb==null || el_adhk==null || el_adhb['status_data']==2 || el_adhk['status_data']==2) self.isApproveAdmin = false;

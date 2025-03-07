@@ -54,7 +54,7 @@ class PdrbPutaranController extends Controller
         $list_periode = $this->list_periode;
         $tahun_berlaku = $this->tahun_berlaku;
 
-        $max_putaran = PdrbFinal::where('tahun', $tahun_berlaku)->max('putaran');
+        $max_putaran = Pdrb::where('tahun', $tahun_berlaku)->max('putaran');
 
         $list_detail_komponen = Komponen::where('status_aktif', 1)
                                     ->orderby('no_komponen')->get();
@@ -62,10 +62,17 @@ class PdrbPutaranController extends Controller
         $tabel_filter = $id; //$request->tabel_filter ? $request->tabel_filter : '3.1';
         $periode_filter = $request->periode_filter ? $request->periode_filter : $list_periode;
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : Auth::user()->kdkab;
-        $putaran_filter = $request->putaran_filter ? $request->putaran_filter : '1';
+        $putaran_filter = $request->putaran_filter ? $request->putaran_filter : '0';
 
         $adhb_or_adhk = ($id === '3.1') ? 1 : 2;
         $data = [];
+
+        if(!is_array($periode_filter)){
+            $test_explode = explode(",", $periode_filter);
+            if(count($test_explode)>1) $periode_filter = $test_explode;
+        }
+
+        // dd($putaran_filter);
         
         foreach ($list_detail_komponen as $komponen) {
             $row = [];
@@ -82,10 +89,11 @@ class PdrbPutaranController extends Controller
                     $condition_arr[] = ['tahun', '=', $arr_periode[0]];
                     $condition_arr[] = ['q', '=', $arr_periode[1]];
                     $condition_arr[] = ['adhb_or_adhk', $adhb_or_adhk];
-                    $condition_arr[] = ['status_data', 2];
+                    $condition_arr[] = ['putaran', $putaran_filter];
+                    // $condition_arr[] = ['status_data','>' ,1];
     
-                    $data_y = PdrbFinal::where($condition_arr)
-                        // ->orderby('revisi_ke', 'desc')
+                    $data_y = Pdrb::where($condition_arr)
+                        ->orderby('id', 'desc')
                         ->first();
                     $row[$periode] = $data_y ? $data_y->$komp_id : null;
                 }

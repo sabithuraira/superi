@@ -94,6 +94,7 @@ class RevisiTotalController extends Controller
                     if (strlen($p) == 4) {
                         $sql .= 'SUM(IF(revisi_ke = 0 AND tahun = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS `Rilis ' . $p . '`, ';
                         $sql .= 'SUM(IF(revisi_ke > 0 AND tahun = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS `Revisi ' . $p . '`, ';
+                        
                         $sql .= '"Arah" AS `Arah ' . $p . '`, ';
                     } else {
                         $sql .= 'SUM(IF(revisi_ke = 0 AND CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS `Rilis ' . $p . '`, ';
@@ -393,7 +394,8 @@ class RevisiTotalController extends Controller
             }
 
             $sql = substr($sql, 0, -2);
-            $sql .= ' FROM superi_pdrb_ori_and_rev_view WHERE CONCAT(kode_prov, kode_kab) = "' . $kd_kab . '"';
+            // $sql .= ' FROM superi_pdrb_ori_and_rev_view WHERE CONCAT(kode_prov, kode_kab) = "' . $kd_kab . '"';
+            $sql .= ' FROM superi_pdrb WHERE CONCAT(kode_prov, kode_kab) = "' . $kd_kab . '"';
 
             $pdrb_c = DB::select($sql);
 

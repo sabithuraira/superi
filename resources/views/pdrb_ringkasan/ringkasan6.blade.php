@@ -74,8 +74,8 @@
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive">
-                                <table class="table">
+                            <div class="table-responsive table-bordered" id="table-responsive">
+                                <table class="table" border="1px solid black">
                                     <thead>
                                         <tr class="text-center">
                                             <th rowspan="2">Komponen</th>
@@ -163,6 +163,7 @@
 @endsection
 
 @section('scripts')
+    <script type="text/javascript" src="{{ URL::asset('js/exportExcel.js') }}"></script>
     <script>
         var APP_URL = {!! json_encode(url('/')) !!}
 
@@ -190,16 +191,5 @@
             form.submit();
         }
 
-        function export_all() {
-            const url = new URL(window.location.href);
-            const periode_filter = url.searchParams.get('periode_filter');
-            let currentUrl = window.location.origin;
-            let newUrl = `${APP_URL}/pdrb_ringkasan_export_all`;
-            if (periode_filter) {
-                newUrl += `?periode_filter=${periode_filter}`;
-            }
-            console.log(newUrl)
-            window.open(newUrl, '_blank');
-        }
     </script>
 @endsection

@@ -67,7 +67,7 @@
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive">
+                            <div class="table-responsive table-bordered" id="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr class="text-center">
@@ -153,6 +153,7 @@
 @endsection
 
 @section('scripts')
+    <script type="text/javascript" src="{{ URL::asset('js/exportExcel.js') }}"></script>
     <script>
         var APP_URL = {!! json_encode(url('/')) !!}
 
@@ -179,31 +180,6 @@
             form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' + periode;
             console.log(form.action)
             form.submit();
-        }
-
-        function exportToExcel() {
-            var location = 'data:application/vnd.ms-excel;base64,';
-            var excelTemplate = '<html> ' +
-                '<head> ' +
-                '<meta http-equiv="content-type" content="text/plain; charset=UTF-8"/> ' +
-                '</head> ' +
-                '<body> ' +
-                document.getElementById("table-responsive").innerHTML +
-                '</body> ' +
-                '</html>'
-            window.location.href = location + window.btoa(excelTemplate);
-        }
-
-        function export_all() {
-            const url = new URL(window.location.href);
-            const periode_filter = url.searchParams.get('periode_filter');
-            let currentUrl = window.location.origin;
-            let newUrl = `${APP_URL}/pdrb_ringkasan_export_all`;
-            if (periode_filter) {
-                newUrl += `?periode_filter=${periode_filter}`;
-            }
-            console.log(newUrl)
-            window.open(newUrl, '_blank');
         }
     </script>
 @endsection

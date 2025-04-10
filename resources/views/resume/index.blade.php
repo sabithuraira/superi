@@ -242,7 +242,7 @@
                     }
                     else{
                         if(isNaN(json.pdrb[i][j])) cell.innerHTML = json.pdrb[i][j];
-                        else cell.innerHTML = Intl.NumberFormat('id-ID').format(json.pdrb[i][j]);
+                        else cell.innerHTML = Intl.NumberFormat('id-ID', {maximumFractionDigits: 2}).format(json.pdrb[i][j]);
                     }
                 }
             }

@@ -82,8 +82,8 @@
                         <span>Arah Revisi</span></a>
                     <ul>
                         @can('arah_revisi_total')
-                            <li class="{{ request()->is('revisi/total') ? 'active' : '' }}"><a
-                                    href="{{ url('revisi/total') }}">Total</a></li>
+                            <li class="{{ request()->is('revisi_total*') ? 'active' : '' }}"><a
+                                    href="{{ url('revisi_total/2.1') }}">Total</a></li>
                         @endcan
 
                         @can('arah_revisi_kabkota')

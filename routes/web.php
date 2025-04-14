@@ -88,6 +88,8 @@ Route::group(['middleware' => ['permission:arah_revisi_total']], function () {
     Route::post('revisi/total', 'RevisiTotalController@get');
     Route::post('revisi/total/export', 'RevisiTotalController@export');
     Route::post('revisi/total/exportall', 'RevisiTotalController@export_all');
+
+    Route::get('revisi_total/{id}', 'RevisiTotalController2@index');
 });
 
 Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {

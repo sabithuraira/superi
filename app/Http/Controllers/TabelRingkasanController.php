@@ -44,7 +44,7 @@ class TabelRingkasanController extends Controller
             $this->list_tabel = [
                 [
                     'id' => '1.11',
-                    'name' => 'Tabel 1.11. Perbandingan Diskrepansi Nasional dan Regional Menurut Komponen',
+                    'name' => 'Tabel 1.11. Perbandingan Diskrepansi Provinsi dan Kabupaten / Kota Menurut Komponen',
                     'url' => 'pdrb_ringkasan4'
                 ],
                 [
@@ -68,12 +68,12 @@ class TabelRingkasanController extends Controller
             $this->list_tabel = [
                 [
                     'id' => '1.1',
-                    'name' => 'Tabel 1.1. Pertumbuhan Ekonomi Provinsi Menurut Komponen',
+                    'name' => 'Tabel 1.1. Perbandingan Pertumbuhan Ekonomi Provinsi dan Kabupaten/Kota Menurut Komponen',
                     'url' => 'pdrb_ringkasan1'
                 ],
                 [
                     'id' => '1.2',
-                    'name' => 'Tabel 1.2.  Pertumbuhan Implisit Provinsi Menurut Komponen',
+                    'name' => 'Tabel 1.2. Perbandingan Pertumbuhan Implisit Provinsi dan Kabupaten Kota Menurut Komponen',
                     'url' => 'pdrb_ringkasan1'
                 ],
                 [
@@ -118,7 +118,7 @@ class TabelRingkasanController extends Controller
                 ],
                 [
                     'id' => '1.11',
-                    'name' => 'Tabel 1.11. Perbandingan Diskrepansi Nasional dan Regional Menurut Komponen',
+                    'name' => 'Tabel 1.11. Perbandingan Diskrepansi Provinsi dan Kabupaten / Kota Menurut Komponen',
                     'url' => 'pdrb_ringkasan4'
                 ],
                 [

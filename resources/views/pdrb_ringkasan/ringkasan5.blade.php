@@ -96,22 +96,22 @@
                                             <tr class="text-right"
                                                 style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td class="text-left">{{ $dt['name'] }}</td>
-                                                <td>
+                                                <td style="@if($dt['yoy']>=10) background-color: yellow @endif">
                                                     {{ array_key_exists('yoy', $dt) && $dt['yoy'] ? round($dt['yoy'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if($dt['qtq']>=10) background-color: yellow @endif">
                                                     {{ array_key_exists('qtq', $dt) && $dt['qtq'] ? round($dt['qtq'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if($dt['ctc']>=10) background-color: yellow @endif">
                                                     {{ array_key_exists('ctc', $dt) && $dt['ctc'] ? round($dt['ctc'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if($dt['implisit_yoy']>=10) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? round($dt['implisit_yoy'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if($dt['implisit_qtq']>=10) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_qtq', $dt) && $dt['implisit_qtq'] ? round($dt['implisit_qtq'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if($dt['implisit_ctc']>=10) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_ctc', $dt) && $dt['implisit_ctc'] ? round($dt['implisit_ctc'], 2) : '' }}
                                                 </td>
                                             </tr>

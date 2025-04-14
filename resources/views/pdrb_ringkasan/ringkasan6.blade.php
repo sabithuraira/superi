@@ -42,6 +42,7 @@
                                             @endforeach
                                         </select>
                                     </div>
+
                                     <div class="form-group col-sm-12 col-md-2">
                                         <select name="periode_filter" id="periode_filter" class="form-control"
                                             onchange="updateFormActionperiode()">
@@ -112,40 +113,40 @@
                                                 <td class="text-left">
                                                     {{ $dt['name'] }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['yoy_rilis']-$dt['yoy_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('yoy_rilis', $dt) && $dt['yoy_rilis'] ? round($dt['yoy_rilis'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['yoy_rilis']-$dt['yoy_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('yoy_revisi', $dt) && $dt['yoy_revisi'] ? round($dt['yoy_revisi'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['qtq_rilis']-$dt['qtq_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('qtq_rilis', $dt) && $dt['qtq_rilis'] ? round($dt['qtq_rilis'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['qtq_rilis']-$dt['qtq_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('qtq_revisi', $dt) && $dt['qtq_revisi'] ? round($dt['qtq_revisi'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['ctc_rilis']-$dt['ctc_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('ctc_rilis', $dt) && $dt['ctc_rilis'] ? round($dt['ctc_rilis'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['ctc_rilis']-$dt['ctc_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('ctc_revisi', $dt) && $dt['ctc_revisi'] ? round($dt['ctc_revisi'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['implisit_yoy_rilis']-$dt['implisit_yoy_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_yoy_rilis', $dt) && $dt['implisit_yoy_rilis'] ? round($dt['implisit_yoy_rilis'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['implisit_yoy_rilis']-$dt['implisit_yoy_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_yoy_revisi', $dt) && $dt['implisit_yoy_revisi'] ? round($dt['implisit_yoy_revisi'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['implisit_qtq_rilis']-$dt['implisit_qtq_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_qtq_rilis', $dt) && $dt['implisit_qtq_rilis'] ? round($dt['implisit_qtq_rilis'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['implisit_qtq_rilis']-$dt['implisit_qtq_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_qtq_revisi', $dt) && $dt['implisit_qtq_revisi'] ? round($dt['implisit_qtq_revisi'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['implisit_ctc_rilis']-$dt['implisit_ctc_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_ctc_rilis', $dt) && $dt['implisit_ctc_rilis'] ? round($dt['implisit_ctc_rilis'], 2) : '' }}
                                                 </td>
-                                                <td>
+                                                <td style="@if(abs($dt['implisit_ctc_rilis']-$dt['implisit_ctc_revisi'])>5) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_ctc_revisi', $dt) && $dt['implisit_ctc_revisi'] ? round($dt['implisit_ctc_revisi'], 2) : '' }}
                                                 </td>
                                             </tr>
@@ -187,7 +188,29 @@
             var periode_option = document.getElementById('periode_filter').options[document.getElementById('periode_filter')
                 .selectedIndex];
             var periode = periode_option.getAttribute('data-periode')
-            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' + periode;
+            var wilayah_option = document.getElementById(
+                'wilayah_filter').options[document.getElementById('wilayah_filter').selectedIndex];
+            var wilayah = wilayah_option.getAttribute('data-id');
+            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter='  +
+            periode + '?wilayah_filter=' + wilayah;
+            form.submit();
+        }
+
+        
+        function updateFormActionWilayah() {
+            var form = document.getElementById('form_filter');
+            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
+                .selectedIndex];
+            var url = tabel_option.getAttribute('data-url');
+            var data_id = tabel_option.getAttribute('data-id');
+            var periode_option = document.getElementById('periode_filter').options[document.getElementById('periode_filter')
+                .selectedIndex];
+            var periode = periode_option.getAttribute('data-periode');
+            var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
+                .selectedIndex];
+            var wilayah = wilayah_option.getAttribute('data-id');
+            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' + periode +
+                '?wilayah_filter=' + wilayah;
             form.submit();
         }
 

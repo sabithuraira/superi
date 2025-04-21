@@ -116,7 +116,7 @@ class RevisiTotalController2 extends Controller
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
             ->whereIn('status_data', [2, 3])
-            ->orderBy('putaran', 'desc')
+            ->orderBy('revisi_ke', 'desc')
             // ->groupby('kode_kab')
             ->first();
         return $data;
@@ -131,7 +131,7 @@ class RevisiTotalController2 extends Controller
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
             ->whereIn('status_data', [2, 3])
-            ->orderBy('putaran', 'asc')
+            ->orderBy('revisi_ke', 'asc')
             // ->groupby('kode_kab')
             ->first();
         return $data;
@@ -156,7 +156,7 @@ class RevisiTotalController2 extends Controller
             //         });
             //     }
             // })
-            ->orderby('putaran', 'desc')
+            ->orderby('revisi_ke', 'desc')
             // ->groupBy('kode_kab')
             ->first();
         return $data;
@@ -181,7 +181,7 @@ class RevisiTotalController2 extends Controller
             //         });
             //     }
             // })
-            ->orderby('putaran', 'asc')
+            ->orderby('revisi_ke', 'asc')
             // ->groupBy('kode_kab')
             ->first();
         return $data;

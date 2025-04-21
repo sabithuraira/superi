@@ -65,9 +65,9 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
                 $new_model->revisi_ke = 0;
             }
             else{
-                $new_model->revisi_ke = 1;
+                $new_model->revisi_ke = $model->revisi_ke + 1;
                 
-                if($model->status_data==4) $putaran = $model->putaran + 1;
+                if($model->status_data==4 || $model->status_data==3) $putaran = $model->putaran + 1;
                 else $putaran = $model->putaran;
             }
 

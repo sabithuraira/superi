@@ -120,34 +120,30 @@
                                                         $yoyKab = $dt[$periode . 'yoy_kab'] ?? null;
                                                         $ctcProv = $dt[$periode . 'ctc_prov'] ?? null;
                                                         $ctcKab = $dt[$periode . 'ctc_kab'] ?? null;
-                                                        $shouldHighlight =
-                                                            ($qtqProv && $qtqKab && $qtqProv * $qtqKab < 0) ||
-                                                            ($yoyProv && $yoyKab && $yoyProv * $yoyKab < 0) ||
-                                                            ($ctcProv && $ctcKab && $ctcProv * $ctcKab < 0);
                                                     @endphp
-                                                    <td class="text-right"
-                                                        style="@if ($shouldBold) font-weight: bold; @endif  @if ($shouldHighlight) background-color: yellow @endif">
+                                                    <td class="text-right" style="@if ($shouldBold) font-weight: bold; @endif  
+                                                        @if ($qtqProv && $qtqKab && $qtqProv * $qtqKab < 0) background-color: yellow @endif">
                                                         {{ $qtqKab ? round($qtqKab, 2) : '' }}
                                                     </td>
-                                                    <td class="text-right"
-                                                        style="@if ($shouldBold) font-weight: bold; @endif  @if ($shouldHighlight) background-color: yellow @endif">
+                                                    <td class="text-right" style="@if ($shouldBold) font-weight: bold; @endif  
+                                                        @if ($qtqProv && $qtqKab && $qtqProv * $qtqKab < 0) background-color: yellow @endif">
                                                         {{ array_key_exists($periode . 'qtq_prov', $dt) && $dt[$periode . 'qtq_prov'] ? round($dt[$periode . 'qtq_prov'], 2) : '' }}
                                                     </td>
 
-                                                    <td class="text-right"
-                                                        style="@if ($shouldBold) font-weight: bold; @endif  @if ($shouldHighlight) background-color: yellow @endif">
+                                                    <td class="text-right" style="@if ($shouldBold) font-weight: bold; @endif  
+                                                        @if ($yoyProv && $yoyKab && $yoyProv * $yoyKab < 0) background-color: yellow @endif">
                                                         {{ array_key_exists($periode . 'yoy_kab', $dt) && $dt[$periode . 'yoy_kab'] ? round($dt[$periode . 'yoy_kab'], 2) : '' }}
                                                     </td>
-                                                    <td class="text-right"
-                                                        style="@if ($shouldBold) font-weight: bold; @endif  @if ($shouldHighlight) background-color: yellow @endif">
+                                                    <td class="text-right" style="@if ($shouldBold) font-weight: bold; @endif  
+                                                        @if ($yoyProv && $yoyKab && $yoyProv * $yoyKab < 0) background-color: yellow @endif">
                                                         {{ array_key_exists($periode . 'yoy_prov', $dt) && $dt[$periode . 'yoy_prov'] ? round($dt[$periode . 'yoy_prov'], 2) : '' }}
                                                     </td>
-                                                    <td class="text-right"
-                                                        style="@if ($shouldBold) font-weight: bold; @endif  @if ($shouldHighlight) background-color: yellow @endif">
+                                                    <td class="text-right" style="@if ($shouldBold) font-weight: bold; @endif  
+                                                        @if ($ctcProv && $ctcKab && $ctcProv * $ctcKab < 0) background-color: yellow @endif">
                                                         {{ array_key_exists($periode . 'ctc_kab', $dt) && $dt[$periode . 'ctc_kab'] ? round($dt[$periode . 'ctc_kab'], 2) : '' }}
                                                     </td>
-                                                    <td class="text-right"
-                                                        style="@if ($shouldBold) font-weight: bold; @endif  @if ($shouldHighlight) background-color: yellow @endif">
+                                                    <td class="text-right" style="@if ($shouldBold) font-weight: bold; @endif  
+                                                        @if ($ctcProv && $ctcKab && $ctcProv * $ctcKab < 0) background-color: yellow @endif">
                                                         {{ array_key_exists($periode . 'ctc_prov', $dt) && $dt[$periode . 'ctc_prov'] ? round($dt[$periode . 'ctc_prov'], 2) : '' }}
                                                     </td>
                                                 @endforeach

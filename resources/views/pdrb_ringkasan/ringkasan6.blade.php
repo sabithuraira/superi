@@ -108,45 +108,56 @@
                                             @php
                                                 $shouldBold = strlen($dt['id']) < 4 || $dt['id'] == 'c_pdrb';
                                             @endphp
-                                            <tr class="text-right"
-                                                style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
+                                            <tr class="text-right" style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td class="text-left">
                                                     {{ $dt['name'] }}
                                                 </td>
-                                                <td style="@if(abs($dt['yoy_rilis']-$dt['yoy_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['yoy_rilis']-$dt['yoy_revisi'])>5) background-color: orange @endif 
+                                                    @if ($dt['yoy_rilis'] * $dt['yoy_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('yoy_rilis', $dt) && $dt['yoy_rilis'] ? round($dt['yoy_rilis'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['yoy_rilis']-$dt['yoy_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['yoy_rilis']-$dt['yoy_revisi'])>5) background-color: orange @endif
+                                                     @if ($dt['yoy_rilis'] * $dt['yoy_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('yoy_revisi', $dt) && $dt['yoy_revisi'] ? round($dt['yoy_revisi'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['qtq_rilis']-$dt['qtq_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['qtq_rilis']-$dt['qtq_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['qtq_rilis'] * $dt['qtq_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('qtq_rilis', $dt) && $dt['qtq_rilis'] ? round($dt['qtq_rilis'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['qtq_rilis']-$dt['qtq_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['qtq_rilis']-$dt['qtq_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['qtq_rilis'] * $dt['qtq_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('qtq_revisi', $dt) && $dt['qtq_revisi'] ? round($dt['qtq_revisi'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['ctc_rilis']-$dt['ctc_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['ctc_rilis']-$dt['ctc_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['ctc_rilis'] * $dt['ctc_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('ctc_rilis', $dt) && $dt['ctc_rilis'] ? round($dt['ctc_rilis'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['ctc_rilis']-$dt['ctc_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['ctc_rilis']-$dt['ctc_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['ctc_rilis'] * $dt['ctc_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('ctc_revisi', $dt) && $dt['ctc_revisi'] ? round($dt['ctc_revisi'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['implisit_yoy_rilis']-$dt['implisit_yoy_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['implisit_yoy_rilis']-$dt['implisit_yoy_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['implisit_yoy_rilis'] * $dt['implisit_yoy_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_yoy_rilis', $dt) && $dt['implisit_yoy_rilis'] ? round($dt['implisit_yoy_rilis'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['implisit_yoy_rilis']-$dt['implisit_yoy_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['implisit_yoy_rilis']-$dt['implisit_yoy_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['implisit_yoy_rilis'] * $dt['implisit_yoy_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_yoy_revisi', $dt) && $dt['implisit_yoy_revisi'] ? round($dt['implisit_yoy_revisi'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['implisit_qtq_rilis']-$dt['implisit_qtq_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['implisit_qtq_rilis']-$dt['implisit_qtq_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['implisit_qtq_rilis'] * $dt['implisit_qtq_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_qtq_rilis', $dt) && $dt['implisit_qtq_rilis'] ? round($dt['implisit_qtq_rilis'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['implisit_qtq_rilis']-$dt['implisit_qtq_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['implisit_qtq_rilis']-$dt['implisit_qtq_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['implisit_qtq_rilis'] * $dt['implisit_qtq_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_qtq_revisi', $dt) && $dt['implisit_qtq_revisi'] ? round($dt['implisit_qtq_revisi'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['implisit_ctc_rilis']-$dt['implisit_ctc_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['implisit_ctc_rilis']-$dt['implisit_ctc_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['implisit_ctc_rilis'] * $dt['implisit_ctc_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_ctc_rilis', $dt) && $dt['implisit_ctc_rilis'] ? round($dt['implisit_ctc_rilis'], 2) : '' }}
                                                 </td>
-                                                <td style="@if(abs($dt['implisit_ctc_rilis']-$dt['implisit_ctc_revisi'])>5) background-color: yellow @endif">
+                                                <td style="@if(abs($dt['implisit_ctc_rilis']-$dt['implisit_ctc_revisi'])>5) background-color: orange @endif 
+                                                     @if ($dt['implisit_ctc_rilis'] * $dt['implisit_ctc_revisi'] < 0) background-color: yellow @endif">
                                                     {{ array_key_exists('implisit_ctc_revisi', $dt) && $dt['implisit_ctc_revisi'] ? round($dt['implisit_ctc_revisi'], 2) : '' }}
                                                 </td>
                                             </tr>

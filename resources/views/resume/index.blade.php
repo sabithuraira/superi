@@ -45,9 +45,6 @@
                                     <option value="Tabel 2.14">Tabel 2.14. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Q-TO-Q) (dalam persen)</option>
                                     <option value="Tabel 2.15">Tabel 2.15. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Y-ON-Y) (dalam persen)</option>
                                     <option value="Tabel 2.16">Tabel 2.16. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (C-TO-C) (dalam persen)</option>
-                                    <option value="Tabel 2.17">Tabel 2.17. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q) (dalam persen)</option>
-                                    <option value="Tabel 2.18">Tabel 2.18. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y) (dalam persen)</option>
-                                    <option value="Tabel 2.19">Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C) (dalam persen)</option>
                                 </select>
                             </div>
                             <div class="col-6 mb-2">

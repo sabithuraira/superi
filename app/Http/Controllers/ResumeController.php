@@ -277,38 +277,39 @@ class ResumeController extends Controller
                 $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_final')[0]->prov;
                 $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
             }
-        } elseif ($tabel == 'Tabel 2.17') {
-            foreach ($periode as $p) {
-                $tahun = substr($p, 0, 4);
-                if (strlen($p) == 4) {
-                    $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-                } else {
-                    $q = substr($p, 5, 1);
-                    if ($q == '1') {
-                        $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-                    } else {
-                        $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-                    }
-                }
-            }
-        } elseif ($tabel == 'Tabel 2.18') {
-            foreach ($periode as $p) {
-                $tahun = substr($p, 0, 4);
-                if (strlen($p) == 4) {
-                    $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-                } else {
-                    $q = substr($p, 5, 1);
-                    $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-                }
-            }
-        } elseif ($tabel == 'Tabel 2.19') {
-            foreach ($periode as $p) {
-                $tahun = substr($p, 0, 4);
-                if (strlen($p) == 4) $q = 4;
-                else $q = substr($p, 5, 1);
-                $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-            }
-        }
+        } 
+        // elseif ($tabel == 'Tabel 2.17') {
+        //     foreach ($periode as $p) {
+        //         $tahun = substr($p, 0, 4);
+        //         if (strlen($p) == 4) {
+        //             $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+        //         } else {
+        //             $q = substr($p, 5, 1);
+        //             if ($q == '1') {
+        //                 $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+        //             } else {
+        //                 $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+        //             }
+        //         }
+        //     }
+        // } elseif ($tabel == 'Tabel 2.18') {
+        //     foreach ($periode as $p) {
+        //         $tahun = substr($p, 0, 4);
+        //         if (strlen($p) == 4) {
+        //             $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+        //         } else {
+        //             $q = substr($p, 5, 1);
+        //             $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+        //         }
+        //     }
+        // } elseif ($tabel == 'Tabel 2.19') {
+        //     foreach ($periode as $p) {
+        //         $tahun = substr($p, 0, 4);
+        //         if (strlen($p) == 4) $q = 4;
+        //         else $q = substr($p, 5, 1);
+        //         $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+        //     }
+        // }
 
         $sql = substr($sql, 0, -2);
         $sql .= ' FROM superi_pdrb_final';

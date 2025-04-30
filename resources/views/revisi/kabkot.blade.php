@@ -21,7 +21,8 @@
                                 @csrf
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-4">
-                                        <select name="tabel_filter" id="tabel_filter" class="form-control" onchange="updateFormAction(this)">
+                                        <select name="tabel_filter" id="tabel_filter" class="form-control"
+                                            onchange="updateFormAction(this)">
                                             @foreach ($list_tabel as $key => $tbl)
                                                 <option value="{{ $tbl['id'] }}" data-id="{{ $tbl['id'] }}"
                                                     @if ($tbl['id'] === $tabel_filter) selected @endif>
@@ -31,8 +32,8 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        <button class="btn btn-primary w-100 " type="button" href="#komponenModal" data-toggle="modal"
-                                            data-target="#komponenModal">Pilih Komponen</button>
+                                        <button class="btn btn-primary w-100 " type="button" href="#komponenModal"
+                                            data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
                                     </div>
 
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
@@ -43,11 +44,13 @@
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
 
                                         @if (Request::is('revisi_kabkot/*') || Request::is('revisi_kabkot_rilis/*'))
-                                            <a class="btn btn-primary w-100" type="button" href="{{ url('revisi_kabkot_7pkrt/301') }}">
+                                            <a class="btn btn-primary w-100" type="button"
+                                                href="{{ url('revisi_kabkot_7pkrt/301') }}">
                                                 PKRT 7 Komponen
                                             </a>
                                         @elseif (Request::is('revisi_kabkot_7pkrt/*'))
-                                            <a class="btn btn-primary w-100" type="button" href="{{ url('revisi_kabkot/301') }}">
+                                            <a class="btn btn-primary w-100" type="button"
+                                                href="{{ url('revisi_kabkot/301') }}">
                                                 PKRT 12 Komponen
                                             </a>
                                         @endif
@@ -59,27 +62,29 @@
                                         <select name="wilayah_filter" id="wilayah_filter" class="form-control"
                                             onchange="updateFormActionWilayah()">
                                             @foreach ($list_wilayah as $key => $wil)
-                                                @if(Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
+                                                @if (Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
                                                     <option value="{{ $key }}" data-id="{{ $key }}"
                                                         @if ($key == $wilayah_filter) selected @endif>
                                                         16{{ $key }} - {{ $wil }}</option>
-                                                @endif 
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2   ">
-                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal" data-toggle="modal"
-                                            data-target="#periodeModal">Pilih Periode</button>
+                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal"
+                                            data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                     <div class="col-sm-6 col-md-2"></div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
 
                                         @if (Request::is('revisi_kabkot/*') || Request::is('revisi_kabkot_7pkrt/*'))
-                                            <a class="btn btn-primary w-100" type="button" href="{{ url('revisi_kabkot_rilis/301') }}">
+                                            <a class="btn btn-primary w-100" type="button"
+                                                href="{{ url('revisi_kabkot_rilis/301') }}">
                                                 Tabel Rilis
                                             </a>
                                         @elseif (Request::is('revisi_kabkot_rilis/*'))
-                                            <a class="btn btn-primary w-100" type="button" href="{{ url('revisi_kabkot/301') }}">
+                                            <a class="btn btn-primary w-100" type="button"
+                                                href="{{ url('revisi_kabkot/301') }}">
                                                 Tabel PKRT 12 Komponen
                                             </a>
                                         @endif
@@ -119,12 +124,16 @@
                                     <tbody>
                                         @foreach ($data as $dt)
                                             @php
-                                                $shouldBold = strlen($dt['id']) < 4 || $dt['id'] == 'c_pdrb' || $dt['id'] == 'pdrb';
+                                                $shouldBold =
+                                                    strlen($dt['id']) < 4 ||
+                                                    $dt['id'] == 'c_pdrb' ||
+                                                    $dt['id'] == 'pdrb';
                                             @endphp
-                                            <tr style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
+                                            <tr
+                                                style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td>
-                                                    @if($dt['id']!='pdrb')
-                                                        {{ $dt['id'] }} 
+                                                    @if ($dt['id'] != 'pdrb')
+                                                        {{ $dt['id'] }}
                                                     @endif
                                                     {{ $dt['name'] }}
                                                 </td>
@@ -170,15 +179,17 @@
                                 <div class="modal-body">
                                     <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
                                         @foreach ($list_tabel as $key => $tbl)
-                                            <option value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
+                                            <option
+                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
                                                 {{ $tbl['name'] }}
                                             </option>
                                         @endforeach
                                     </select>
                                     @foreach ($list_group_komponen as $i => $kmp)
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['column_alias'] }}"
-                                                name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
+                                            <input class="form-check-input" type="checkbox"
+                                                value="{{ $kmp['column_alias'] }}" name="komponen_filter[]"
+                                                id="{{ 'komponen_filter' . $i }}"
                                                 @foreach ($komponen_filter as $kom_fil)
                                                     @if ($kom_fil == $kmp['column_alias'])
                                                     checked
@@ -191,8 +202,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
-                                            aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            data-toggle="dropdown" aria-expanded="false">
                                             Pilihan
                                         </button>
                                         <div class="dropdown-menu">
@@ -221,7 +232,8 @@
                                 <div class="modal-body mx-4">
                                     <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
                                         @foreach ($list_tabel as $key => $tbl)
-                                            <option value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
+                                            <option
+                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
                                                 {{ $tbl['name'] }}
                                             </option>
                                         @endforeach
@@ -231,25 +243,30 @@
                                             @if ($li_per < 2018)
                                                 <div class="col-8"></div>
                                                 <div class="form-check col-4">
-                                                    <input class="form-check-input" type="checkbox" value="{{ $li_per }}"
-                                                        name="periode_filter[]" id="{{ 'periode_filter_' . $li_per }}"
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
                                                         @foreach ($periode_filter as $per_fil)
                                                 @if ($per_fil === $li_per)
                                                 checked
                                                 @endif @endforeach>
-                                                    <label class="form-check-label" for="{{ 'periode_filter_' . $li_per }}">
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $li_per }}">
                                                         {{ $li_per }}
                                                     </label>
                                                 </div>
                                             @else
-                                                <div class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
-                                                    <input class="form-check-input" type="checkbox" value="{{ $li_per }}"
-                                                        name="periode_filter[]" id="{{ 'periode_filter_' . $li_per }}"
+                                                <div
+                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
                                                         @foreach ($periode_filter as $per_fil)
                                                     @if ($per_fil === $li_per)
                                                     checked
                                                     @endif @endforeach>
-                                                    <label class="form-check-label" for="{{ 'periode_filter_' . $li_per }}">
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $li_per }}">
                                                         {{ $li_per }}
                                                     </label>
                                                 </div>
@@ -259,8 +276,8 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown"
-                                            aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            data-toggle="dropdown" aria-expanded="false">
                                             Pilihan
                                         </button>
                                         <div class="dropdown-menu">
@@ -313,18 +330,19 @@
 @section('scripts')
     <script>
         var APP_URL = {!! json_encode(url('/')) !!}
+        var URL_SEGMENT = "{{ Request::segment(1) }}";
 
         function updateFormAction(selectElement) {
             var form = document.getElementById('form_filter');
             var selectedOption = selectElement.options[selectElement.selectedIndex];
             var data_id = selectedOption.getAttribute('data-id');
-            form.action = APP_URL + '/revisi_kabkot' + '/' + data_id;
+            form.action = APP_URL + '/' + URL_SEGMENT + '/' + data_id;
             form.submit();
         }
 
         function updateFormActionWilayah() {
-            var url = "{{ url("/revisi_kabkot") }}";
-            
+            var url = "{{ url('/revisi_kabkot') }}";
+
             var form = document.getElementById('form_filter');
             var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
                 .selectedIndex];
@@ -334,7 +352,8 @@
                 .selectedIndex];
             var wilayah = wilayah_option.getAttribute('data-id');
 
-            form.action = url + '/' + data_id + '?wilayah_filter=' + wilayah;  //APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
+            form.action = url + '/' + data_id + '?wilayah_filter=' +
+                wilayah; //APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
             console.log(form.action)
             form.submit();
         }

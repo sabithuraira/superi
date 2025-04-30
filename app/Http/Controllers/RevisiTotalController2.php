@@ -38,6 +38,7 @@ class RevisiTotalController2 extends Controller
     {
         $str_sql_select = "";
         $list_komp = AssetData::getDetailKomponen();
+
         foreach ($list_komp as $item) {
             $str_sql_select .= "SUM(" . $item['select_id'] . ") as " . $item['id'] . ",";
         }
@@ -80,33 +81,78 @@ class RevisiTotalController2 extends Controller
         ['id' => '2.14', 'name' => 'Tabel 2.14. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Q-TO-Q), (persen)'],
         ['id' => '2.15', 'name' => 'Tabel 2.15. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Y-ON-Y), (persen)'],
         ['id' => '2.16', 'name' => 'Tabel 2.16. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (C-TO-C), (persen)'],
-        ['id' => '2.17', 'name' => 'Tabel 2.17. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q), (persen)'],
-        ['id' => '2.18', 'name' => 'Tabel 2.18. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y), (persen)'],
-        ['id' => '2.19', 'name' => 'Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C), (persen)'],
+        // ['id' => '2.17', 'name' => 'Tabel 2.17. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q), (persen)'],
+        // ['id' => '2.18', 'name' => 'Tabel 2.18. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y), (persen)'],
+        // ['id' => '2.19', 'name' => 'Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C), (persen)'],
     ];
 
     /**
      * get last revisi data base on kab, tahun, q, adhk & status
      */
-    public function get_rev($kab, $thn, $q, $adhk, $status)
+    public function get_q($total_or_prov, $thn, $adhk, $status_rilis)
+    {
+        $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
+            ->when($total_or_prov == 1, function ($query) {
+                return $query->where('kode_kab', '!=', "00");
+            }, function ($query) {
+                return $query->where('kode_kab', '=', "00");
+            })
+            ->where('tahun', $thn)
+            ->where('adhb_or_adhk', $adhk)
+            ->where('status_data', "LIKE", '%' . $status_rilis . '%')
+            ->groupBy('kode_kab', 'q')
+            ->get();
+        return $rev;
+    }
+
+    public function get_data_cum($total_or_prov, $thn, $q, $adhk, $status_rilis, $rev)
+    {
+        $str_sql_select = "";
+        $list_detail_komponen = AssetData::getDetailKomponen();
+        foreach ($list_detail_komponen as $item) {
+            $str_sql_select .= "SUM(" . $item['select_id'] . ") as " . $item['id'] . ",";
+        }
+        $str_sql_select = substr($str_sql_select, 0, -1);
+        $data = Pdrb::select('kode_prov', DB::raw($str_sql_select))
+            ->when($total_or_prov == 1, function ($query) {
+                return $query->where('kode_kab', '!=', "00");
+            }, function ($query) {
+                return $query->where('kode_kab', '=', "00");
+            })
+            ->where('tahun', $thn)
+            ->wherein('q', $q)
+            ->where('adhb_or_adhk', $adhk)
+            ->where('status_data', "LIKE", '%' . $status_rilis . '%')
+            ->where(function ($query) use ($rev) {
+                foreach ($rev as $r) {
+                    $query->orWhere(function ($subquery) use ($r) {
+                        $subquery->where('kode_kab', $r->kode_kab)
+                            ->where('q', $r->q)
+                            ->where('revisi_ke', $r->max_revisi);
+                    });
+                }
+            })
+            // ->orderby('revisi_ke', 'desc')
+            ->groupBy('kode_prov')
+            ->first();
+        return $data;
+    }
+
+    public function get_q_rilis($kab, $thn, $q, $adhk)
     {
         $rev =  Pdrb::selectRaw('kode_kab, q, MAX(revisi_ke) as max_revisi')
             ->where('kode_kab', $kab)
             ->where('tahun', $thn)
-            ->where('q', "LIKE", '%' . $q . '%')
+            // ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', "LIKE", '%' . $status . '%')
+            // ->where('status_data', "LIKE", '%' . $status . '%')
+            ->whereIn('status_data', [3])
             ->groupBy('kode_kab', 'q')
             ->get();
 
         return $rev;
     }
 
-    /**
-     * get data base on kab, tahun, q, adhk, status
-     * only get "select" property
-     * and get last revisi data
-     */
     public function get_data_rev($kab, $thn, $q, $adhk, $select)
     {
         $data = Pdrb::
@@ -115,7 +161,7 @@ class RevisiTotalController2 extends Controller
             ->where('tahun', $thn)
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
-            ->whereIn('status_data', [2, 3])
+            // ->whereIn('status_data', [2, 3])
             ->orderBy('revisi_ke', 'desc')
             // ->groupby('kode_kab')
             ->first();
@@ -131,13 +177,13 @@ class RevisiTotalController2 extends Controller
             ->where('q', "LIKE", '%' . $q . '%')
             ->where('adhb_or_adhk', $adhk)
             ->whereIn('status_data', [2, 3])
-            ->orderBy('revisi_ke', 'asc')
+            ->orderBy('revisi_ke', 'desc')
             // ->groupby('kode_kab')
             ->first();
         return $data;
     }
 
-    public function get_data_cumulative_revisi($kab, $thn, $q, $adhk, $select) //$rev, $select)
+    public function get_data_cumulative_revisi($kab, $thn, $q, $adhk, $rev, $select)
     {
         $data = Pdrb::
             // select($select)
@@ -146,23 +192,23 @@ class RevisiTotalController2 extends Controller
             ->wherein('q', $q)
             ->where('adhb_or_adhk', $adhk)
             // ->where('status_data', "LIKE", '%' . $status . '%')
-            ->whereIn('status_data', [2, 3])
-            // ->where(function ($query) use ($rev) {
-            //     foreach ($rev as $r) {
-            //         $query->orWhere(function ($subquery) use ($r) {
-            //             $subquery->where('kode_kab', $r->kode_kab)
-            //                 ->where('q', $r->q)
-            //                 ->where('revisi_ke', $r->max_revisi);
-            //         });
-            //     }
-            // })
+            // ->whereIn('status_data', [2, 3])
+            ->where(function ($query) use ($rev) {
+                foreach ($rev as $r) {
+                    $query->orWhere(function ($subquery) use ($r) {
+                        $subquery->where('kode_kab', $r->kode_kab)
+                            ->where('q', $r->q)
+                            ->where('revisi_ke', $r->max_revisi);
+                    });
+                }
+            })
             ->orderby('revisi_ke', 'desc')
             // ->groupBy('kode_kab')
             ->first();
         return $data;
     }
 
-    public function get_data_cumulative_rilis($kab, $thn, $q, $adhk, $select) //$rev, $select)
+    public function get_data_cumulative_rilis($kab, $thn, $q, $adhk, $rev, $select)
     {
         $data = Pdrb::
             // select($select)
@@ -172,16 +218,16 @@ class RevisiTotalController2 extends Controller
             ->where('adhb_or_adhk', $adhk)
             // ->where('status_data', "LIKE", '%' . $status . '%')
             ->whereIn('status_data', [2, 3])
-            // ->where(function ($query) use ($rev) {
-            //     foreach ($rev as $r) {
-            //         $query->orWhere(function ($subquery) use ($r) {
-            //             $subquery->where('kode_kab', $r->kode_kab)
-            //                 ->where('q', $r->q)
-            //                 ->where('revisi_ke', $r->max_revisi);
-            //         });
-            //     }
-            // })
-            ->orderby('revisi_ke', 'asc')
+            ->where(function ($query) use ($rev) {
+                foreach ($rev as $r) {
+                    $query->orWhere(function ($subquery) use ($r) {
+                        $subquery->where('kode_kab', $r->kode_kab)
+                            ->where('q', $r->q)
+                            ->where('revisi_ke', $r->max_revisi);
+                    });
+                }
+            })
+            ->orderby('revisi_ke', 'desc')
             // ->groupBy('kode_kab')
             ->first();
         return $data;
@@ -194,22 +240,43 @@ class RevisiTotalController2 extends Controller
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
         }
-        $list_detail_komponen = Komponen::wherein('no_komponen', $array_komp_filter)->orderby('no_komponen')->get()->toArray();
-        array_push($list_detail_komponen, ['id' => '26', 'no_komponen' => 'pdrb', 'nama_komponen' => "PDRB"]);
+        $komponens = [];
+        $list_detail_komponen = AssetData::getDetailKomponen();
+        foreach ($array_komp_filter as $arr_komp_filter) {
+            foreach ($list_detail_komponen as $dtl_komp) {
+                if ($dtl_komp['id'] == $arr_komp_filter) {
+                    $komponens[] = [
+                        'id' => $arr_komp_filter,
+                        'name' => $dtl_komp['name'],
+                        'alias' => $dtl_komp['alias']
+                    ];
+                }
+            }
+        }
         if ($id === '2.1') {
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $revisi = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $row[$periode . "_rilis"] = $rilis ? $rilis->$komp_id : null;
-                    $row[$periode . "_revisi"] = $revisi ? $revisi->$komp_id : null;
+                    $q_kabkot_rilis = $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_revisi = $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_prov_rilis = $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_revisi = $this->get_q(0, $arr_periode[0], 1, "");
+
+                    $kabkot_rilis = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis);
+                    $kabkot_revisi = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi);
+                    $prov_rilis = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis);
+                    $prov_revisi = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, "", $q_prov_revisi);
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis ? $kabkot_rilis->$komp_id : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi ? $kabkot_revisi->$komp_id : null;
+                    $row[$periode . "prov_rilis"] = $prov_rilis ? $prov_rilis->$komp_id : null;
+                    $row[$periode . "prov_revisi"] = $prov_revisi ? $prov_revisi->$komp_id : null;
                 }
                 $data[] = $row;
             }
@@ -217,16 +284,26 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $row[$periode . "_rilis"] = $rilis ? $rilis->$komp_id : null;
-                    $row[$periode . "_revisi"] = $revisi ? $revisi->$komp_id : null;
+                    $q_kabkot_rilis = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi = $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis);
+                    $kabkot_revisi = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi);
+                    $prov_rilis = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis);
+                    $prov_revisi = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi);
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis ? $kabkot_rilis->$komp_id : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi ? $kabkot_revisi->$komp_id : null;
+                    $row[$periode . "prov_rilis"] = $prov_rilis ? $prov_rilis->$komp_id : null;
+                    $row[$periode . "prov_revisi"] = $prov_revisi ? $prov_revisi->$komp_id : null;
                 }
                 $data[] = $row;
             }
@@ -234,19 +311,26 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $rilis_prov = $this->get_data_rilis('00', $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_prov = $this->get_data_rev('00', $arr_periode[0], $arr_periode[1], 2, $select);
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 2, "");
 
-                    $row[$periode . "_rilis"] = $rilis && $rilis_prov && isset($rilis_prov->$komp_id) && $rilis_prov->$komp_id != 0 ?  $rilis->$komp_id / $rilis_prov->$komp_id * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi && $revisi_prov && isset($revisi_q_1->$komp_id) && $revisi_q_1->$komp_id != 0 ? $revisi->$komp_id / $revisi_prov->$komp_id * 100 : null;
+                    $kabkot_rilis =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis);
+                    $kabkot_revisi =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi);
+                    $prov_rilis =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis);
+                    $prov_revisi =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi);
+
+                    $row[$periode . "kabkot_rilis"]     = $kabkot_rilis && $prov_rilis && isset($prov_rilis->$komp_id) && $prov_rilis->$komp_id != 0 ?  $kabkot_rilis->$komp_id / $prov_rilis->$komp_id * 100 : null;
+                    $row[$periode . "kabkot_revisi"]    = $kabkot_rilis && $prov_revisi && isset($prov_revisi->$komp_id) && $prov_revisi->$komp_id != 0 ? $kabkot_revisi->$komp_id / $prov_revisi->$komp_id * 100 : null;
+                    $row[$periode . "prov_rilis"]       = $prov_rilis && $prov_rilis && isset($prov_rilis->$komp_id) && $prov_rilis->$komp_id != 0 ?  $prov_rilis->$komp_id / $prov_rilis->$komp_id * 100 : null;
+                    $row[$periode . "prov_revisi"]      = $prov_revisi && $prov_revisi && isset($prov_revisi->$komp_id) && $prov_revisi->$komp_id != 0 ? $prov_revisi->$komp_id / $prov_revisi->$komp_id * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -254,17 +338,26 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $revisi = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 1, "");
 
-                    $row[$periode . "_rilis"] = $rilis  && isset($rilis_prov->c_pdrb) && $rilis_prov->c_pdrb != 0 ?  $rilis->$komp_id / $rilis->c_pdrb * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi  && isset($revisi_q_1->c_pdrb) && $revisi_q_1->c_pdrb != 0 ? $revisi->$komp_id / $revisi->c_pdrb * 100 : null;
+                    $kabkot_rilis =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis);
+                    $kabkot_revisi =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi);
+                    $prov_rilis =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis);
+                    $prov_revisi =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, "", $q_prov_revisi);
+
+                    $row[$periode . "kabkot_rilis"]     = $kabkot_rilis  && isset($kabkot_rilis->c_pdrb) && $kabkot_rilis->c_pdrb != 0 ?  $kabkot_rilis->$komp_id / $kabkot_rilis->c_pdrb * 100 : null;
+                    $row[$periode . "kabkot_revisi"]    = $kabkot_revisi  && isset($kabkot_revisi->c_pdrb) && $kabkot_revisi->c_pdrb != 0 ?  $kabkot_revisi->$komp_id / $kabkot_revisi->c_pdrb * 100 : null;
+                    $row[$periode . "prov_rilis"]       = $prov_rilis  && isset($prov_rilis->c_pdrb) && $prov_rilis->c_pdrb != 0 ?  $prov_rilis->$komp_id / $prov_rilis->c_pdrb * 100 : null;
+                    $row[$periode . "prov_revisi"]      = $prov_revisi  && isset($prov_revisi->c_pdrb) && $prov_revisi->c_pdrb != 0 ?  $prov_revisi->$komp_id / $prov_revisi->c_pdrb * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -272,17 +365,27 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
 
-                    $row[$periode . "_rilis"] = $rilis  && isset($rilis_prov->c_pdrb) && $rilis_prov->c_pdrb != 0 ?  $rilis->$komp_id / $rilis->c_pdrb * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi  && isset($revisi_q_1->c_pdrb) && $revisi_q_1->c_pdrb != 0 ? $revisi->$komp_id / $revisi->c_pdrb * 100 : null;
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis);
+                    $kabkot_revisi =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi);
+                    $prov_rilis =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis);
+                    $prov_revisi =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi);
+
+                    $row[$periode . "kabkot_rilis"]     = $kabkot_rilis  && isset($kabkot_rilis->c_pdrb) && $kabkot_rilis->c_pdrb != 0 ?  $kabkot_rilis->$komp_id / $kabkot_rilis->c_pdrb * 100 : null;
+                    $row[$periode . "kabkot_revisi"]    = $kabkot_revisi  && isset($kabkot_revisi->c_pdrb) && $kabkot_revisi->c_pdrb != 0 ?  $kabkot_revisi->$komp_id / $kabkot_revisi->c_pdrb * 100 : null;
+                    $row[$periode . "prov_rilis"]       = $prov_rilis  && isset($prov_rilis->c_pdrb) && $prov_rilis->c_pdrb != 0 ?  $prov_rilis->$komp_id / $prov_rilis->c_pdrb * 100 : null;
+                    $row[$periode . "prov_revisi"]      = $prov_revisi  && isset($prov_revisi->c_pdrb) && $prov_revisi->c_pdrb != 0 ?  $prov_revisi->$komp_id / $prov_revisi->c_pdrb * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -290,18 +393,50 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis_hb = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $rilis_hk = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_hb = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $revisi_hk = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $row[$periode . "_rilis"] = $rilis_hb && $rilis_hk && isset($rilis_hk->$komp_id) && $rilis_hk->$komp_id != 0 ? $rilis_hb->$komp_id / $rilis_hk->$komp_id * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi_hb && $revisi_hk && isset($revisi_hk->$komp_id) && $revisi_hk->$komp_id != 0 ? $revisi_hb->$komp_id / $revisi_hk->$komp_id * 100 : null;
+
+                    $q_kabkot_rilis_hb =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_rilis_hk =   $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_hb =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_kabkot_revisi_hk =  $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_hb =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_rilis_hk =     $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_hb =    $this->get_q(0, $arr_periode[0], 1, "");
+                    $q_prov_revisi_hk =    $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis_hb =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis_hb);
+                    $kabkot_rilis_hk =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis_hk);
+                    $kabkot_revisi_hb =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi_hb);
+                    $kabkot_revisi_hk =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi_hk);
+                    $prov_rilis_hb =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis_hb);
+                    $prov_rilis_hk =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis_hk);
+                    $prov_revisi_hb =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, "", $q_prov_revisi_hb);
+                    $prov_revisi_hk =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi_hk);
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis_hb && $kabkot_rilis_hk
+                        && isset($kabkot_rilis_hk->$komp_id)
+                        && $kabkot_rilis_hk->$komp_id != 0
+                        ? $kabkot_rilis_hb->$komp_id / $kabkot_rilis_hk->$komp_id * 100 : null;
+
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi_hb && $kabkot_revisi_hk
+                        && isset($kabkot_revisi_hk->$komp_id)
+                        && $kabkot_revisi_hk->$komp_id != 0
+                        ? $kabkot_revisi_hb->$komp_id / $kabkot_revisi_hk->$komp_id * 100 : null;
+
+                    $row[$periode . "prov_rilis"] = $prov_rilis_hb && $prov_rilis_hk
+                        && isset($prov_rilis_hk->$komp_id)
+                        && $prov_rilis_hk->$komp_id != 0
+                        ? $prov_rilis_hb->$komp_id / $prov_rilis_hk->$komp_id * 100 : null;
+
+                    $row[$periode . "prov_revisi"] = $prov_revisi_hb && $prov_revisi_hk
+                        && isset($prov_revisi_hk->$komp_id)
+                        && $prov_revisi_hk->$komp_id != 0
+                        ? $prov_revisi_hb->$komp_id / $prov_revisi_hk->$komp_id * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -309,13 +444,14 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
-                foreach ($periode_filter as $periode) {
+                $komp_id = str_replace(".", "", $komponen['id']);
+                foreach ($periode_filter as $key => $periode) {
                     $arr_periode = explode("Q", $periode);
                     $q = [];
+
                     if (sizeof($arr_periode) > 1) {
                         for ($i = 1; $i <= $arr_periode[1]; $i++) {
                             $q[] = $i;
@@ -324,12 +460,43 @@ class RevisiTotalController2 extends Controller
                         $q = [1, 2, 3, 4];
                     }
 
-                    $rilis_hb  = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 1, $select);
-                    $rilis_hk  = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $select);
-                    $revisi_hb = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 1, $select);
-                    $revisi_hk = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $select);
-                    $row[$periode . "_rilis"] = $rilis_hb && $rilis_hk && isset($rilis_hk->$komp_id) && $rilis_hk->$komp_id != 0 ? $rilis_hb->$komp_id / $rilis_hk->$komp_id * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi_hb && $revisi_hk && isset($revisi_hk->$komp_id) && $revisi_hk->$komp_id != 0 ? $revisi_hb->$komp_id / $revisi_hk->$komp_id * 100 : null;
+                    $q_kabkot_rilis_hb =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_rilis_hk =   $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_hb =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_kabkot_revisi_hk =  $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_hb =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_rilis_hk =     $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_hb =    $this->get_q(0, $arr_periode[0], 1, "");
+                    $q_prov_revisi_hk =    $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis_hb =     $this->get_data_cum(1, $arr_periode[0], $q, 1, 3, $q_kabkot_rilis_hb);
+                    $kabkot_rilis_hk =     $this->get_data_cum(1, $arr_periode[0], $q, 2, 3, $q_kabkot_rilis_hk);
+                    $kabkot_revisi_hb =    $this->get_data_cum(1, $arr_periode[0], $q, 1, "", $q_kabkot_revisi_hb);
+                    $kabkot_revisi_hk =    $this->get_data_cum(1, $arr_periode[0], $q, 2, "", $q_kabkot_revisi_hk);
+                    $prov_rilis_hb =       $this->get_data_cum(0, $arr_periode[0], $q, 1, 3, $q_prov_rilis_hb);
+                    $prov_rilis_hk =       $this->get_data_cum(0, $arr_periode[0], $q, 2, 3, $q_prov_rilis_hk);
+                    $prov_revisi_hb =      $this->get_data_cum(0, $arr_periode[0], $q, 1, "", $q_prov_revisi_hb);
+                    $prov_revisi_hk =      $this->get_data_cum(0, $arr_periode[0], $q, 2, "", $q_prov_revisi_hk);
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis_hb && $kabkot_rilis_hk
+                        && isset($kabkot_rilis_hk->$komp_id)
+                        && $kabkot_rilis_hk->$komp_id != 0
+                        ? $kabkot_rilis_hb->$komp_id / $kabkot_rilis_hk->$komp_id * 100 : null;
+
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi_hb && $kabkot_revisi_hk
+                        && isset($kabkot_revisi_hk->$komp_id)
+                        && $kabkot_revisi_hk->$komp_id != 0
+                        ? $kabkot_revisi_hb->$komp_id / $kabkot_revisi_hk->$komp_id * 100 : null;
+
+                    $row[$periode . "prov_rilis"] = $prov_rilis_hb && $prov_rilis_hk
+                        && isset($prov_rilis_hk->$komp_id)
+                        && $prov_rilis_hk->$komp_id != 0
+                        ? $prov_rilis_hb->$komp_id / $prov_rilis_hk->$komp_id * 100 : null;
+
+                    $row[$periode . "prov_revisi"] = $prov_revisi_hb && $prov_revisi_hk
+                        && isset($prov_revisi_hk->$komp_id)
+                        && $prov_revisi_hk->$komp_id != 0
+                        ? $prov_revisi_hb->$komp_id / $prov_revisi_hk->$komp_id * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -337,23 +504,48 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis_y = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_y = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
+
+                    $q_kabkot_rilis_y     = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_y    = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_y       = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_y     = $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis_y   = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis_y);
+                    $kabkot_revisi_y  = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi_y);
+                    $prov_rilis_y     = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis_y);
+                    $prov_revisi_y    = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi_y);
+
                     if ($arr_periode[1] == 1) {
-                        $rilis_q_1 = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, 4, 2, $select);
-                        $revisi_q_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, 4, 2, $select);
+                        $q_kabkot_rilis_q     = $this->get_q(1, $arr_periode[0] - 1, 1, 3);
+                        $q_kabkot_revisi_q    = $this->get_q(1, $arr_periode[0] - 1, 1, "");
+                        $q_prov_rilis_q       = $this->get_q(0, $arr_periode[0] - 1, 1, 3);
+                        $q_prov_revisi_q      = $this->get_q(0, $arr_periode[0] - 1, 1, "");
+
+                        $kabkot_rilis_q   = $this->get_data_cum(1, $arr_periode[0] - 1, [4], 1, 3, $q_kabkot_rilis_q);
+                        $kabkot_revisi_q  = $this->get_data_cum(1, $arr_periode[0] - 1, [4], 1, "", $q_kabkot_revisi_q);
+                        $prov_rilis_q     = $this->get_data_cum(0, $arr_periode[0] - 1, [4], 1, 3, $q_prov_rilis_q);
+                        $prov_revisi_q    = $this->get_data_cum(0, $arr_periode[0] - 1, [4], 1, "", $q_prov_revisi_q);
                     } else {
-                        $rilis_q_1 = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 2, $select);
-                        $revisi_q_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 2, $select);
+                        $q_kabkot_rilis_q     = $this->get_q(1, $arr_periode[0], 1, 3);
+                        $q_kabkot_revisi_q    = $this->get_q(1, $arr_periode[0], 1, "");
+                        $q_prov_rilis_q       = $this->get_q(0, $arr_periode[0], 1, 3);
+                        $q_prov_revisi_q      = $this->get_q(0, $arr_periode[0], 1, "");
+
+                        $kabkot_rilis_q   = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 1, 3, $q_kabkot_rilis_q);
+                        $kabkot_revisi_q  = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 1, "", $q_kabkot_revisi_q);
+                        $prov_rilis_q     = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 1, 3, $q_prov_rilis_q);
+                        $prov_revisi_q    = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 1, "", $q_prov_revisi_q);
                     }
-                    $row[$periode . "_rilis"] = $rilis_y && $rilis_q_1 && isset($rilis_q_1->$komp_id) && $rilis_q_1->$komp_id != 0 ? ($rilis_y->$komp_id - $rilis_q_1->$komp_id) / $rilis_q_1->$komp_id * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi_y && $revisi_q_1 && isset($revisi_q_1->$komp_id) && $revisi_q_1->$komp_id != 0 ? ($revisi_y->$komp_id - $revisi_q_1->$komp_id) / $revisi_q_1->$komp_id * 100 : null;
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis_y && $kabkot_rilis_q && isset($kabkot_rilis_q->$komp_id) && $kabkot_rilis_q->$komp_id != 0 ? ($kabkot_rilis_y->$komp_id - $kabkot_rilis_q->$komp_id) / $kabkot_rilis_q->$komp_id * 100 : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi_y && $kabkot_revisi_q && isset($kabkot_revisi_q->$komp_id) && $kabkot_revisi_q->$komp_id != 0 ? ($kabkot_revisi_y->$komp_id - $kabkot_revisi_q->$komp_id) / $kabkot_revisi_q->$komp_id * 100 : null;
+                    $row[$periode . "prov_rilis"] = $prov_rilis_y && $prov_rilis_q && isset($prov_rilis_q->$komp_id) && $prov_rilis_q->$komp_id != 0 ? ($prov_rilis_y->$komp_id - $prov_rilis_q->$komp_id) / $prov_rilis_q->$komp_id * 100 : null;
+                    $row[$periode . "prov_revisi"] = $prov_revisi_y && $prov_revisi_q && isset($prov_revisi_q->$komp_id) && $prov_revisi_q->$komp_id != 0 ? ($prov_revisi_y->$komp_id - $prov_revisi_q->$komp_id) / $prov_revisi_q->$komp_id * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -361,18 +553,41 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
                     $rilis_y = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
                     $revisi_y = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
                     $rilis_y_1 = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
                     $revisi_y_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
-                    $row[$periode . "_rilis"] = $rilis_y && $rilis_y_1 && isset($revisi_y_1->$komp_id) && $rilis_y_1->$komp_id != 0 ? ($rilis_y->$komp_id - $rilis_y_1->$komp_id) / $rilis_y_1->$komp_id * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi_y && $revisi_y_1 && isset($revisi_y_1->$komp_id) && $revisi_y_1->$komp_id != 0 ? ($revisi_y->$komp_id - $revisi_y_1->$komp_id) / $revisi_y_1->$komp_id * 100 : null;
+
+                    $q_kabkot_rilis_y     = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_y    = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_y       = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_y      = $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis_y   = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis_y);
+                    $kabkot_revisi_y  = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi_y);
+                    $prov_rilis_y     = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis_y);
+                    $prov_revisi_y    = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi_y);
+
+                    $q_kabkot_rilis_y_1     = $this->get_q(1, $arr_periode[0] - 1, 2, 3);
+                    $q_kabkot_revisi_y_1    = $this->get_q(1, $arr_periode[0] - 1, 2, "");
+                    $q_prov_rilis_y_1       = $this->get_q(0, $arr_periode[0] - 1, 2, 3);
+                    $q_prov_revisi_y_1     = $this->get_q(0, $arr_periode[0] - 1, 2, "");
+
+                    $kabkot_rilis_y_1   = $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 2, 3, $q_kabkot_rilis_y_1);
+                    $kabkot_revisi_y_1  = $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 2, "", $q_kabkot_revisi_y_1);
+                    $prov_rilis_y_1     = $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 2, 3, $q_prov_rilis_y_1);
+                    $prov_revisi_y_1    = $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 2, "", $q_prov_revisi_y_1);
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis_y && $kabkot_rilis_y_1 && isset($kabkot_rilis_y_1->$komp_id) && $kabkot_rilis_y_1->$komp_id != 0 ? ($kabkot_rilis_y->$komp_id - $kabkot_rilis_y_1->$komp_id) / $kabkot_rilis_y_1->$komp_id * 100 : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi_y && $kabkot_revisi_y_1 && isset($kabkot_revisi_y_1->$komp_id) && $kabkot_revisi_y_1->$komp_id != 0 ? ($kabkot_revisi_y->$komp_id - $kabkot_revisi_y_1->$komp_id) / $kabkot_revisi_y_1->$komp_id * 100 : null;
+                    $row[$periode . "prov_rilis"] = $prov_rilis_y && $prov_rilis_y_1 && isset($prov_rilis_y_1->$komp_id) && $prov_rilis_y_1->$komp_id != 0 ? ($prov_rilis_y->$komp_id - $prov_rilis_y_1->$komp_id) / $prov_rilis_y_1->$komp_id * 100 : null;
+                    $row[$periode . "prov_revisi"] = $prov_revisi_y && $prov_revisi_y_1 && isset($prov_revisi_y_1->$komp_id) && $prov_revisi_y_1->$komp_id != 0 ? ($prov_revisi_y->$komp_id - $prov_revisi_y_1->$komp_id) / $prov_revisi_y_1->$komp_id * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -380,10 +595,10 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
                     $q = [];
@@ -394,18 +609,35 @@ class RevisiTotalController2 extends Controller
                     } else {
                         $q = [1, 2, 3, 4];
                     }
-                    // $rev_rilis_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
-                    // $rev_revisi_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, null);
-                    // $rev_rilis_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                    // $rev_revisi_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, null);
+                    $rilis_y = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
+                    $revisi_y = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
+                    $rilis_y_1 = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
+                    $revisi_y_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
 
-                    $rilis_c = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_rilis_y, $select);
-                    $revisi_c = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_revisi_y, $select);
-                    $rilis_c_1 = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_rilis_y_1, $select);
-                    $revisi_c_1 = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_revisi_y_1, $select);
+                    $q_kabkot_rilis_y     = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_y    = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_y       = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_y      = $this->get_q(0, $arr_periode[0], 2, "");
 
-                    $row[$periode . "_rilis"] = $rilis_c && $rilis_c_1 && isset($rilis_c_1->$komp_id) && $rilis_c_1->$komp_id != 0 ? ($rilis_c->$komp_id - $rilis_c_1->$komp_id) / $rilis_c_1->$komp_id * 100 : null;
-                    $row[$periode . "_revisi"] = $revisi_c && $revisi_c_1 && isset($revisi_c_1->$komp_id) && $revisi_c_1->$komp_id != 0 ? ($revisi_c->$komp_id - $revisi_c_1->$komp_id) / $revisi_c_1->$komp_id * 100 : null;
+                    $kabkot_rilis_y   = $this->get_data_cum(1, $arr_periode[0], $q, 2, 3, $q_kabkot_rilis_y);
+                    $kabkot_revisi_y  = $this->get_data_cum(1, $arr_periode[0], $q, 2, "", $q_kabkot_revisi_y);
+                    $prov_rilis_y     = $this->get_data_cum(0, $arr_periode[0], $q, 2, 3, $q_prov_rilis_y);
+                    $prov_revisi_y    = $this->get_data_cum(0, $arr_periode[0], $q, 2, "", $q_prov_revisi_y);
+
+                    $q_kabkot_rilis_y_1     = $this->get_q(1, $arr_periode[0] - 1, 2, 3);
+                    $q_kabkot_revisi_y_1    = $this->get_q(1, $arr_periode[0] - 1, 2, "");
+                    $q_prov_rilis_y_1       = $this->get_q(0, $arr_periode[0] - 1, 2, 3);
+                    $q_prov_revisi_y_1     = $this->get_q(0, $arr_periode[0] - 1, 2, "");
+
+                    $kabkot_rilis_y_1   = $this->get_data_cum(1, $arr_periode[0] - 1, $q, 2, 3, $q_kabkot_rilis_y_1);
+                    $kabkot_revisi_y_1  = $this->get_data_cum(1, $arr_periode[0] - 1, $q, 2, "", $q_kabkot_revisi_y_1);
+                    $prov_rilis_y_1     = $this->get_data_cum(0, $arr_periode[0] - 1, $q, 2, 3, $q_prov_rilis_y_1);
+                    $prov_revisi_y_1    = $this->get_data_cum(0, $arr_periode[0] - 1, $q, 2, "", $q_prov_revisi_y_1);
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_rilis_y && $kabkot_rilis_y_1 && isset($kabkot_rilis_y_1->$komp_id) && $kabkot_rilis_y_1->$komp_id != 0 ? ($kabkot_rilis_y->$komp_id - $kabkot_rilis_y_1->$komp_id) / $kabkot_rilis_y_1->$komp_id * 100 : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_revisi_y && $kabkot_revisi_y_1 && isset($kabkot_revisi_y_1->$komp_id) && $kabkot_revisi_y_1->$komp_id != 0 ? ($kabkot_revisi_y->$komp_id - $kabkot_revisi_y_1->$komp_id) / $kabkot_revisi_y_1->$komp_id * 100 : null;
+                    $row[$periode . "prov_rilis"] = $prov_rilis_y && $prov_rilis_y_1 && isset($prov_rilis_y_1->$komp_id) && $prov_rilis_y_1->$komp_id != 0 ? ($prov_rilis_y->$komp_id - $prov_rilis_y_1->$komp_id) / $prov_rilis_y_1->$komp_id * 100 : null;
+                    $row[$periode . "prov_revisi"] = $prov_revisi_y && $prov_revisi_y_1 && isset($prov_revisi_y_1->$komp_id) && $prov_revisi_y_1->$komp_id != 0 ? ($prov_revisi_y->$komp_id - $prov_revisi_y_1->$komp_id) / $prov_revisi_y_1->$komp_id * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -413,38 +645,72 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis_hb   = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $rilis_hk   = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_hb  = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $revisi_hk  = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
+
+
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 1, "");
+
+                    $kabkot_rilis_hb =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis);
+                    $kabkot_rilis_hk =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis);
+                    $kabkot_revisi_hb =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi);
+                    $kabkot_revisi_hk =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi);
+                    $prov_rilis_hb =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis);
+                    $prov_rilis_hk =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis);
+                    $prov_revisi_hb =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, "", $q_prov_revisi);
+                    $prov_revisi_hk =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi);
 
                     if ($arr_periode[1] == 1) {
+                        $q_kabkot_rilis_q =   $this->get_q(1, $arr_periode[0] - 1, 1, 3);
+                        $q_kabkot_revisi_q =  $this->get_q(1, $arr_periode[0] - 1, 1, "");
+                        $q_prov_rilis_q =     $this->get_q(0, $arr_periode[0] - 1, 1, 3);
+                        $q_prov_revisi_q =    $this->get_q(0, $arr_periode[0] - 1, 1, "");
 
-                        $rilis_hb_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, 4, 1, $select);
-                        $rilis_hk_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, 4, 2, $select);
-                        $revisi_hb_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, 4, 1, $select);
-                        $revisi_hk_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, 4, 2, $select);
+                        $kabkot_rilis_hb_q =     $this->get_data_cum(1, $arr_periode[0] - 1, [4], 1, 3, $q_kabkot_rilis_q);
+                        $kabkot_rilis_hk_q =     $this->get_data_cum(1, $arr_periode[0] - 1, [4], 2, 3, $q_kabkot_rilis_q);
+                        $kabkot_revisi_hb_q =    $this->get_data_cum(1, $arr_periode[0] - 1, [4], 1, "", $q_kabkot_revisi_q);
+                        $kabkot_revisi_hk_q =    $this->get_data_cum(1, $arr_periode[0] - 1, [4], 2, "", $q_kabkot_revisi_q);
+                        $prov_rilis_hb_q =       $this->get_data_cum(0, $arr_periode[0] - 1, [4], 1, 3, $q_prov_rilis_q);
+                        $prov_rilis_hk_q =       $this->get_data_cum(0, $arr_periode[0] - 1, [4], 2, 3, $q_prov_rilis_q);
+                        $prov_revisi_hb_q =      $this->get_data_cum(0, $arr_periode[0] - 1, [4], 1, "", $q_prov_revisi_q);
+                        $prov_revisi_hk_q =      $this->get_data_cum(0, $arr_periode[0] - 1, [4], 2, "", $q_prov_revisi_q);
                     } else {
-                        $rilis_hb_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 1, $select);
-                        $rilis_hk_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 2, $select);
-                        $revisi_hb_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 1, $select);
-                        $revisi_hk_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 2, $select);
+
+                        $q_kabkot_rilis_q =   $this->get_q(1, $arr_periode[0], 1, 3);
+                        $q_kabkot_revisi_q =  $this->get_q(1, $arr_periode[0], 1, "");
+                        $q_prov_rilis_q =     $this->get_q(0, $arr_periode[0], 1, 3);
+                        $q_prov_revisi_q =    $this->get_q(0, $arr_periode[0], 1, "");
+
+                        $kabkot_rilis_hb_q =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 1, 3, $q_kabkot_rilis_q);
+                        $kabkot_rilis_hk_q =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 2, 3, $q_kabkot_rilis_q);
+                        $kabkot_revisi_hb_q =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 1, "", $q_kabkot_revisi_q);
+                        $kabkot_revisi_hk_q =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 2, "", $q_kabkot_revisi_q);
+                        $prov_rilis_hb_q =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 1, 3, $q_prov_rilis_q);
+                        $prov_rilis_hk_q =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 2, 3, $q_prov_rilis_q);
+                        $prov_revisi_hb_q =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 1, "", $q_prov_revisi_q);
+                        $prov_revisi_hk_q =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 2, "", $q_prov_revisi_q);
                     }
 
+                    $kabkot_implisit_rilis      = $kabkot_rilis_hb      && $kabkot_rilis_hk     && isset($kabkot_rilis_hk->$komp_id)    && $kabkot_rilis_hk->$komp_id != 0      ? $kabkot_rilis_hb->$komp_id / $kabkot_rilis_hk->$komp_id * 100 : null;
+                    $kabkot_implisit_rilis_1    = $kabkot_rilis_hb_q    && $kabkot_rilis_hk_q   && isset($kabkot_rilis_hk_q->$komp_id)  && $kabkot_rilis_hk_q->$komp_id != 0    ? $kabkot_rilis_hb_q->$komp_id / $kabkot_rilis_hk_q->$komp_id * 100 : null;
+                    $kabkot_implisit_revisi     = $kabkot_revisi_hb     && $kabkot_revisi_hk    && isset($kabkot_revisi_hk->$komp_id)   && $kabkot_revisi_hk->$komp_id != 0     ? $kabkot_revisi_hb->$komp_id / $kabkot_revisi_hk->$komp_id * 100 : null;
+                    $kabkot_implisit_revisi_1   = $kabkot_revisi_hb_q   && $kabkot_revisi_hk_q  && isset($kabkot_revisi_hk_q->$komp_id) && $kabkot_revisi_hk_q->$komp_id != 0   ? $kabkot_revisi_hb_q->$komp_id / $kabkot_revisi_hk_q->$komp_id * 100 : null;
+                    $prov_implisit_rilis        = $prov_rilis_hb        && $prov_rilis_hk       && isset($prov_rilis_hk->$komp_id)      && $prov_rilis_hk->$komp_id != 0        ? $prov_rilis_hb->$komp_id / $prov_rilis_hk->$komp_id * 100 : null;
+                    $prov_implisit_rilis_1      = $prov_rilis_hb_q      && $prov_rilis_hk_q     && isset($prov_rilis_hk_q->$komp_id)    && $prov_rilis_hk_q->$komp_id != 0      ? $prov_rilis_hb_q->$komp_id / $prov_rilis_hk_q->$komp_id * 100 : null;
+                    $prov_implisit_revisi       = $prov_revisi_hb       && $prov_revisi_hk      && isset($prov_revisi_hk->$komp_id)     && $prov_revisi_hk->$komp_id != 0       ? $prov_revisi_hb->$komp_id / $prov_revisi_hk->$komp_id * 100 : null;
+                    $prov_implisit_revisi_1     = $prov_revisi_hb_q     && $prov_revisi_hk_q    && isset($prov_revisi_hk_q->$komp_id)   && $prov_revisi_hk_q->$komp_id != 0     ? $prov_revisi_hb_q->$komp_id / $prov_revisi_hk_q->$komp_id * 100 : null;
 
-                    $implisit_rilis = $rilis_hb && $rilis_hk && isset($rilis_hk->$komp_id) && $rilis_hk->$komp_id != 0 ? $rilis_hb->$komp_id / $rilis_hk->$komp_id * 100 : null;
-                    $implisit_rilis_1 = $rilis_hb_1 && $rilis_hk_1 && isset($rilis_hk_1->$komp_id) && $rilis_hk_1->$komp_id != 0 ? $rilis_hb_1->$komp_id / $rilis_hk_1->$komp_id * 100 : null;
-                    $implisit_revisi = $revisi_hb && $revisi_hk && isset($revisi_hk->$komp_id) && $revisi_hk->$komp_id != 0 ? $revisi_hb->$komp_id / $revisi_hk->$komp_id * 100 : null;
-                    $implisit_revisi_1 = $revisi_hb_1 && $revisi_hk_1 && isset($revisi_hk_1->$komp_id) && $revisi_hk_1->$komp_id != 0 ? $revisi_hb_1->$komp_id / $revisi_hk_1->$komp_id * 100 : null;
-
-                    $row[$periode . "_rilis"] = $implisit_rilis && $implisit_rilis_1 && $implisit_rilis_1 != 0 ? ($implisit_rilis - $implisit_rilis_1) / $implisit_rilis_1 * 100 : null;
-                    $row[$periode . "_revisi"] = $implisit_revisi && $implisit_revisi_1 && $implisit_revisi_1 != 0 ? ($implisit_revisi - $implisit_revisi_1) / $implisit_revisi_1 * 100 : null;;
+                    $row[$periode . "kabkot_rilis"] = $kabkot_implisit_rilis && $kabkot_implisit_rilis_1 && $kabkot_implisit_rilis_1 != 0 ? ($kabkot_implisit_rilis - $kabkot_implisit_rilis_1) / $kabkot_implisit_rilis_1 * 100 : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_implisit_revisi && $kabkot_implisit_revisi_1 && $kabkot_implisit_revisi_1 != 0 ? ($kabkot_implisit_revisi - $kabkot_implisit_revisi_1) / $kabkot_implisit_revisi_1 * 100 : null;;
+                    $row[$periode . "prov_rilis"] = $prov_implisit_rilis && $prov_implisit_rilis_1 && $prov_implisit_rilis_1 != 0 ? ($prov_implisit_rilis - $prov_implisit_rilis_1) / $prov_implisit_rilis_1 * 100 : null;
+                    $row[$periode . "prov_revisi"] = $prov_implisit_revisi && $prov_implisit_revisi_1 && $prov_implisit_revisi_1 != 0 ? ($prov_implisit_revisi - $prov_implisit_revisi_1) / $prov_implisit_revisi_1 * 100 : null;;
                 }
                 $data[] = $row;
             }
@@ -452,29 +718,54 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis_hb   = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $rilis_hk   = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $rilis_hb_1 = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 1, $select);
-                    $rilis_hk_1 = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
 
-                    $revisi_hb      = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 1, $select);
-                    $revisi_hk      = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_hb_1    = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 1, $select);
-                    $revisi_hk_1    = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 1, "");
 
-                    $implisit_rilis = $rilis_hb && $rilis_hk && isset($rilis_hk->$komp_id) && $rilis_hk->$komp_id != 0 ? $rilis_hb->$komp_id / $rilis_hk->$komp_id * 100 : null;
-                    $implisit_rilis_1 = $rilis_hb_1 && $rilis_hk_1 && isset($rilis_hk_1->$komp_id) && $rilis_hk_1->$komp_id != 0 ? $rilis_hb_1->$komp_id / $rilis_hk_1->$komp_id * 100 : null;
-                    $implisit_revisi = $revisi_hb && $revisi_hk && isset($revisi_hk->$komp_id) && $revisi_hk->$komp_id != 0 ? $revisi_hb->$komp_id / $revisi_hk->$komp_id * 100 : null;
-                    $implisit_revisi_1 = $revisi_hb_1 && $revisi_hk_1 && isset($revisi_hk_1->$komp_id) && $revisi_hk_1->$komp_id != 0 ? $revisi_hb_1->$komp_id / $revisi_hk_1->$komp_id * 100 : null;
+                    $kabkot_rilis_hb =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis);
+                    $kabkot_rilis_hk =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis);
+                    $kabkot_revisi_hb =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi);
+                    $kabkot_revisi_hk =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi);
+                    $prov_rilis_hb =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis);
+                    $prov_rilis_hk =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis);
+                    $prov_revisi_hb =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, "", $q_prov_revisi);
+                    $prov_revisi_hk =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi);
 
-                    $row[$periode . "_rilis"] = $implisit_rilis && $implisit_rilis_1 && $implisit_rilis_1 != 0 ? ($implisit_rilis - $implisit_rilis_1) / $implisit_rilis_1 * 100 : null;
-                    $row[$periode . "_revisi"] = $implisit_revisi && $implisit_revisi_1 && $implisit_revisi_1 != 0 ? ($implisit_revisi - $implisit_revisi_1) / $implisit_revisi_1 * 100 : null;;
+                    $q_kabkot_rilis_1 =   $this->get_q(1, $arr_periode[0] - 1, 1, 3);
+                    $q_kabkot_revisi_1 =  $this->get_q(1, $arr_periode[0] - 1, 1, "");
+                    $q_prov_rilis_1 =     $this->get_q(0, $arr_periode[0] - 1, 1, 3);
+                    $q_prov_revisi_1 =    $this->get_q(0, $arr_periode[0] - 1, 1, "");
+
+                    $kabkot_rilis_hb_1 =     $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 1, 3, $q_kabkot_rilis_1);
+                    $kabkot_rilis_hk_1 =     $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 2, 3, $q_kabkot_rilis_1);
+                    $kabkot_revisi_hb_1 =    $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 1, "", $q_kabkot_revisi_1);
+                    $kabkot_revisi_hk_1 =    $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 2, "", $q_kabkot_revisi_1);
+                    $prov_rilis_hb_1 =       $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 1, 3, $q_prov_rilis_1);
+                    $prov_rilis_hk_1 =       $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 2, 3, $q_prov_rilis_1);
+                    $prov_revisi_hb_1 =      $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 1, "", $q_prov_revisi_1);
+                    $prov_revisi_hk_1 =      $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 2, "", $q_prov_revisi_1);
+
+                    $kabkot_implisit_rilis      = $kabkot_rilis_hb      && $kabkot_rilis_hk     && isset($kabkot_rilis_hk->$komp_id)    && $kabkot_rilis_hk->$komp_id != 0      ? $kabkot_rilis_hb->$komp_id / $kabkot_rilis_hk->$komp_id * 100 : null;
+                    $kabkot_implisit_rilis_1    = $kabkot_rilis_hb_1    && $kabkot_rilis_hk_1   && isset($kabkot_rilis_hk_1->$komp_id)  && $kabkot_rilis_hk_1->$komp_id != 0    ? $kabkot_rilis_hb_1->$komp_id / $kabkot_rilis_hk_1->$komp_id * 100 : null;
+                    $kabkot_implisit_revisi     = $kabkot_revisi_hb     && $kabkot_revisi_hk    && isset($kabkot_revisi_hk->$komp_id)   && $kabkot_revisi_hk->$komp_id != 0     ? $kabkot_revisi_hb->$komp_id / $kabkot_revisi_hk->$komp_id * 100 : null;
+                    $kabkot_implisit_revisi_1   = $kabkot_revisi_hb_1   && $kabkot_revisi_hk_1  && isset($kabkot_revisi_hk_1->$komp_id) && $kabkot_revisi_hk_1->$komp_id != 0   ? $kabkot_revisi_hb_1->$komp_id / $kabkot_revisi_hk_1->$komp_id * 100 : null;
+                    $prov_implisit_rilis        = $prov_rilis_hb        && $prov_rilis_hk       && isset($prov_rilis_hk->$komp_id)      && $prov_rilis_hk->$komp_id != 0        ? $prov_rilis_hb->$komp_id / $prov_rilis_hk->$komp_id * 100 : null;
+                    $prov_implisit_rilis_1      = $prov_rilis_hb_1      && $prov_rilis_hk_1     && isset($prov_rilis_hk_1->$komp_id)    && $prov_rilis_hk_1->$komp_id != 0      ? $prov_rilis_hb_1->$komp_id / $prov_rilis_hk_1->$komp_id * 100 : null;
+                    $prov_implisit_revisi       = $prov_revisi_hb       && $prov_revisi_hk      && isset($prov_revisi_hk->$komp_id)     && $prov_revisi_hk->$komp_id != 0       ? $prov_revisi_hb->$komp_id / $prov_revisi_hk->$komp_id * 100 : null;
+                    $prov_implisit_revisi_1     = $prov_revisi_hb_1     && $prov_revisi_hk_1    && isset($prov_revisi_hk_1->$komp_id)   && $prov_revisi_hk_1->$komp_id != 0     ? $prov_revisi_hb_1->$komp_id / $prov_revisi_hk_1->$komp_id * 100 : null;
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_implisit_rilis && $kabkot_implisit_rilis_1 && $kabkot_implisit_rilis_1 != 0 ? ($kabkot_implisit_rilis - $kabkot_implisit_rilis_1) / $kabkot_implisit_rilis_1 * 100 : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_implisit_revisi && $kabkot_implisit_revisi_1 && $kabkot_implisit_revisi_1 != 0 ? ($kabkot_implisit_revisi - $kabkot_implisit_revisi_1) / $kabkot_implisit_revisi_1 * 100 : null;
+                    $row[$periode . "prov_rilis"] = $prov_implisit_rilis && $prov_implisit_rilis_1 && $prov_implisit_rilis_1 != 0 ? ($prov_implisit_rilis - $prov_implisit_rilis_1) / $prov_implisit_rilis_1 * 100 : null;
+                    $row[$periode . "prov_revisi"] = $prov_implisit_revisi && $prov_implisit_revisi_1 && $prov_implisit_revisi_1 != 0 ? ($prov_implisit_revisi - $prov_implisit_revisi_1) / $prov_implisit_revisi_1 * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -482,10 +773,10 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
 
@@ -497,23 +788,49 @@ class RevisiTotalController2 extends Controller
                     } else {
                         $q = [1, 2, 3, 4];
                     }
-                    $rilis_hb   = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 1, $select);
-                    $rilis_hk   = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $select);
-                    $rilis_hb_1 = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, 1, $select);
-                    $rilis_hk_1 = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select);
 
-                    $revisi_hb      = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 1, $select);
-                    $revisi_hk      = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $select);
-                    $revisi_hb_1    = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, 1, $select);
-                    $revisi_hk_1    = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select);
 
-                    $implisit_rilis = $rilis_hb && $rilis_hk && isset($rilis_hk->$komp_id) && $rilis_hk->$komp_id != 0 ? $rilis_hb->$komp_id / $rilis_hk->$komp_id * 100 : null;
-                    $implisit_rilis_1 = $rilis_hb_1 && $rilis_hk_1 && isset($rilis_hk_1->$komp_id) && $rilis_hk_1->$komp_id != 0 ? $rilis_hb_1->$komp_id / $rilis_hk_1->$komp_id * 100 : null;
-                    $implisit_revisi = $revisi_hb && $revisi_hk && isset($revisi_hk->$komp_id) && $revisi_hk->$komp_id != 0 ? $revisi_hb->$komp_id / $revisi_hk->$komp_id * 100 : null;
-                    $implisit_revisi_1 = $revisi_hb_1 && $revisi_hk_1 && isset($revisi_hk_1->$komp_id) && $revisi_hk_1->$komp_id != 0 ? $revisi_hb_1->$komp_id / $revisi_hk_1->$komp_id * 100 : null;
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 1, "");
 
-                    $row[$periode . "_rilis"] = $implisit_rilis && $implisit_rilis_1 && $implisit_rilis_1 != 0 ? ($implisit_rilis - $implisit_rilis_1) / $implisit_rilis_1 * 100 : null;
-                    $row[$periode . "_revisi"] = $implisit_revisi && $implisit_revisi_1 && $implisit_revisi_1 != 0 ? ($implisit_revisi - $implisit_revisi_1) / $implisit_revisi_1 * 100 : null;;
+                    $kabkot_rilis_hb =     $this->get_data_cum(1, $arr_periode[0], $q, 1, 3, $q_kabkot_rilis);
+                    $kabkot_rilis_hk =     $this->get_data_cum(1, $arr_periode[0], $q, 2, 3, $q_kabkot_rilis);
+                    $kabkot_revisi_hb =    $this->get_data_cum(1, $arr_periode[0], $q, 1, "", $q_kabkot_revisi);
+                    $kabkot_revisi_hk =    $this->get_data_cum(1, $arr_periode[0], $q, 2, "", $q_kabkot_revisi);
+                    $prov_rilis_hb =       $this->get_data_cum(0, $arr_periode[0], $q, 1, 3, $q_prov_rilis);
+                    $prov_rilis_hk =       $this->get_data_cum(0, $arr_periode[0], $q, 2, 3, $q_prov_rilis);
+                    $prov_revisi_hb =      $this->get_data_cum(0, $arr_periode[0], $q, 1, "", $q_prov_revisi);
+                    $prov_revisi_hk =      $this->get_data_cum(0, $arr_periode[0], $q, 2, "", $q_prov_revisi);
+
+                    $q_kabkot_rilis_1 =   $this->get_q(1, $arr_periode[0] - 1, 1, 3);
+                    $q_kabkot_revisi_1 =  $this->get_q(1, $arr_periode[0] - 1, 1, "");
+                    $q_prov_rilis_1 =     $this->get_q(0, $arr_periode[0] - 1, 1, 3);
+                    $q_prov_revisi_1 =    $this->get_q(0, $arr_periode[0] - 1, 1, "");
+
+                    $kabkot_rilis_hb_1 =     $this->get_data_cum(1, $arr_periode[0] - 1, $q, 1, 3, $q_kabkot_rilis_1);
+                    $kabkot_rilis_hk_1 =     $this->get_data_cum(1, $arr_periode[0] - 1, $q, 2, 3, $q_kabkot_rilis_1);
+                    $kabkot_revisi_hb_1 =    $this->get_data_cum(1, $arr_periode[0] - 1, $q, 1, "", $q_kabkot_revisi_1);
+                    $kabkot_revisi_hk_1 =    $this->get_data_cum(1, $arr_periode[0] - 1, $q, 2, "", $q_kabkot_revisi_1);
+                    $prov_rilis_hb_1 =       $this->get_data_cum(0, $arr_periode[0] - 1, $q, 1, 3, $q_prov_rilis_1);
+                    $prov_rilis_hk_1 =       $this->get_data_cum(0, $arr_periode[0] - 1, $q, 2, 3, $q_prov_rilis_1);
+                    $prov_revisi_hb_1 =      $this->get_data_cum(0, $arr_periode[0] - 1, $q, 1, "", $q_prov_revisi_1);
+                    $prov_revisi_hk_1 =      $this->get_data_cum(0, $arr_periode[0] - 1, $q, 2, "", $q_prov_revisi_1);
+
+                    $kabkot_implisit_rilis      = $kabkot_rilis_hb      && $kabkot_rilis_hk     && isset($kabkot_rilis_hk->$komp_id)    && $kabkot_rilis_hk->$komp_id != 0      ? $kabkot_rilis_hb->$komp_id / $kabkot_rilis_hk->$komp_id * 100 : null;
+                    $kabkot_implisit_rilis_1    = $kabkot_rilis_hb_1    && $kabkot_rilis_hk_1   && isset($kabkot_rilis_hk_1->$komp_id)  && $kabkot_rilis_hk_1->$komp_id != 0    ? $kabkot_rilis_hb_1->$komp_id / $kabkot_rilis_hk_1->$komp_id * 100 : null;
+                    $kabkot_implisit_revisi     = $kabkot_revisi_hb     && $kabkot_revisi_hk    && isset($kabkot_revisi_hk->$komp_id)   && $kabkot_revisi_hk->$komp_id != 0     ? $kabkot_revisi_hb->$komp_id / $kabkot_revisi_hk->$komp_id * 100 : null;
+                    $kabkot_implisit_revisi_1   = $kabkot_revisi_hb_1   && $kabkot_revisi_hk_1  && isset($kabkot_revisi_hk_1->$komp_id) && $kabkot_revisi_hk_1->$komp_id != 0   ? $kabkot_revisi_hb_1->$komp_id / $kabkot_revisi_hk_1->$komp_id * 100 : null;
+                    $prov_implisit_rilis        = $prov_rilis_hb        && $prov_rilis_hk       && isset($prov_rilis_hk->$komp_id)      && $prov_rilis_hk->$komp_id != 0        ? $prov_rilis_hb->$komp_id / $prov_rilis_hk->$komp_id * 100 : null;
+                    $prov_implisit_rilis_1      = $prov_rilis_hb_1      && $prov_rilis_hk_1     && isset($prov_rilis_hk_1->$komp_id)    && $prov_rilis_hk_1->$komp_id != 0      ? $prov_rilis_hb_1->$komp_id / $prov_rilis_hk_1->$komp_id * 100 : null;
+                    $prov_implisit_revisi       = $prov_revisi_hb       && $prov_revisi_hk      && isset($prov_revisi_hk->$komp_id)     && $prov_revisi_hk->$komp_id != 0       ? $prov_revisi_hb->$komp_id / $prov_revisi_hk->$komp_id * 100 : null;
+                    $prov_implisit_revisi_1     = $prov_revisi_hb_1     && $prov_revisi_hk_1    && isset($prov_revisi_hk_1->$komp_id)   && $prov_revisi_hk_1->$komp_id != 0     ? $prov_revisi_hb_1->$komp_id / $prov_revisi_hk_1->$komp_id * 100 : null;
+
+                    $row[$periode . "kabkot_rilis"] = $kabkot_implisit_rilis && $kabkot_implisit_rilis_1 && $kabkot_implisit_rilis_1 != 0 ? ($kabkot_implisit_rilis - $kabkot_implisit_rilis_1) / $kabkot_implisit_rilis_1 * 100 : null;
+                    $row[$periode . "kabkot_revisi"] = $kabkot_implisit_revisi && $kabkot_implisit_revisi_1 && $kabkot_implisit_revisi_1 != 0 ? ($kabkot_implisit_revisi - $kabkot_implisit_revisi_1) / $kabkot_implisit_revisi_1 * 100 : null;
+                    $row[$periode . "prov_rilis"] = $prov_implisit_rilis && $prov_implisit_rilis_1 && $prov_implisit_rilis_1 != 0 ? ($prov_implisit_rilis - $prov_implisit_rilis_1) / $prov_implisit_rilis_1 * 100 : null;
+                    $row[$periode . "prov_revisi"] = $prov_implisit_revisi && $prov_implisit_revisi_1 && $prov_implisit_revisi_1 != 0 ? ($prov_implisit_revisi - $prov_implisit_revisi_1) / $prov_implisit_revisi_1 * 100 : null;
                 }
                 $data[] = $row;
             }
@@ -521,48 +838,87 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis_y  = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $prov_rilis_y  = $this->get_data_rilis('00', $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_y = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $prov_revisi_y = $this->get_data_rev('00', $arr_periode[0], $arr_periode[1], 2, $select);
+                    $q_kabkot_rilis_y     = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_y    = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_y       = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_y     = $this->get_q(0, $arr_periode[0], 2, "");
+
+                    $kabkot_rilis_y   = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis_y);
+                    $kabkot_revisi_y  = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi_y);
+                    $prov_rilis_y     = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis_y);
+                    $prov_revisi_y    = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi_y);
 
                     if ($arr_periode[1] == 1) {
-                        $rilis_q_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, 4, 2, $select);
-                        $prov_rilis_q_1  = $this->get_data_rilis('00', $arr_periode[0] - 1, 4, 2, $select);
-                        $revisi_q_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, 4, 2, $select);
-                        $prov_revisi_q_1 = $this->get_data_rev('00', $arr_periode[0] - 1, 4, 2, $select);
+                        $q_kabkot_rilis_q     = $this->get_q(1, $arr_periode[0] - 1, 2, 3);
+                        $q_kabkot_revisi_q    = $this->get_q(1, $arr_periode[0] - 1, 2, "");
+                        $q_prov_rilis_q       = $this->get_q(0, $arr_periode[0] - 1, 2, 3);
+                        $q_prov_revisi_q      = $this->get_q(0, $arr_periode[0] - 1, 2, "");
+
+                        $kabkot_rilis_q   = $this->get_data_cum(1, $arr_periode[0] - 1, [4], 2, 3, $q_kabkot_rilis_q);
+                        $kabkot_revisi_q  = $this->get_data_cum(1, $arr_periode[0] - 1, [4], 2, "", $q_kabkot_revisi_q);
+                        $prov_rilis_q     = $this->get_data_cum(0, $arr_periode[0] - 1, [4], 2, 3, $q_prov_rilis_q);
+                        $prov_revisi_q    = $this->get_data_cum(0, $arr_periode[0] - 1, [4], 2, "", $q_prov_revisi_q);
                     } else {
-                        $rilis_q_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 2, $select);
-                        $prov_rilis_q_1  = $this->get_data_rilis('00', $arr_periode[0], $arr_periode[1] - 1, 2, $select);
-                        $revisi_q_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1] - 1, 2, $select);
-                        $prov_revisi_q_1 = $this->get_data_rev('00', $arr_periode[0], $arr_periode[1] - 1, 2, $select);
+                        $q_kabkot_rilis_q     = $this->get_q(1, $arr_periode[0], 2, 3);
+                        $q_kabkot_revisi_q    = $this->get_q(1, $arr_periode[0], 2, "");
+                        $q_prov_rilis_q       = $this->get_q(0, $arr_periode[0], 2, 3);
+                        $q_prov_revisi_q      = $this->get_q(0, $arr_periode[0], 2, "");
+
+                        $kabkot_rilis_q   = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 2, 3, $q_kabkot_rilis_q);
+                        $kabkot_revisi_q  = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1] - 1], 2, "", $q_kabkot_revisi_q);
+                        $prov_rilis_q     = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 2, 3, $q_prov_rilis_q);
+                        $prov_revisi_q    = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1] - 1], 2, "", $q_prov_revisi_q);
                     }
-                    $laju_pert_rilis =  $prov_rilis_y && $prov_rilis_q_1 && isset($prov_rilis_q_1->c_pdrb) && $prov_rilis_q_1->c_pdrb != 0 ? ($prov_rilis_y->c_pdrb - $prov_rilis_q_1->c_pdrb) / $prov_rilis_q_1->c_pdrb * 100 : null;
-                    $laju_pert_rev =  $prov_revisi_y && $prov_revisi_q_1 && isset($prov_revisi_q_1->c_pdrb) && $prov_revisi_q_1->c_pdrb != 0 ? ($prov_revisi_y->c_pdrb - $prov_revisi_q_1->c_pdrb) / $prov_revisi_q_1->c_pdrb * 100 : null;
-                    $row[$periode . '_rilis'] = $rilis_y
-                        && $rilis_q_1
+
+                    $laju_pert_rilis =  $prov_rilis_y && $prov_rilis_q && isset($prov_rilis_q->c_pdrb) && $prov_rilis_q->c_pdrb != 0 ? ($prov_rilis_y->c_pdrb - $prov_rilis_q->c_pdrb) / $prov_rilis_q->c_pdrb * 100 : null;
+                    $laju_pert_rev =  $prov_revisi_y && $prov_revisi_q && isset($prov_revisi_q->c_pdrb) && $prov_revisi_q->c_pdrb != 0 ? ($prov_revisi_y->c_pdrb - $prov_revisi_q->c_pdrb) / $prov_revisi_q->c_pdrb * 100 : null;
+
+                    $row[$periode . 'kabkot_rilis'] = $kabkot_rilis_y
+                        && $kabkot_rilis_q
                         && $laju_pert_rilis
-                        && isset($rilis_y->$komp_id)
-                        && isset($rilis_q_1->$komp_id)
-                        && isset($rilis_y->c_pdrb)
-                        && isset($rilis_q_1->c_pdrb)
-                        && ($rilis_y->c_pdrb - $rilis_q_1->c_pdrb) != 0                        ?
-                        (($rilis_y->$komp_id - $rilis_q_1->$komp_id) / ($rilis_y->c_pdrb - $rilis_q_1->c_pdrb)) * $laju_pert_rilis : null;
-                    $row[$periode . '_revisi'] = $revisi_y
-                        && $revisi_q_1
+                        && isset($kabkot_rilis_y->$komp_id)
+                        && isset($kabkot_rilis_q->$komp_id)
+                        && isset($kabkot_rilis_y->c_pdrb)
+                        && isset($kabkot_rilis_q->c_pdrb)
+                        && ($kabkot_rilis_y->c_pdrb - $kabkot_rilis_q->c_pdrb) != 0
+                        ? (($kabkot_rilis_y->$komp_id - $kabkot_rilis_q->$komp_id) / ($kabkot_rilis_y->c_pdrb - $kabkot_rilis_q->c_pdrb)) * $laju_pert_rilis : null;
+
+                    $row[$periode . 'kabkot_revisi'] = $kabkot_revisi_y
+                        && $kabkot_revisi_q
                         && $laju_pert_rev
-                        && isset($revisi_y->$komp_id)
-                        && isset($revisi_q_1->$komp_id)
-                        && isset($revisi_y->c_pdrb)
-                        && isset($revisi_q_1->c_pdrb)
-                        && ($revisi_y->c_pdrb - $revisi_q_1->c_pdrb) != 0                        ?
-                        (($revisi_y->$komp_id - $revisi_q_1->$komp_id) / ($revisi_y->c_pdrb - $revisi_q_1->c_pdrb)) * $laju_pert_rev : null;
+                        && isset($kabkot_revisi_y->$komp_id)
+                        && isset($kabkot_revisi_q->$komp_id)
+                        && isset($kabkot_revisi_y->c_pdrb)
+                        && isset($kabkot_revisi_q->c_pdrb)
+                        && ($kabkot_revisi_y->c_pdrb - $kabkot_revisi_q->c_pdrb) != 0                        ?
+                        (($kabkot_revisi_y->$komp_id - $kabkot_revisi_q->$komp_id) / ($kabkot_revisi_y->c_pdrb - $kabkot_revisi_q->c_pdrb)) * $laju_pert_rev : null;
+
+
+                    $row[$periode . 'prov_rilis'] = $prov_rilis_y
+                        && $prov_rilis_q
+                        && $laju_pert_rilis
+                        && isset($prov_rilis_y->$komp_id)
+                        && isset($prov_rilis_q->$komp_id)
+                        && isset($prov_rilis_y->c_pdrb)
+                        && isset($prov_rilis_q->c_pdrb)
+                        && ($prov_rilis_y->c_pdrb - $prov_rilis_q->c_pdrb) != 0
+                        ? (($prov_rilis_y->$komp_id - $prov_rilis_q->$komp_id) / ($prov_rilis_y->c_pdrb - $prov_rilis_q->c_pdrb)) * $laju_pert_rilis : null;
+
+                    $row[$periode . 'prov_revisi'] = $prov_revisi_y
+                        && $prov_revisi_q
+                        && $laju_pert_rev
+                        && isset($prov_revisi_y->$komp_id)
+                        && isset($prov_revisi_q->$komp_id)
+                        && isset($prov_revisi_y->c_pdrb)
+                        && isset($prov_revisi_q->c_pdrb)
+                        && ($prov_revisi_y->c_pdrb - $prov_revisi_q->c_pdrb) != 0                        ?
+                        (($prov_revisi_y->$komp_id - $prov_revisi_q->$komp_id) / ($prov_revisi_y->c_pdrb - $prov_revisi_q->c_pdrb)) * $laju_pert_rev : null;
                 }
                 $data[] = $row;
             }
@@ -570,42 +926,74 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $rilis_y    = $this->get_data_rilis($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $revisi_y   = $this->get_data_rev($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, $select);
-                    $rilis_y_1  = $this->get_data_rilis($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
-                    $revisi_y_1 = $this->get_data_rev($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, $select);
 
-                    $prov_rilis_y    = $this->get_data_rilis('00', $arr_periode[0], $arr_periode[1], 2, $select);
-                    $prov_revisi_y   = $this->get_data_rev('00', $arr_periode[0], $arr_periode[1], 2, $select);
-                    $prov_rilis_y_1  = $this->get_data_rilis('00', $arr_periode[0] - 1, $arr_periode[1], 2, $select);
-                    $prov_revisi_y_1 = $this->get_data_rev('00', $arr_periode[0] - 1, $arr_periode[1], 2, $select);
+                    $q_kabkot_rilis_y     = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_y    = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_y       = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_y      = $this->get_q(0, $arr_periode[0], 2, "");
+                    $kabkot_rilis_y   = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis_y);
+                    $kabkot_revisi_y  = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi_y);
+                    $prov_rilis_y     = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis_y);
+                    $prov_revisi_y    = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi_y);
+
+                    $q_kabkot_rilis_y_1     = $this->get_q(1, $arr_periode[0] - 1, 2, 3);
+                    $q_kabkot_revisi_y_1    = $this->get_q(1, $arr_periode[0] - 1, 2, "");
+                    $q_prov_rilis_y_1       = $this->get_q(0, $arr_periode[0] - 1, 2, 3);
+                    $q_prov_revisi_y_1      = $this->get_q(0, $arr_periode[0] - 1, 2, "");
+                    $kabkot_rilis_y_1   = $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 2, 3, $q_kabkot_rilis_y_1);
+                    $kabkot_revisi_y_1  = $this->get_data_cum(1, $arr_periode[0] - 1, [$arr_periode[1]], 2, "", $q_kabkot_revisi_y_1);
+                    $prov_rilis_y_1     = $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 2, 3, $q_prov_rilis_y_1);
+                    $prov_revisi_y_1    = $this->get_data_cum(0, $arr_periode[0] - 1, [$arr_periode[1]], 2, "", $q_prov_revisi_y_1);
 
                     $laju_pert_rilis =  $prov_rilis_y && $prov_rilis_y_1 && isset($prov_rilis_y_1->c_pdrb) && $prov_rilis_y_1->c_pdrb != 0 ? ($prov_rilis_y->c_pdrb - $prov_rilis_y_1->c_pdrb) / $prov_rilis_y_1->c_pdrb * 100 : null;
                     $laju_pert_rev =  $prov_revisi_y && $prov_revisi_y_1 && isset($prov_revisi_y_1->c_pdrb) && $prov_revisi_y_1->c_pdrb != 0 ? ($prov_revisi_y->c_pdrb - $prov_revisi_y_1->c_pdrb) / $prov_revisi_y_1->c_pdrb * 100 : null;
-                    $row[$periode . '_rilis'] = $rilis_y
-                        && $rilis_y_1
+
+                    $row[$periode . 'kabkot_rilis'] = $kabkot_rilis_y
+                        && $q_kabkot_rilis_y_1
                         && $laju_pert_rilis
-                        && isset($rilis_y->$komp_id)
-                        && isset($rilis_y_1->$komp_id)
-                        && isset($rilis_y->c_pdrb)
-                        && isset($rilis_y_1->c_pdrb)
-                        && ($rilis_y->c_pdrb - $rilis_y_1->c_pdrb) != 0                        ?
-                        (($rilis_y->$komp_id - $rilis_y_1->$komp_id) / ($rilis_y->c_pdrb - $rilis_y_1->c_pdrb)) * $laju_pert_rilis : null;
-                    $row[$periode . '_revisi'] = $revisi_y
-                        && $revisi_y_1
+                        && isset($kabkot_rilis_y->$komp_id)
+                        && isset($q_kabkot_rilis_y_1->$komp_id)
+                        && isset($kabkot_rilis_y->c_pdrb)
+                        && isset($q_kabkot_rilis_y_1->c_pdrb)
+                        && ($kabkot_rilis_y->c_pdrb - $q_kabkot_rilis_y_1->c_pdrb) != 0
+                        ? (($kabkot_rilis_y->$komp_id - $q_kabkot_rilis_y_1->$komp_id) / ($kabkot_rilis_y->c_pdrb - $q_kabkot_rilis_y_1->c_pdrb)) * $laju_pert_rilis : null;
+
+                    $row[$periode . 'kabkot_revisi'] = $kabkot_revisi_y
+                        && $kabkot_revisi_y_1
                         && $laju_pert_rev
-                        && isset($revisi_y->$komp_id)
-                        && isset($revisi_y_1->$komp_id)
-                        && isset($revisi_y->c_pdrb)
-                        && isset($revisi_y_1->c_pdrb)
-                        && ($revisi_y->c_pdrb - $revisi_y_1->c_pdrb) != 0                        ?
-                        (($revisi_y->$komp_id - $revisi_y_1->$komp_id) / ($revisi_y->c_pdrb - $revisi_y_1->c_pdrb)) * $laju_pert_rev : null;
+                        && isset($kabkot_revisi_y->$komp_id)
+                        && isset($kabkot_revisi_y_1->$komp_id)
+                        && isset($kabkot_revisi_y->c_pdrb)
+                        && isset($kabkot_revisi_y_1->c_pdrb)
+                        && ($kabkot_revisi_y->c_pdrb - $kabkot_revisi_y_1->c_pdrb) != 0                        ?
+                        (($kabkot_revisi_y->$komp_id - $kabkot_revisi_y_1->$komp_id) / ($kabkot_revisi_y->c_pdrb - $kabkot_revisi_y_1->c_pdrb)) * $laju_pert_rev : null;
+
+
+                    $row[$periode . 'prov_rilis'] = $prov_rilis_y
+                        && $prov_rilis_y_1
+                        && $laju_pert_rilis
+                        && isset($prov_rilis_y->$komp_id)
+                        && isset($prov_rilis_y_1->$komp_id)
+                        && isset($prov_rilis_y->c_pdrb)
+                        && isset($prov_rilis_y_1->c_pdrb)
+                        && ($prov_rilis_y->c_pdrb - $prov_rilis_y_1->c_pdrb) != 0
+                        ? (($prov_rilis_y->$komp_id - $prov_rilis_y_1->$komp_id) / ($prov_rilis_y->c_pdrb - $prov_rilis_y_1->c_pdrb)) * $laju_pert_rilis : null;
+
+                    $row[$periode . 'prov_revisi'] = $prov_revisi_y
+                        && $prov_revisi_y_1
+                        && $laju_pert_rev
+                        && isset($prov_revisi_y->$komp_id)
+                        && isset($prov_revisi_y_1->$komp_id)
+                        && isset($prov_revisi_y->c_pdrb)
+                        && isset($prov_revisi_y_1->c_pdrb)
+                        && ($prov_revisi_y->c_pdrb - $prov_revisi_y_1->c_pdrb) != 0                        ?
+                        (($prov_revisi_y->$komp_id - $prov_revisi_y_1->$komp_id) / ($prov_revisi_y->c_pdrb - $prov_revisi_y_1->c_pdrb)) * $laju_pert_rev : null;
                 }
                 $data[] = $row;
             }
@@ -613,10 +1001,10 @@ class RevisiTotalController2 extends Controller
             foreach ($list_detail_komponen as $komponen) {
                 $row = [];
                 $row = [
-                    'id' => $komponen['no_komponen'],
-                    'name' => $komponen['nama_komponen'],
+                    'id' => $komponen['id'],
+                    'name' => $komponen['name'],
                 ];
-                $komp_id = 'c_' . str_replace(".", "", $komponen['no_komponen']);
+                $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
                     $q = [];
@@ -628,36 +1016,67 @@ class RevisiTotalController2 extends Controller
                         $q = [1, 2, 3, 4];
                     }
 
-                    $rilis_c    = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_rilis_y, $select);
-                    $revisi_c   = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_revisi_y, $select);
-                    $rilis_c_1  = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_rilis_y_1, $select);
-                    $revisi_c_1 = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_revisi_y_1, $select);
+                    $q_kabkot_rilis_y     = $this->get_q(1, $arr_periode[0], 2, 3);
+                    $q_kabkot_revisi_y    = $this->get_q(1, $arr_periode[0], 2, "");
+                    $q_prov_rilis_y       = $this->get_q(0, $arr_periode[0], 2, 3);
+                    $q_prov_revisi_y      = $this->get_q(0, $arr_periode[0], 2, "");
+                    $kabkot_rilis_y   = $this->get_data_cum(1, $arr_periode[0], $q, 2, 3, $q_kabkot_rilis_y);
+                    $kabkot_revisi_y  = $this->get_data_cum(1, $arr_periode[0], $q, 2, "", $q_kabkot_revisi_y);
+                    $prov_rilis_y     = $this->get_data_cum(0, $arr_periode[0], $q, 2, 3, $q_prov_rilis_y);
+                    $prov_revisi_y    = $this->get_data_cum(0, $arr_periode[0], $q, 2, "", $q_prov_revisi_y);
 
-                    $prov_rilis_c    = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_rilis_y, $select);
-                    $prov_revisi_c   = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_revisi_y, $select);
-                    $prov_rilis_c_1  = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_rilis_y_1, $select);
-                    $prov_revisi_c_1 = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_revisi_y_1, $select);
+                    $q_kabkot_rilis_y_1     = $this->get_q(1, $arr_periode[0] - 1, 2, 3);
+                    $q_kabkot_revisi_y_1    = $this->get_q(1, $arr_periode[0] - 1, 2, "");
+                    $q_prov_rilis_y_1       = $this->get_q(0, $arr_periode[0] - 1, 2, 3);
+                    $q_prov_revisi_y_1      = $this->get_q(0, $arr_periode[0] - 1, 2, "");
+                    $kabkot_rilis_y_1   = $this->get_data_cum(1, $arr_periode[0] - 1, $q, 2, 3, $q_kabkot_rilis_y_1);
+                    $kabkot_revisi_y_1  = $this->get_data_cum(1, $arr_periode[0] - 1, $q, 2, "", $q_kabkot_revisi_y_1);
+                    $prov_rilis_y_1     = $this->get_data_cum(0, $arr_periode[0] - 1, $q, 2, 3, $q_prov_rilis_y_1);
+                    $prov_revisi_y_1    = $this->get_data_cum(0, $arr_periode[0] - 1, $q, 2, "", $q_prov_revisi_y_1);
 
-                    $laju_pert_rilis =  $prov_rilis_c && $prov_rilis_c_1 && isset($prov_rilis_c_1->c_pdrb) && $prov_rilis_c_1->c_pdrb != 0 ? ($prov_rilis_c->c_pdrb - $prov_rilis_c_1->c_pdrb) / $prov_rilis_c_1->c_pdrb * 100 : null;
-                    $laju_pert_rev =  $prov_revisi_c && $prov_revisi_c_1 && isset($prov_revisi_c_1->c_pdrb) && $prov_revisi_c_1->c_pdrb != 0 ? ($prov_revisi_c->c_pdrb - $prov_revisi_c_1->c_pdrb) / $prov_revisi_c_1->c_pdrb * 100 : null;
-                    $row[$periode . '_rilis'] = $rilis_c
-                        && $rilis_c_1
+                    $laju_pert_rilis =  $prov_rilis_y && $prov_rilis_y_1 && isset($prov_rilis_y_1->c_pdrb) && $prov_rilis_y_1->c_pdrb != 0 ? ($prov_rilis_y->c_pdrb - $prov_rilis_y_1->c_pdrb) / $prov_rilis_y_1->c_pdrb * 100 : null;
+                    $laju_pert_rev =  $prov_revisi_y && $prov_revisi_y_1 && isset($prov_revisi_y_1->c_pdrb) && $prov_revisi_y_1->c_pdrb != 0 ? ($prov_revisi_y->c_pdrb - $prov_revisi_y_1->c_pdrb) / $prov_revisi_y_1->c_pdrb * 100 : null;
+
+                    $row[$periode . 'kabkot_rilis'] = $kabkot_rilis_y
+                        && $q_kabkot_rilis_y_1
                         && $laju_pert_rilis
-                        && isset($rilis_c->$komp_id)
-                        && isset($rilis_c_1->$komp_id)
-                        && isset($rilis_c->c_pdrb)
-                        && isset($rilis_c_1->c_pdrb)
-                        && ($rilis_c->c_pdrb - $rilis_c_1->c_pdrb) != 0                        ?
-                        (($rilis_c->$komp_id - $rilis_c_1->$komp_id) / ($rilis_c->c_pdrb - $rilis_c_1->c_pdrb)) * $laju_pert_rilis : null;
-                    $row[$periode . '_revisi'] = $revisi_c
-                        && $revisi_c_1
+                        && isset($kabkot_rilis_y->$komp_id)
+                        && isset($q_kabkot_rilis_y_1->$komp_id)
+                        && isset($kabkot_rilis_y->c_pdrb)
+                        && isset($q_kabkot_rilis_y_1->c_pdrb)
+                        && ($kabkot_rilis_y->c_pdrb - $q_kabkot_rilis_y_1->c_pdrb) != 0
+                        ? (($kabkot_rilis_y->$komp_id - $q_kabkot_rilis_y_1->$komp_id) / ($kabkot_rilis_y->c_pdrb - $q_kabkot_rilis_y_1->c_pdrb)) * $laju_pert_rilis : null;
+
+                    $row[$periode . 'kabkot_revisi'] = $kabkot_revisi_y
+                        && $kabkot_revisi_y_1
                         && $laju_pert_rev
-                        && isset($revisi_c->$komp_id)
-                        && isset($revisi_c_1->$komp_id)
-                        && isset($revisi_c->c_pdrb)
-                        && isset($revisi_c_1->c_pdrb)
-                        && ($revisi_c->c_pdrb - $revisi_c_1->c_pdrb) != 0                        ?
-                        (($revisi_c->$komp_id - $revisi_c_1->$komp_id) / ($revisi_c->c_pdrb - $revisi_c_1->c_pdrb)) * $laju_pert_rev : null;
+                        && isset($kabkot_revisi_y->$komp_id)
+                        && isset($kabkot_revisi_y_1->$komp_id)
+                        && isset($kabkot_revisi_y->c_pdrb)
+                        && isset($kabkot_revisi_y_1->c_pdrb)
+                        && ($kabkot_revisi_y->c_pdrb - $kabkot_revisi_y_1->c_pdrb) != 0                        ?
+                        (($kabkot_revisi_y->$komp_id - $kabkot_revisi_y_1->$komp_id) / ($kabkot_revisi_y->c_pdrb - $kabkot_revisi_y_1->c_pdrb)) * $laju_pert_rev : null;
+
+
+                    $row[$periode . 'prov_rilis'] = $prov_rilis_y
+                        && $prov_rilis_y_1
+                        && $laju_pert_rilis
+                        && isset($prov_rilis_y->$komp_id)
+                        && isset($prov_rilis_y_1->$komp_id)
+                        && isset($prov_rilis_y->c_pdrb)
+                        && isset($prov_rilis_y_1->c_pdrb)
+                        && ($prov_rilis_y->c_pdrb - $prov_rilis_y_1->c_pdrb) != 0
+                        ? (($prov_rilis_y->$komp_id - $prov_rilis_y_1->$komp_id) / ($prov_rilis_y->c_pdrb - $prov_rilis_y_1->c_pdrb)) * $laju_pert_rilis : null;
+
+                    $row[$periode . 'prov_revisi'] = $prov_revisi_y
+                        && $prov_revisi_y_1
+                        && $laju_pert_rev
+                        && isset($prov_revisi_y->$komp_id)
+                        && isset($prov_revisi_y_1->$komp_id)
+                        && isset($prov_revisi_y->c_pdrb)
+                        && isset($prov_revisi_y_1->c_pdrb)
+                        && ($prov_revisi_y->c_pdrb - $prov_revisi_y_1->c_pdrb) != 0                        ?
+                        (($prov_revisi_y->$komp_id - $prov_revisi_y_1->$komp_id) / ($prov_revisi_y->c_pdrb - $prov_revisi_y_1->c_pdrb)) * $laju_pert_rev : null;
                 }
                 $data[] = $row;
             }
@@ -760,10 +1179,15 @@ class RevisiTotalController2 extends Controller
                         $q = [1, 2, 3, 4];
                     }
 
-                    $rilis_c    = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_rilis_y, $select);
-                    $revisi_c   = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $select); //$rev_revisi_y, $select);
-                    $rilis_c_1  = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_rilis_y_1, $select);
-                    $revisi_c_1 = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, 2, $select); //$rev_revisi_y_1, $select);
+                    $q_rilis_c = $this->get_q_rilis($wilayah_filter, $arr_periode[0], null, 2);
+                    $q_rilis_c_1 = $this->get_q_rilis($wilayah_filter, $arr_periode[0] - 1, null, 2);
+                    $q_revisi_c = $this->get_q_rev($wilayah_filter, $arr_periode[0], null, 2);
+                    $q_revisi_c_1 = $this->get_q_rev($wilayah_filter, $arr_periode[0] - 1, null, 2);
+
+                    $rilis_c    = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0], $q, 2, $q_rilis_c, $select); //$rev_rilis_y, $select);
+                    $revisi_c   = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0], $q, 2, $q_revisi_c, $select); //$rev_revisi_y, $select);
+                    $rilis_c_1  = $this->get_data_cumulative_rilis($wilayah_filter, $arr_periode[0] - 1, $q, $q_rilis_c_1, 2, $select); //$rev_rilis_y_1, $select);
+                    $revisi_c_1 = $this->get_data_cumulative_revisi($wilayah_filter, $arr_periode[0] - 1, $q, $q_revisi_c_1, 2, $select); //$rev_revisi_y_1, $select);
 
                     $laju_pert_rilis =  $rilis_c && $rilis_c_1 && isset($rilis_c_1->c_pdrb) && $rilis_c_1->c_pdrb != 0 ? ($rilis_c->c_pdrb - $rilis_c_1->c_pdrb) / $rilis_c_1->c_pdrb * 100 : null;
                     $laju_pert_rev =  $revisi_c && $revisi_c_1 && isset($revisi_c_1->c_pdrb) && $revisi_c_1->c_pdrb != 0 ? ($revisi_c->c_pdrb - $revisi_c_1->c_pdrb) / $revisi_c_1->c_pdrb * 100 : null;

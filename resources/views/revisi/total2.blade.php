@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-4">
-                                        <select name="wilayah_filter" id="wilayah_filter" class="form-control"
+                                        {{-- <select name="wilayah_filter" id="wilayah_filter" class="form-control"
                                             onchange="updateFormActionWilayah()">
                                             @foreach ($list_wilayah as $key => $wil)
                                                 @if (Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
@@ -68,9 +68,9 @@
                                                         16{{ $key }} - {{ $wil }}</option>
                                                 @endif
                                             @endforeach
-                                        </select>
+                                        </select> --}}
                                     </div>
-                                    <div class="form-group col-sm-6 col-md-2   ">
+                                    <div class="form-group col-sm-6 col-md-2 ">
                                         <button class="btn btn-primary w-100" type="button" href="#periodeModal"
                                             data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
@@ -109,6 +109,7 @@
                                     <thead>
                                         <tr class="text-center">
                                             <th rowspan="2">Komponen</th>
+                                            <th rowspan="2">Kabkot/Nasional</th>
                                             @foreach ($periode_filter as $periode)
                                                 <th colspan="3">{{ $periode }}</th>
                                             @endforeach
@@ -131,35 +132,62 @@
                                             @endphp
                                             <tr
                                                 style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
-                                                <td>
-                                                    @if ($dt['id'] != 'pdrb')
+                                                <td rowspan="2">
+                                                    {{-- @if ($dt['id'] != 'pdrb')
                                                         {{ $dt['id'] }}
-                                                    @endif
+                                                    @endif --}}
                                                     {{ $dt['name'] }}
                                                 </td>
+                                                <td>Total 17 Kabkot</td>
 
                                                 @foreach ($periode_filter as $periode)
                                                     @php
-                                                        $rilis = $dt[$periode . '_rilis'] ?? null;
-                                                        $revisi = $dt[$periode . '_revisi'] ?? null;
+                                                        $kabkot_rilis = $dt[$periode . 'kabkot_rilis'] ?? null;
+                                                        $kabkot_revisi = $dt[$periode . 'kabkot_revisi'] ?? null;
                                                     @endphp
 
                                                     <td class="text-right">
-                                                        {{ $rilis != null ? number_format(round($rilis, 2), 2, ',', '.') : '' }}
+                                                        {{ $kabkot_rilis != null ? number_format(round($kabkot_rilis, 2), 2, ',', '.') : '' }}
                                                     </td>
                                                     <td class="text-right">
-                                                        {{ $revisi != null ? number_format(round($revisi, 2), 2, ',', '.') : '' }}
+                                                        {{ $kabkot_revisi != null ? number_format(round($kabkot_revisi, 2), 2, ',', '.') : '' }}
                                                     </td>
                                                     <td class="text-center">
-                                                        @if ($rilis < $revisi)
+                                                        @if ($kabkot_rilis && $kabkot_revisi && $kabkot_rilis < $kabkot_revisi)
                                                             <div class="text-danger">▼</div>
-                                                        @elseif ($rilis > $revisi)
+                                                        @elseif ($kabkot_rilis && $kabkot_revisi && $kabkot_rilis > $kabkot_revisi)
                                                             <div class="text-success">▲</div>
                                                         @else
                                                             <div class="text-warning">═</div>
                                                         @endif
                                                     </td>
                                                 @endforeach
+                                            </tr>
+                                            <tr>
+                                                <td>Provinsi</td>
+                                                @foreach ($periode_filter as $periode)
+                                                    @php
+                                                        $prov_rilis = $dt[$periode . 'prov_rilis'] ?? null;
+                                                        $prov_revisi = $dt[$periode . 'prov_revisi'] ?? null;
+                                                    @endphp
+
+                                                    <td class="text-right">
+                                                        {{ $prov_rilis != null ? number_format(round($prov_rilis, 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ $prov_revisi != null ? number_format(round($prov_revisi, 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if ($prov_rilis && $prov_revisi && $prov_rilis < $prov_revisi)
+                                                            <div class="text-danger">▼</div>
+                                                        @elseif ($prov_rilis && $prov_revisi && $prov_rilis > $prov_revisi)
+                                                            <div class="text-success">▲</div>
+                                                        @else
+                                                            <div class="text-warning">═</div>
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+
                                             </tr>
                                         @endforeach
                                     </tbody>

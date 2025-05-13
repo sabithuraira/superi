@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Pdrb;
 use App\PdrbFinal;
+use App\SettingApp;
 
 class PdrbObserver
 {
@@ -89,11 +90,24 @@ class PdrbObserver
      * @return void
      */
     public function updated(Pdrb $pdrb){
+        //////
+        $upload_tahun = date('Y');
+        $upload_triwulan = 1;
+        
+        $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
+        if($tahun_berlaku!=null) $upload_tahun = $tahun_berlaku->setting_value;
+
+        $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
+        if($triwulan_berlaku!=null) $upload_triwulan = $triwulan_berlaku->setting_value;
+        /////////
+
         $pdrb_final = PdrbFinal::where('tahun', $pdrb->tahun)
                         ->where('q', $pdrb->q)
                         ->where('kode_prov', $pdrb->kode_prov)
                         ->where('kode_kab', $pdrb->kode_kab)
                         ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
+                        ->where('upload_tahun', $upload_tahun)
+                        ->where('upload_q', $upload_triwulan)
                         ->first();
 
         if($pdrb->status_data==2){
@@ -105,6 +119,10 @@ class PdrbObserver
             
             $new_pdrb_final->tahun = $pdrb->tahun;
             $new_pdrb_final->q = $pdrb->q;
+            
+            $new_pdrb_final->upload_tahun = $upload_tahun;
+            $new_pdrb_final->upload_q = $upload_triwulan;
+
             $new_pdrb_final->adhb_or_adhk = $pdrb->adhb_or_adhk;
             $new_pdrb_final->status_data = $pdrb->status_data;
             $new_pdrb_final->putaran = $pdrb->putaran;

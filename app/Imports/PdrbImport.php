@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use App\SettingApp;
 
 class PdrbImport implements  WithMultipleSheets //ToCollection
 {
@@ -39,18 +40,33 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $q = $split_header[1];
 
             $putaran = 0;
+                
+            $upload_tahun = date('Y');
+            $upload_triwulan = 1;
+            
+            $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
+            if($tahun_berlaku!=null) $upload_tahun = $tahun_berlaku->setting_value;
+
+            $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
+            if($triwulan_berlaku!=null) $upload_triwulan = $triwulan_berlaku->setting_value;
 
             $model = Pdrb::where('tahun', $year) //self::$tahun)
                 ->where('q', $q)
                 ->where('adhb_or_adhk', $is_adhb)
                 ->where('kode_prov', '16')
                 ->where('kode_kab', self::$wilayah)
+                ->where('upload_tahun', $upload_tahun)
+                ->where('upload_q', $upload_triwulan)
                 ->orderBy('id', 'desc')
                 ->first();
 
             $new_model = new Pdrb;
             $new_model->tahun = $year; //self::$tahun;
             $new_model->q = $q;
+            
+            $new_model->upload_tahun = $upload_tahun; 
+            $new_model->upload_q = $upload_triwulan;
+
             $new_model->adhb_or_adhk = $is_adhb;
             $new_model->status_data = 1;
 

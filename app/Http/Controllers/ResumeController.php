@@ -11,21 +11,22 @@ use App\Helpers\AssetData;
 
 class ResumeController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $komponen = $this->get_all_komponen();
 
         $tahun = DB::select('SELECT DISTINCT tahun FROM superi_pdrb_final ORDER BY tahun');
 
         $tahun_now = DB::table('setting')
-                     ->select('setting_value')
-                     ->where('setting_name', '=', 'tahun_berlaku')
-                     ->first();
+            ->select('setting_value')
+            ->where('setting_name', '=', 'tahun_berlaku')
+            ->first();
         $tahun_now = $tahun_now->setting_value;
 
         $q_now = DB::table('setting')
-                 ->select('setting_value')
-                 ->where('setting_name', '=', 'triwulan_berlaku')
-                 ->first();
+            ->select('setting_value')
+            ->where('setting_name', '=', 'triwulan_berlaku')
+            ->first();
         $q_now = $q_now->setting_value;
 
         $periode = [];
@@ -44,7 +45,8 @@ class ResumeController extends Controller
         return view('resume.index', compact('komponen', 'periode'));
     }
 
-    public function get(Request $request) {
+    public function get(Request $request)
+    {
         $tabel = $request->input('tabel');
         $c = $request->input('komponen');
         $periode = explode(',', $request->input('periode'));
@@ -55,7 +57,8 @@ class ResumeController extends Controller
         return response()->json($pdrb);
     }
 
-    public function export(Request $request) {
+    public function export(Request $request)
+    {
         $judul = $request->input('judul');
         $tabel = $request->input('tabel');
         $c = $request->input('komponen');
@@ -69,7 +72,8 @@ class ResumeController extends Controller
         return Excel::download(new ResumeExport($judul, $pdrb['columns'], $pdrb['pdrb'], $komponen), 'Resume' . $judul . '.xlsx');
     }
 
-    public function export_all(Request $request) {
+    public function export_all(Request $request)
+    {
         $judul = $request->input('judul');
         $tabel = $request->input('tabel');
         $c_all = explode(',', $request->input('komponen'));
@@ -89,11 +93,13 @@ class ResumeController extends Controller
         return Excel::download(new ResumeExportAll($judul, $columns, $pdrb_all), 'All Resume' . $judul . '.xlsx');
     }
 
-    private function get_all_komponen() {
+    private function get_all_komponen()
+    {
         return AssetData::getDetailKomponen();
     }
 
-    private function get_komponen($c) {
+    private function get_komponen($c)
+    {
         $komponen = $this->get_all_komponen();
         foreach ($komponen as $k) {
             if ($k['select_id'] == $c) return $k['id'];
@@ -101,7 +107,8 @@ class ResumeController extends Controller
         return null;
     }
 
-    private function get_komponen_desc($c) {
+    private function get_komponen_desc($c)
+    {
         $komponen = $this->get_all_komponen();
         foreach ($komponen as $k) {
             if ($k['select_id'] == $c) return $k['name'];
@@ -109,7 +116,8 @@ class ResumeController extends Controller
         return null;
     }
 
-    private function get_komponen_desc_short($c) {
+    private function get_komponen_desc_short($c)
+    {
         $komponen = $this->get_all_komponen();
         foreach ($komponen as $k) {
             if ($k['select_id'] == $c) return $k['alias'];
@@ -117,7 +125,8 @@ class ResumeController extends Controller
         return null;
     }
 
-    private function resume($tabel, $c, $periode, $kd_kab) {
+    private function resume($tabel, $c, $periode, $kd_kab)
+    {
         $pdrb = [];
 
         $c_desc = $this->get_komponen_desc($c);
@@ -138,10 +147,10 @@ class ResumeController extends Controller
             foreach ($periode as $p) {
                 if (strlen($p) == 4) {
                     $pembagi_prov = DB::select('SELECT SUM(IF(tahun = "' . $p . '" AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS prov FROM superi_pdrb_final')[0]->prov;
-                    $sql .= 'SUM(IF(tahun = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov .' * 100 AS `' . $p . '`, ';
+                    $sql .= 'SUM(IF(tahun = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                 } else {
                     $pembagi_prov = DB::select('SELECT SUM(IF(CONCAT(tahun, "Q", q) = "' . $p . '" AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 1, ' . $c . ', 0)) AS prov FROM superi_pdrb_final')[0]->prov;
-                    $sql .= 'SUM(IF(CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov .' * 100 AS `' . $p . '`, ';
+                    $sql .= 'SUM(IF(CONCAT(tahun, "Q", q) = "' . $p . '" AND adhb_or_adhk = 1, ' . $c . ', 0)) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
                 }
             }
         } elseif ($tabel == 'Tabel 2.4') {
@@ -277,51 +286,50 @@ class ResumeController extends Controller
                 $pembagi_prov = DB::select('SELECT SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND kode_prov = "16" AND kode_kab = "00" AND adhb_or_adhk = 2, c_pdrb, 0)) AS prov FROM superi_pdrb_final')[0]->prov;
                 $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / ' . $pembagi_prov . ' * 100 AS `' . $p . '`, ';
             }
-        } 
-        // elseif ($tabel == 'Tabel 2.17') {
-        //     foreach ($periode as $p) {
-        //         $tahun = substr($p, 0, 4);
-        //         if (strlen($p) == 4) {
-        //             $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-        //         } else {
-        //             $q = substr($p, 5, 1);
-        //             if ($q == '1') {
-        //                 $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-        //             } else {
-        //                 $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-        //             }
-        //         }
-        //     }
-        // } elseif ($tabel == 'Tabel 2.18') {
-        //     foreach ($periode as $p) {
-        //         $tahun = substr($p, 0, 4);
-        //         if (strlen($p) == 4) {
-        //             $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-        //         } else {
-        //             $q = substr($p, 5, 1);
-        //             $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-        //         }
-        //     }
-        // } elseif ($tabel == 'Tabel 2.19') {
-        //     foreach ($periode as $p) {
-        //         $tahun = substr($p, 0, 4);
-        //         if (strlen($p) == 4) $q = 4;
-        //         else $q = substr($p, 5, 1);
-        //         $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
-        //     }
-        // }
+        } elseif ($tabel == 'Tabel 2.17') {
+            foreach ($periode as $p) {
+                $tahun = substr($p, 0, 4);
+                if (strlen($p) == 4) {
+                    $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+                } else {
+                    $q = substr($p, 5, 1);
+                    if ($q == '1') {
+                        $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = 1 AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = 4 AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+                    } else {
+                        $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . $tahun . ' AND q = ' . ($q - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+                    }
+                }
+            }
+        } elseif ($tabel == 'Tabel 2.18') {
+            foreach ($periode as $p) {
+                $tahun = substr($p, 0, 4);
+                if (strlen($p) == 4) {
+                    $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+                } else {
+                    $q = substr($p, 5, 1);
+                    $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q = ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+                }
+            }
+        } elseif ($tabel == 'Tabel 2.19') {
+            foreach ($periode as $p) {
+                $tahun = substr($p, 0, 4);
+                if (strlen($p) == 4) $q = 4;
+                else $q = substr($p, 5, 1);
+                $sql .= '(SUM(IF(tahun = ' . $tahun . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0)) - SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, ' . $c . ', 0))) / SUM(IF(tahun = ' . ($tahun - 1) . ' AND q <= ' . $q . ' AND adhb_or_adhk = 2, c_pdrb, 0)) * 100 AS `' . $p . '`, ';
+            }
+        }
 
         $sql = substr($sql, 0, -2);
         $sql .= ' FROM superi_pdrb_final';
         $sql .= ' GROUP BY CONCAT(kode_prov, kode_kab)';
-
+        // dd($sql);
         $pdrb_c = DB::select($sql);
 
         foreach ($pdrb_c as $pdrb_item) {
             array_push($pdrb, $pdrb_item);
         }
 
-        $pdrb = array_filter($pdrb, function($pdrb_item) use ($kd_kab) {
+        $pdrb = array_filter($pdrb, function ($pdrb_item) use ($kd_kab) {
             if (in_array($pdrb_item->kd_kab, $kd_kab)) return true;
             return false;
         });

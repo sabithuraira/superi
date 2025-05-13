@@ -13,7 +13,6 @@
             <div class="card">
                 <div class="header">
                     <h2>Arah Revisi Total </h2>
-                    {{-- <h2>Arah Revisi Provinsi (PKRT 12 Komponen)</h2> --}}
                 </div>
                 <div class="body">
                     <div class="row">
@@ -32,63 +31,19 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    {{-- <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        <button class="btn btn-primary w-100 " type="button" href="#komponenModal"
-                                            data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
-                                    </div> --}}
-
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
                                         <button class="btn btn-success w-100" type="button"onclick="exportToExcel()">
                                             Export Excel
                                         </button>
                                     </div>
-                                    {{-- <div class="form-group col-sm-6 col-md-2 d-grid ">
-                                        @if (Request::is('revisi_kabkot/*') || Request::is('revisi_kabkot_rilis/*'))
-                                            <a class="btn btn-primary w-100" type="button"
-                                                href="{{ url('revisi_kabkot_7pkrt/301') }}">
-                                                PKRT 7 Komponen
-                                            </a>
-                                        @elseif (Request::is('revisi_kabkot_7pkrt/*'))
-                                            <a class="btn btn-primary w-100" type="button"
-                                                href="{{ url('revisi_kabkot/301') }}">
-                                                PKRT 12 Komponen
-                                            </a>
-                                        @endif
-                                    </div> --}}
-
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-4">
-                                        {{-- <select name="wilayah_filter" id="wilayah_filter" class="form-control"
-                                            onchange="updateFormActionWilayah()">
-                                            @foreach ($list_wilayah as $key => $wil)
-                                                @if (Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
-                                                    <option value="{{ $key }}" data-id="{{ $key }}"
-                                                        @if ($key == $wilayah_filter) selected @endif>
-                                                        16{{ $key }} - {{ $wil }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select> --}}
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 ">
                                         <button class="btn btn-primary w-100" type="button" href="#periodeModal"
                                             data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
                                     </div>
-                                    {{-- <div class="col-sm-6 col-md-2"></div>
-                                    <div class="form-group col-sm-6 col-md-2 d-grid ">
-
-                                        @if (Request::is('revisi_kabkot/*') || Request::is('revisi_kabkot_7pkrt/*'))
-                                            <a class="btn btn-primary w-100" type="button"
-                                                href="{{ url('revisi_kabkot_rilis/301') }}">
-                                                Tabel Rilis
-                                            </a>
-                                        @elseif (Request::is('revisi_kabkot_rilis/*'))
-                                            <a class="btn btn-primary w-100" type="button"
-                                                href="{{ url('revisi_kabkot/301') }}">
-                                                Tabel PKRT 12 Komponen
-                                            </a>
-                                        @endif
-                                    </div> --}}
                                 </div>
                             </form>
                         </div>
@@ -153,9 +108,9 @@
                                                         {{ $kabkot_revisi != null ? number_format(round($kabkot_revisi, 2), 2, ',', '.') : '' }}
                                                     </td>
                                                     <td class="text-center">
-                                                        @if ($kabkot_rilis && $kabkot_revisi && $kabkot_rilis < $kabkot_revisi)
+                                                        @if ($kabkot_rilis && $kabkot_revisi && $kabkot_rilis > $kabkot_revisi)
                                                             <div class="text-danger">▼</div>
-                                                        @elseif ($kabkot_rilis && $kabkot_revisi && $kabkot_rilis > $kabkot_revisi)
+                                                        @elseif ($kabkot_rilis && $kabkot_revisi && $kabkot_rilis < $kabkot_revisi)
                                                             <div class="text-success">▲</div>
                                                         @else
                                                             <div class="text-warning">═</div>
@@ -268,37 +223,18 @@
                                     </select>
                                     <div class="row">
                                         @foreach ($list_periode as $li_per)
-                                            @if ($li_per < 2018)
-                                                <div class="col-8"></div>
-                                                <div class="form-check col-4">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $li_per }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $li_per }}"
-                                                        @foreach ($periode_filter as $per_fil)
-                                                @if ($per_fil === $li_per)
-                                                checked
-                                                @endif @endforeach>
-                                                    <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $li_per }}">
-                                                        {{ $li_per }}
-                                                    </label>
-                                                </div>
-                                            @else
-                                                <div
-                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $li_per }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $li_per }}"
-                                                        @foreach ($periode_filter as $per_fil)
+                                            <div class="form-check  col-3 ">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $li_per }}" name="periode_filter[]"
+                                                    id="{{ 'periode_filter_' . $li_per }}"
+                                                    @foreach ($periode_filter as $per_fil)
                                                     @if ($per_fil === $li_per)
                                                     checked
                                                     @endif @endforeach>
-                                                    <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $li_per }}">
-                                                        {{ $li_per }}
-                                                    </label>
-                                                </div>
-                                            @endif
+                                                <label class="form-check-label" for="{{ 'periode_filter_' . $li_per }}">
+                                                    {{ $li_per }}
+                                                </label>
+                                            </div>
                                         @endforeach
                                     </div>
                                 </div>

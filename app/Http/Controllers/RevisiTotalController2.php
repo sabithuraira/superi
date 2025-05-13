@@ -27,10 +27,12 @@ class RevisiTotalController2 extends Controller
         $this->tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first()->setting_value;
         $this->triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first()->setting_value;
 
-        for ($i = 1; $i <= $this->triwulan_berlaku; $i++) {
-            array_push($this->list_periode, "{$this->tahun_berlaku}Q{$i}");
+        for ($t = $this->tahun_berlaku - 3; $t <= $this->tahun_berlaku; $t++) {
+            for ($i = 1; $i <= 4; $i++) {
+                array_push($this->list_periode, "{$t}Q{$i}");
+            }
         }
-
+        // dd($this->list_periode);
         $this->setSelectVariable();
     }
 
@@ -78,12 +80,12 @@ class RevisiTotalController2 extends Controller
         ['id' => '2.11', 'name' => 'Tabel 2.11. Pertumbuhan Indeks Implisit PDRB (Q-TO-Q), (persen)'],
         ['id' => '2.12', 'name' => 'Tabel 2.12. Pertumbuhan Indeks Implisit PDRB (Y-ON-Y), (persen)'],
         ['id' => '2.13', 'name' => 'Tabel 2.13. Pertumbuhan Indeks Implisit PDRB (C-TO-C), (persen)'],
-        ['id' => '2.14', 'name' => 'Tabel 2.14. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Q-TO-Q), (persen)'],
-        ['id' => '2.15', 'name' => 'Tabel 2.15. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (Y-ON-Y), (persen)'],
-        ['id' => '2.16', 'name' => 'Tabel 2.16. Sumber Pertumbuhan Kabupaten/Kota Terhadap PDRB Provinsi (C-TO-C), (persen)'],
-        // ['id' => '2.17', 'name' => 'Tabel 2.17. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q), (persen)'],
-        // ['id' => '2.18', 'name' => 'Tabel 2.18. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y), (persen)'],
-        // ['id' => '2.19', 'name' => 'Tabel 2.19. Sumber Pertumbuhan Komponen Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C), (persen)'],
+        ['id' => '2.14', 'name' => 'Tabel 2.14. Sumber Pertumbuhan Terhadap Komponen 17 Kabkot (Q-TO-Q), (persen)'],
+        ['id' => '2.15', 'name' => 'Tabel 2.15. Sumber Pertumbuhan Terhadap Komponen 17 Kabkot (Y-ON-Y), (persen)'],
+        ['id' => '2.16', 'name' => 'Tabel 2.16. Sumber Pertumbuhan Terhadap Komponen 17 Kabkot (C-TO-C), (persen)'],
+        ['id' => '2.17', 'name' => 'Tabel 2.17. Sumber Pertumbuhan Terhadap PDRB Kabupaten/Kota/Provinsi (Q-TO-Q), (persen)'],
+        ['id' => '2.18', 'name' => 'Tabel 2.18. Sumber Pertumbuhan Terhadap PDRB Kabupaten/Kota/Provinsi (Y-ON-Y), (persen)'],
+        ['id' => '2.19', 'name' => 'Tabel 2.19. Sumber Pertumbuhan Terhadap PDRB Kabupaten/Kota/Provinsi (C-TO-C), (persen)'],
     ];
 
     /**
@@ -317,15 +319,15 @@ class RevisiTotalController2 extends Controller
                 $komp_id = str_replace(".", "", $komponen['id']);
                 foreach ($periode_filter as $periode) {
                     $arr_periode = explode("Q", $periode);
-                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 2, 3);
-                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 2, "");
-                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 2, 3);
-                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 2, "");
+                    $q_kabkot_rilis =   $this->get_q(1, $arr_periode[0], 1, 3);
+                    $q_kabkot_revisi =  $this->get_q(1, $arr_periode[0], 1, "");
+                    $q_prov_rilis =     $this->get_q(0, $arr_periode[0], 1, 3);
+                    $q_prov_revisi =    $this->get_q(0, $arr_periode[0], 1, "");
 
-                    $kabkot_rilis =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_kabkot_rilis);
-                    $kabkot_revisi =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 2, "", $q_kabkot_revisi);
-                    $prov_rilis =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, 3, $q_prov_rilis);
-                    $prov_revisi =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 2, "", $q_prov_revisi);
+                    $kabkot_rilis =     $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis);
+                    $kabkot_revisi =    $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi);
+                    $prov_rilis =       $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis);
+                    $prov_revisi =      $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, "", $q_prov_revisi);
 
                     $row[$periode . "kabkot_rilis"]     = $kabkot_rilis && $prov_rilis && isset($prov_rilis->$komp_id) && $prov_rilis->$komp_id != 0 ?  $kabkot_rilis->$komp_id / $prov_rilis->$komp_id * 100 : null;
                     $row[$periode . "kabkot_revisi"]    = $kabkot_rilis && $prov_revisi && isset($prov_revisi->$komp_id) && $prov_revisi->$komp_id != 0 ? $kabkot_revisi->$komp_id / $prov_revisi->$komp_id * 100 : null;

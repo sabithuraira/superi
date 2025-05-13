@@ -60,14 +60,14 @@
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
                                 @if ($tabel['id'] == $tabel_filter)
-                                    <p>{{ $tabel['name'] }}  <span class="text-muted font-italic"> (dalam persen)</span></p>
+                                    <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
                         </div>
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive table-bordered" id="table-responsive">
+                            <div class="table-responsive table-bordered table-striped" id="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr class="text-center">
@@ -76,7 +76,7 @@
                                             <th colspan="2">Pertumbuhan QtQ</th>
                                             <th colspan="2">Pertumbuhan CtC</th>
                                             <th rowspan="2">Implisit YoY {{ $periode_filter }}</th>
-                                            <th rowspan="2">Share terhadap provinsi</th>
+                                            <th rowspan="2">Share Thd Total 17 Kabkot</th>
                                         </tr>
                                         <tr>
                                             @php
@@ -108,36 +108,73 @@
                                         @foreach ($data as $dt)
                                             @php
                                                 $shouldBold = $dt['id'] == '00';
-
                                             @endphp
+                                            @if ($dt['id'] == 99)
+                                                @continue
+                                            @else
+                                            @endif
                                             <tr
                                                 style="@if ($shouldBold) background-color:#f2f2f2;font-weight: bold; @endif">
                                                 <td style="@if ($shouldBold) font-weight: bold; @endif">
                                                     [16{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
-                                                <td>
-                                                    {{ array_key_exists('yoy_prev', $dt) && $dt['yoy_prev'] ? round($dt['yoy_prev'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('yoy_prev', $dt) && $dt['yoy_prev'] ? number_format(round($dt['yoy_prev'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>
-                                                    {{ array_key_exists('yoy_current', $dt) && $dt['yoy_current'] ? round($dt['yoy_current'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('yoy_current', $dt) && $dt['yoy_current'] ? number_format(round($dt['yoy_current'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>
-                                                    {{ array_key_exists('qtq_prev', $dt) && $dt['qtq_prev'] ? round($dt['qtq_prev'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('qtq_prev', $dt) && $dt['qtq_prev'] ? number_format(round($dt['qtq_prev'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>
-                                                    {{ array_key_exists('qtq_current', $dt) && $dt['qtq_current'] ? round($dt['qtq_current'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('qtq_current', $dt) && $dt['qtq_current'] ? number_format(round($dt['qtq_current'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>
-                                                    {{ array_key_exists('ctc_prev', $dt) && $dt['ctc_prev'] ? round($dt['ctc_prev'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('ctc_prev', $dt) && $dt['ctc_prev'] ? number_format(round($dt['ctc_prev'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>
-                                                    {{ array_key_exists('ctc_current', $dt) && $dt['ctc_current'] ? round($dt['ctc_current'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('ctc_current', $dt) && $dt['ctc_current'] ? number_format(round($dt['ctc_current'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>{{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? round($dt['implisit_yoy'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? number_format(round($dt['implisit_yoy'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td>{{ array_key_exists('share_prov', $dt) && $dt['share_prov'] ? round($dt['share_prov'], 2) : '' }}
+                                                <td class="text-right">
+                                                    {{ array_key_exists('share_kabkot', $dt) && $dt['share_kabkot'] ? number_format(round($dt['share_kabkot'], 2), 2, ',', '.') : '' }}
                                                 </td>
                                             </tr>
+                                            @if ($dt['id'] == '00')
+                                                <tr>
+                                                    <td style="font-weight: bold">
+                                                        [1600] Total 17 Kabupaten Kota
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('yoy_prev', $data['total_kabkot']) && $data['total_kabkot']['yoy_prev'] ? number_format(round($data['total_kabkot']['yoy_prev'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('yoy_current', $data['total_kabkot']) && $data['total_kabkot']['yoy_current'] ? number_format(round($data['total_kabkot']['yoy_current'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('qtq_prev', $data['total_kabkot']) && $data['total_kabkot']['qtq_prev'] ? number_format(round($data['total_kabkot']['qtq_prev'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('qtq_current', $data['total_kabkot']) && $data['total_kabkot']['qtq_current'] ? number_format(round($data['total_kabkot']['qtq_current'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('ctc_prev', $data['total_kabkot']) && $data['total_kabkot']['ctc_prev'] ? number_format(round($data['total_kabkot']['ctc_prev'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('ctc_current', $data['total_kabkot']) && $data['total_kabkot']['ctc_current'] ? number_format(round($data['total_kabkot']['ctc_current'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('implisit_yoy', $data['total_kabkot']) && $data['total_kabkot']['implisit_yoy'] ? number_format(round($data['total_kabkot']['implisit_yoy'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{ array_key_exists('share_kabkot', $data['total_kabkot']) && $data['total_kabkot']['share_kabkot'] ? number_format(round($data['total_kabkot']['share_kabkot'], 2), 2, ',', '.') : '' }}
+                                                    </td>
+
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>

@@ -62,14 +62,14 @@
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
                                 @if ($tabel['id'] === $tabel_filter)
-                                    <p>{{ $tabel['name'] }}  <span class="text-muted font-italic"> (dalam persen)</span></p>
+                                    <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
                         </div>
                     </div>
                     <div class="row">
                         <div class="col table-responsive">
-                            <div class="table-responsive table-bordered" id="table-responsive">
+                            <div class="table-responsive table-bordered table-striped " id="table-responsive">
                                 <table class="table" border="1px solid black">
                                     <thead>
                                         <tr class="text-center">
@@ -81,6 +81,9 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($data as $dt)
+                                            @if ($dt['id'] == '99')
+                                                @continue
+                                            @endif
                                             @php
                                                 $shouldBold = $dt['id'] == '00';
                                             @endphp
@@ -89,13 +92,31 @@
                                                     [16{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 @foreach ($komponens as $key => $komp)
-                                                    <td style="@if ($shouldBold) font-weight: bold; @endif">
+                                                    <td style="@if ($shouldBold) font-weight: bold; @endif"
+                                                        class="text-right">
                                                         {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']]
                                                             ? number_format(round($dt[$komp['id']], 2), 2, ',', '.')
                                                             : '' }}
                                                     </td>
                                                 @endforeach
+
+
                                             </tr>
+                                            @if ($dt['id'] == '00')
+                                                <tr>
+                                                    <td style="@if ($shouldBold) font-weight: bold; @endif">
+                                                        [1600] Total 17 Kabkot
+                                                    </td>
+                                                    @foreach ($komponens as $key => $komp)
+                                                        <td style="@if ($shouldBold) font-weight: bold; @endif"
+                                                            class="text-right">
+                                                            {{ array_key_exists($komp['id'], $dt) && $data['total_kabkot'][$komp['id']]
+                                                                ? number_format(round($data['total_kabkot'][$komp['id']], 2), 2, ',', '.')
+                                                                : '' }}
+                                                        </td>
+                                                    @endforeach
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>

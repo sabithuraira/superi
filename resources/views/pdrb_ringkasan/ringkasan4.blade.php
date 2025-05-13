@@ -56,7 +56,7 @@
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
                                 @if ($tabel['id'] == $tabel_filter)
-                                    <p>{{ $tabel['name'] }}  <span class="text-muted font-italic"> (dalam persen)</span></p>
+                                    <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
                         </div>
@@ -96,15 +96,44 @@
                                                 style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td>{{ $dt['komponen_name'] }}</td>
                                                 @foreach ($periode_filter as $periode)
-                                                    <td>
-                                                        {{ array_key_exists($periode . 'adhb', $dt) && $dt[$periode . 'adhb'] ? round($dt[$periode . 'adhb'], 2) : '' }}
+                                                    @php
+                                                        $hb = $dt[$periode . 'adhb'];
+                                                        $hk = $dt[$periode . 'adhk'];
+                                                    @endphp
+                                                    <td class="text-right"
+                                                        style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                        {{ array_key_exists($periode . 'adhb', $dt) && $dt[$periode . 'adhb'] ? number_format(round($dt[$periode . 'adhb'], 2), 2, ',', '.') : '' }}
                                                     </td>
-                                                    <td>
-                                                        {{ array_key_exists($periode . 'adhk', $dt) && $dt[$periode . 'adhb'] ? round($dt[$periode . 'adhk'], 2) : '' }}
+                                                    <td class="text-right"
+                                                        style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                        {{ array_key_exists($periode . 'adhk', $dt) && $dt[$periode . 'adhb'] ? number_format(round($dt[$periode . 'adhk'], 2), 2, ',', '.') : '' }}
                                                     </td>
                                                 @endforeach
                                             </tr>
                                         @endforeach
+                                        <tr>
+                                            <td><b>Net Eksim</b></td>
+                                            @foreach ($periode_filter as $periode)
+                                                <td class="text-right"
+                                                    style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                    {{ array_key_exists($periode . 'adhb', $data[15]) &&
+                                                    $data[15][$periode . 'adhb'] &&
+                                                    array_key_exists($periode . 'adhb', $data[16]) &&
+                                                    $data[16][$periode . 'adhb']
+                                                        ? number_format(round($data[15][$periode . 'adhb'] - $data[16][$periode . 'adhb'], 2), 2, ',', '.')
+                                                        : '' }}
+                                                </td>
+                                                <td class="text-right"
+                                                    style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                    {{ array_key_exists($periode . 'adhk', $data[15]) &&
+                                                    $data[15][$periode . 'adhk'] &&
+                                                    array_key_exists($periode . 'adhk', $data[16]) &&
+                                                    $data[16][$periode . 'adhk']
+                                                        ? number_format(round($data[15][$periode . 'adhk'] - $data[16][$periode . 'adhk'], 2), 2, ',', '.')
+                                                        : '' }}
+                                                </td>
+                                            @endforeach
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

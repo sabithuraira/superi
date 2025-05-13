@@ -68,7 +68,7 @@
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
                                 @if ($tabel['id'] == $tabel_filter)
-                                    <p>{{ $tabel['name'] }}  <span class="text-muted font-italic"> (dalam persen)</span></p>
+                                    <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
                         </div>
@@ -96,23 +96,29 @@
                                             <tr class="text-right"
                                                 style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td class="text-left">{{ $dt['name'] }}</td>
-                                                <td style="@if($dt['yoy']>=10) background-color: yellow @endif">
-                                                    {{ array_key_exists('yoy', $dt) && $dt['yoy'] ? round($dt['yoy'], 2) : '' }}
+                                                <td
+                                                    style="@if (abs($dt['yoy']) >= 5) background-color: yellow @endif">
+                                                    {{ array_key_exists('yoy', $dt) && $dt['yoy'] ? number_format(round($dt['yoy'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td style="@if($dt['qtq']>=10) background-color: yellow @endif">
-                                                    {{ array_key_exists('qtq', $dt) && $dt['qtq'] ? round($dt['qtq'], 2) : '' }}
+                                                <td
+                                                    style="@if (abs($dt['qtq']) >= 5) background-color: yellow @endif">
+                                                    {{ array_key_exists('qtq', $dt) && $dt['qtq'] ? number_format(round($dt['qtq'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td style="@if($dt['ctc']>=10) background-color: yellow @endif">
-                                                    {{ array_key_exists('ctc', $dt) && $dt['ctc'] ? round($dt['ctc'], 2) : '' }}
+                                                <td
+                                                    style="@if (abs($dt['ctc']) >= 5) background-color: yellow @endif">
+                                                    {{ array_key_exists('ctc', $dt) && $dt['ctc'] ? number_format(round($dt['ctc'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td style="@if($dt['implisit_yoy']>=10) background-color: yellow @endif">
-                                                    {{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? round($dt['implisit_yoy'], 2) : '' }}
+                                                <td
+                                                    style="@if (abs($dt['implisit_yoy']) >= 5) background-color: yellow @endif">
+                                                    {{ array_key_exists('implisit_yoy', $dt) && $dt['implisit_yoy'] ? number_format(round($dt['implisit_yoy'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td style="@if($dt['implisit_qtq']>=10) background-color: yellow @endif">
-                                                    {{ array_key_exists('implisit_qtq', $dt) && $dt['implisit_qtq'] ? round($dt['implisit_qtq'], 2) : '' }}
+                                                <td
+                                                    style="@if (abs($dt['implisit_qtq']) >= 5) background-color: yellow @endif">
+                                                    {{ array_key_exists('implisit_qtq', $dt) && $dt['implisit_qtq'] ? number_format(round($dt['implisit_qtq'], 2), 2, ',', '.') : '' }}
                                                 </td>
-                                                <td style="@if($dt['implisit_ctc']>=10) background-color: yellow @endif">
-                                                    {{ array_key_exists('implisit_ctc', $dt) && $dt['implisit_ctc'] ? round($dt['implisit_ctc'], 2) : '' }}
+                                                <td
+                                                    style="@if (abs($dt['implisit_ctc']) >= 5) background-color: yellow @endif">
+                                                    {{ array_key_exists('implisit_ctc', $dt) && $dt['implisit_ctc'] ? number_format(round($dt['implisit_ctc'], 2), 2, ',', '.') : '' }}
                                                 </td>
                                             </tr>
                                         @endforeach

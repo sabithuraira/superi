@@ -57,8 +57,8 @@
                         @endcan
                         @if (Auth::user()->kdkab == '00')
                             @can('tabel_resume')
-                                <li class="{{ request()->is('tabel/resume') ? 'active' : '' }}">
-                                    <a href="{{ url('tabel/resume') }}">Tabel Resume Per Komponen</a>
+                                <li class="{{ request()->is('pdrb_resume/2.1') ? 'active' : '' }}">
+                                    <a href="{{ url('pdrb_resume/2.1') }}">Tabel Resume Per Komponen</a>
                                 </li>
                             @endcan
                         @endif

@@ -891,11 +891,11 @@ class TabelRingkasanController extends Controller
             for ($i = 1; $i <= $arr_periode[1]; $i++) {
                 $q[] = $i;
             }
-            $dk_c0    = $this->get_data_cumulative(0, "00", $arr_periode[0], $q, 2, 1); //, $rev_c);
-            $dk_c1    = $this->get_data_cumulative(0, "00", $arr_periode[0] - 1, $q, 2, 1); //, $rev_c_1);
-            $dk_c2    = $this->get_data_cumulative(0, "00", $arr_periode[0] - 2, $q, 2, 1); //, $rev_c_2);
-            $dk_hb_y0 = $this->get_data_cumulative(0, "00", $arr_periode[0], [$arr_periode[1]], 1, 1);
-            $dk_hb_y1 = $this->get_data_cumulative(0, "00", $arr_periode[0] - 1, [$arr_periode[1]], 1, 1);
+            $dk_c0    = $this->get_data_cumulative(1, "00", $arr_periode[0], $q, 2, 1); //, $rev_c);
+            $dk_c1    = $this->get_data_cumulative(1, "00", $arr_periode[0] - 1, $q, 2, 1); //, $rev_c_1);
+            $dk_c2    = $this->get_data_cumulative(1, "00", $arr_periode[0] - 2, $q, 2, 1); //, $rev_c_2);
+            $dk_hb_y0 = $this->get_data_cumulative(1, "00", $arr_periode[0], [$arr_periode[1]], 1, 1);
+            $dk_hb_y1 = $this->get_data_cumulative(1, "00", $arr_periode[0] - 1, [$arr_periode[1]], 1, 1);
         } else {
             $dk_y0 = $this->get_data_cumulative(1, "00", $arr_periode[0], [1, 2, 3, 4], 2, 1);
             $dk_y1 = $this->get_data_cumulative(1, "00", $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1);
@@ -905,8 +905,8 @@ class TabelRingkasanController extends Controller
             $dk_c0    = $dk_y0;
             $dk_c1    = $dk_y1;
             $dk_c2    = $dk_y2;
-            $dk_hb_y0 = $this->get_data_cumulative(0, "00", $arr_periode[0], [1, 2, 3, 4], 1, 1);
-            $dk_hb_y1 = $this->get_data_cumulative(0, "00", $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);
+            $dk_hb_y0 = $this->get_data_cumulative(1, "00", $arr_periode[0], [1, 2, 3, 4], 1, 1);
+            $dk_hb_y1 = $this->get_data_cumulative(1, "00", $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1);
         }
 
         if ($id == "1.4") {
@@ -1230,10 +1230,10 @@ class TabelRingkasanController extends Controller
                 'name' => 'Total 17 Kabkot',
                 'alias' => '17 kabkot'
             ];
-            if ($dk_y0) {
+            if ($dk_hb_y0) {
                 foreach ($komponens as $komp) {
                     $komp_id = $komp['id'];
-                    $data['total_kabkot'][$komp_id] = isset($dk_y0->$komp_id) ? $dk_y0->$komp_id : null;
+                    $data['total_kabkot'][$komp_id] = isset($dk_hb_y0->$komp_id) ? $dk_hb_y0->$komp_id : null;
                 }
             }
         } else if ($id == "1.16") {
@@ -1262,10 +1262,10 @@ class TabelRingkasanController extends Controller
                 'name' => 'Total 17 Kabkot',
                 'alias' => '17 kabkot'
             ];
-            if ($dk_hb_y0) {
+            if ($dk_y0) {
                 foreach ($komponens as $komp) {
                     $komp_id = $komp['id'];
-                    $data['total_kabkot'][$komp_id] = isset($dk_hb_y0->$komp_id) ? $dk_hb_y0->$komp_id : null;
+                    $data['total_kabkot'][$komp_id] = isset($dk_y0->$komp_id) ? $dk_y0->$komp_id : null;
                 }
             }
         }

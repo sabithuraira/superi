@@ -70,6 +70,8 @@ Route::group(['middleware' => ['permission:tabel_resume']], function () {
     Route::post('tabel/resume', 'ResumeController@get');
     Route::post('tabel/resume/export', 'ResumeController@export');
     Route::post('tabel/resume/exportall', 'ResumeController@export_all');
+
+    Route::get('pdrb_resume/{id}', 'ResumeController2@index');
 });
 
 Route::group(['middleware' => ['permission:tabel_kabkot']], function () {

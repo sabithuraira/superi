@@ -320,7 +320,7 @@
             var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
                 .selectedIndex];
             var wilayah = wilayah_option.getAttribute('data-id');
-            form.action = APP_URL + '/pdrb_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
+            form.action = APP_URL + '/' + URL_SEGMENT + '/' + data_id + '?wilayah_filter=' + wilayah;
             form.submit();
         }
 

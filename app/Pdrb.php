@@ -16,57 +16,58 @@ class Pdrb extends Model
         4 => 'Reject By Admin',
     ];
 
-    public function getPdrb($wilayah, $tahun, $triwulan){
+    public function getPdrb($wilayah, $tahun, $triwulan, $status)
+    {
         $datas = [
-            'adhb' => $this->queryPdrb($wilayah, $tahun, $triwulan, 1),
-            'adhk' => $this->queryPdrb($wilayah, $tahun, $triwulan, 2),
-        ];        
+            'adhb' => $this->queryPdrb($wilayah, $tahun, $triwulan, 1, $status),
+            'adhk' => $this->queryPdrb($wilayah, $tahun, $triwulan, 2, $status),
+        ];
 
         return $datas;
     }
 
-    private function queryPdrb($wilayah, $tahun, $triwulan, $adhb_or_adhk){
-        if($triwulan==4){
+    private function queryPdrb($wilayah, $tahun, $triwulan, $adhb_or_adhk, $status)
+    {
+        if ($triwulan == 4) {
             $datas = [null, null, null, null, null, null, null, null, null, null, null, null];
 
-            for($x=($tahun-2);$x<=$tahun;$x++){
-                $sql = "SELECT * from superi_pdrb 
-                    WHERE 
-                        kode_prov='16' AND 
-                        kode_kab='$wilayah' AND 
-                        tahun='$x' AND 
-                        adhb_or_adhk=$adhb_or_adhk AND 
-                        status_data>=1
+            for ($x = $tahun - 2; $x <= $tahun; $x++) {
+                $sql = "SELECT * from superi_pdrb
+                    WHERE
+                        kode_prov='16' AND
+                        kode_kab='$wilayah' AND
+                        tahun='$x' AND
+                        adhb_or_adhk=$adhb_or_adhk AND
+                        status_data >= $status
                     ORDER BY  q ASC, revisi_ke DESC";
 
                 $result = DB::select(DB::raw($sql));
 
-                $idx = $x - ($tahun-2);
-                foreach($result as $value){
-                    if($datas[($idx*4)+($value->q-1)]==null){
-                        $datas[($idx*4)+($value->q-1)] = $value;
+                $idx = $x - ($tahun - 2);
+                foreach ($result as $value) {
+                    if ($datas[$idx * 4 + ($value->q - 1)] == null) {
+                        $datas[$idx * 4 + ($value->q - 1)] = $value;
                     }
                 }
             }
-    
+
             return $datas;
-        }
-        else{
-            $sql = "SELECT * from superi_pdrb 
-                WHERE 
-                    kode_prov='16' AND 
-                    kode_kab='$wilayah' AND 
-                    tahun='$tahun' AND 
-                    adhb_or_adhk=$adhb_or_adhk AND 
-                    status_data>=1
+        } else {
+            $sql = "SELECT * from superi_pdrb
+                WHERE
+                    kode_prov='16' AND
+                    kode_kab='$wilayah' AND
+                    tahun='$tahun' AND
+                    adhb_or_adhk=$adhb_or_adhk AND
+                    status_data>= $status
                 ORDER BY  q ASC, revisi_ke DESC";
 
             $datas = [null, null, null, null];
             $result = DB::select(DB::raw($sql));
-    
-            foreach($result as $value){
-                if($datas[$value->q-1]==null){
-                    $datas[$value->q-1] = $value;
+
+            foreach ($result as $value) {
+                if ($datas[$value->q - 1] == null) {
+                    $datas[$value->q - 1] = $value;
                 }
             }
             return $datas;

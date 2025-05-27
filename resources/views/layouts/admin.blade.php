@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{ env('APP_NAME', 'SUPERI') }}</title>
+    <title>{{ env('APP_NAME', 'RESPEK-Sumsel beb') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
@@ -54,6 +54,30 @@
                         </div>
                     </div>
                 </div>
+                @if (session('message'))
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <i class="fa fa-info-circle"></i>{{ session('message') }}
+                    </div>
+                @endif
+
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <i class="fa fa-check-circle"></i>{{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span></button>
+                        <i class="fa fa-times-circle"></i> {{ session('error') }}
+                    </div>
+                @endif
+
 
                 @yield('content')
 
@@ -61,7 +85,8 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-body">
-                                <div class="text-center"><img src="{!! asset('lucid/assets/images/loading.gif') !!}" width="200" height="200" alt="Loading..."></div>
+                                <div class="text-center"><img src="{!! asset('lucid/assets/images/loading.gif') !!}" width="200"
+                                        height="200" alt="Loading..."></div>
                                 <h4 class="text-center">Please wait...</h4>
                             </div>
                         </div>

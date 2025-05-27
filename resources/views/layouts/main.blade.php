@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-<title>{{ env('APP_NAME', 'SUPERI') }}</title>
+<title>{{ env('APP_NAME', 'RESPEK-Sumsel beb') }}</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -30,7 +30,7 @@
 <div class="page-loader-wrapper">
     <div class="loader">
         <div class="m-t-30"><img src="{!! asset('lucid/assets/images/logo-icon.svg') !!}" width="48" height="48" alt="Lucid"></div>
-        <p>Please wait...</p>        
+        <p>Please wait...</p>
     </div>
 </div>
 <!-- Overlay For Sidebars -->
@@ -40,18 +40,18 @@
     <nav class="navbar navbar-fixed-top">
         <div class="container">
             <div class="navbar-brand">
-                <a href="index.html"><img src="{!! asset('lucid/assets/images/logo.svg') !!}" alt="Lucid Logo" class="img-responsive logo"></a>                
+                <a href="index.html"><img src="{!! asset('lucid/assets/images/logo.svg') !!}" alt="Lucid Logo" class="img-responsive logo"></a>
             </div>
-            
+
             <div class="navbar-right">
                 <form id="navbar-search" class="navbar-form search-form">
                     <input value="" class="form-control" placeholder="Search here..." type="text">
                     <button type="button" class="btn btn-default"><i class="icon-magnifier"></i></button>
-                </form>    
-                
+                </form>
+
                 <div id="navbar-menu">
                     <ul class="nav navbar-nav">
-                        
+
                         <li>
                         @if (Auth::check())
                             <div class="user-account margin-0">
@@ -88,14 +88,14 @@
                             <a href="{{url('login')}}" class="icon-menu d-none d-sm-block rightbar_btn"><i class="icon-login"></i> Login</a>
                         @endif
                         </li>
-                        
+
                     </ul>
                 </div>
             </div>
 
         </div>
     </nav>
-    
+
     <div class="main_menu">
         <nav class="navbar navbar-expand-lg">
             <div class="container">
@@ -115,7 +115,7 @@
 
             </div>
         </nav>
-    </div>    
+    </div>
 
     <div id="main-content">
         <div class="container">
@@ -141,7 +141,7 @@
                                 <ul class="chat-widget m-r-5 clearfix">
                                     <li class="left float-left">
                                         <img src="{!! asset('lucid/assets/images/xs/avatar2.jpg') !!}" class="rounded-circle" alt="">
-                                        <div class="chat-info">       
+                                        <div class="chat-info">
                                             <span class="message">Hello, John<br>What is the update on Project X?</span>
                                         </div>
                                     </li>
@@ -169,8 +169,8 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" ><i class="icon-paper-plane"></i></span>
                                 </div>
-                                <input type="text" class="form-control" placeholder="Enter text here...">                                    
-                            </div>                            
+                                <input type="text" class="form-control" placeholder="Enter text here...">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -218,7 +218,7 @@
                             </div>
                         </div>
                     </div>
-                </div>                
+                </div>
             </div>
 
             <div class="row clearfix">
@@ -263,7 +263,7 @@
                                         <h4 class="title">7 New Orders <small class="float-right text-muted">11:35</small></h4>
                                         <small>You received a new oder from Tina.</small>
                                     </div>
-                                </li>                                   
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -293,8 +293,8 @@
                                                 <span class="badge badge-outline status"></span>
                                             </div>
                                         </div>
-                                    </a>                            
-                                </li>                                
+                                    </a>
+                                </li>
                                 <li class="online">
                                     <a href="javascript:void(0);">
                                         <div class="media">
@@ -305,7 +305,7 @@
                                                 <span class="badge badge-outline status"></span>
                                             </div>
                                         </div>
-                                    </a>                            
+                                    </a>
                                 </li>
                                 <li class="online">
                                     <a href="javascript:void(0);">
@@ -318,8 +318,8 @@
                                             </div>
                                         </div>
                                     </a>
-                                </li>                        
-                            </ul>                            
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -382,7 +382,7 @@
                                         </div>
                                     </div>
 
-                                </div>                                
+                                </div>
                             </div>
 
                             <div class="timeline-item blue" date-is="19-04-2018 - Yesterday">
@@ -434,11 +434,11 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 
 <!-- Javascript -->
-<script src="{!! asset('assets_hmenu/bundles/libscripts.bundle.js') !!}"></script>    
+<script src="{!! asset('assets_hmenu/bundles/libscripts.bundle.js') !!}"></script>
 <script src="{!! asset('assets_hmenu/bundles/vendorscripts.bundle.js') !!}"></script>
 
 <script src="{!! asset('assets_hmenu/bundles/chartist.bundle.js') !!}"></script>

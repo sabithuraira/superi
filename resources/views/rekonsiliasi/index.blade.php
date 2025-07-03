@@ -32,14 +32,14 @@
             position: sticky;
             top: 0;
             z-index: 15;
-            background: white;
+            /* background: white; */
         }
 
         .fixed-col {
             position: sticky;
             left: 0;
             z-index: 15;
-            background: white;
+            /* background: white; */
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
 
@@ -48,7 +48,7 @@
             left: 0;
             top: 0;
             z-index: 30;
-            background: white;
+            /* background: white; */
             box-shadow:
                 2px 0 5px rgba(0, 0, 0, 0.1),
                 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -59,7 +59,7 @@
             top: 40px;
             /* Adjust based on row height */
             z-index: 15;
-            background: white;
+            /* background: white; */
         }
 
         .fixed-row-3 {
@@ -67,13 +67,29 @@
             top: 80px;
             /* Adjust based on cumulative height */
             z-index: 15;
-            background: white;
+            /* background: white; */
         }
 
         /* Pastikan tidak ada transform yang mengganggu */
         table {
             border-collapse: separate;
             border-spacing: 0;
+        }
+
+        .bg-tw1 {
+            background-color: #ffee8e;
+        }
+
+        .bg-tw2 {
+            background-color: #a6ff98;
+        }
+
+        .bg-tw3 {
+            background-color: #a3c6fa;
+        }
+
+        .bg-tw4 {
+            background-color: #ff8e8e;
         }
     </style>
 @endsection
@@ -274,44 +290,50 @@
                         if (data.data.length === 0) return;
 
                         periode_header =
-                            '<tr><th rowspan = 3 class=" sticky-cell fixed-row-1 fixed-col ">Kabupaten/Kota</th>';
+                            '<tr><th rowspan = 3 class="sticky-cell fixed-row-1 fixed-col bg-white">Kabupaten/Kota</th>';
 
+                        // color_header = "";
                         self.periode_filter.forEach(periode => {
-                            periode_header += '<th colspan=16 class="fixed-row-1">' + periode + ' </th>';
+                            color_header = getHeaderColor(periode);
+
+                            periode_header += '<th colspan=16 class="fixed-row-1 ' + color_header + '">' + periode + '</th>';
                         })
-                        str_header = periode_header += '</tr>';
-                        str_header = str_header += `<tr >`
+
+                        str_header = periode_header += '</tr>'
+                        str_header = str_header += `<tr>`
                         self.periode_filter.forEach(periode => {
+                            color_header = getHeaderColor(periode);
                             str_header = str_header += `
-                            <th colspan = 3 class="fixed-row-2">Berlaku</th>
-                            <th colspan = 3 class="fixed-row-2">Konstan</th>
-                            <th colspan = 2 class="fixed-row-2">Pertumbuhan QtoQ</th>
-                            <th colspan = 2 class="fixed-row-2">Pertumbuhan YtoY</th>
-                            <th colspan = 2 class="fixed-row-2">Pertumbuhan CtoC</th>
-                            <th colspan = 2 class="fixed-row-2">Indeks Implisit</th>
-                            <th colspan = 2 class="fixed-row-2">Laju Implisit</th>
+                            <th colspan = 3 class="fixed-row-2 ` + color_header + `">Berlaku</th>
+                            <th colspan = 3 class="fixed-row-2 ` + color_header + `">Konstan</th>
+                            <th colspan = 2 class="fixed-row-2 ` + color_header + `">Pertumbuhan QtoQ</th>
+                            <th colspan = 2 class="fixed-row-2 ` + color_header + `">Pertumbuhan YtoY</th>
+                            <th colspan = 2 class="fixed-row-2 ` + color_header + `">Pertumbuhan CtoC</th>
+                            <th colspan = 2 class="fixed-row-2 ` + color_header + `">Indeks Implisit</th>
+                            <th colspan = 2 class="fixed-row-2 ` + color_header + `">Laju Implisit</th>
                             `;
                         })
                         str_header = str_header += `</tr>`
                         str_header = str_header += `<tr>`
                         self.periode_filter.forEach(periode => {
+                            color_header = getHeaderColor(periode);
                             str_header = str_header += `
-                            <th class="fixed-row-3">PDRB</th>
-                            <th class="fixed-row-3">Adj</th>
-                            <th class="fixed-row-3">PDRB+Adj</th>
-                            <th class="fixed-row-3">PDRB</th>
-                            <th class="fixed-row-3">Adj</th>
-                            <th class="fixed-row-3">PDRB+Adj</th>
-                            <th class="fixed-row-3">PDRB </th>
-                            <th class="fixed-row-3">PDRB+Adj</th>
-                            <th class="fixed-row-3">PDRB </th>
-                            <th class="fixed-row-3">PDRB+Adj</th>
-                            <th class="fixed-row-3">PDRB </th>
-                            <th class="fixed-row-3">PDRB+Adj</th>
-                            <th class="fixed-row-3">PDRB </th>
-                            <th class="fixed-row-3">PDRB+Adj</th>
-                            <th class="fixed-row-3">PDRB </th>
-                            <th class="fixed-row-3">PDRB+Adj</th>`;
+                            <th class="fixed-row-3 ` + color_header + `">PDRB</th>
+                            <th class="fixed-row-3  ` + color_header + `">Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB</th>
+                            <th class="fixed-row-3 ` + color_header + `">Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB </th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB </th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB </th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB </th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB </th>
+                            <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>`;
                         })
                         str_header = str_header += `</tr>`
                         $('#thead-row').append(str_header);
@@ -321,7 +343,7 @@
                         data.data.forEach(row => {
                             let rowHtml = '<tr class ="text-right">';
                             rowHtml +=
-                                `<td class = "text-left fixed-col">[${row['kode_kab']??''}] ${row['nama_kab'] ?? ''}</td>`
+                                `<td class = "text-left fixed-col bg-white">[${row['kode_kab']??''}] ${row['nama_kab'] ?? ''}</td>`
 
                             self.periode_filter.forEach(periode => {
                                 const adhb = row[periode + '_adhb'] !== null && row[periode + '_adhb'] !== undefined ?
@@ -361,11 +383,10 @@
                                     ((adhb + adhb_adj) / (adhk + adhk_adj) * 100) : "";
 
                                 const laju_implisit = adhb != "" && adhk != "" && adhb_y1 != "" && adhk_y1 != "" ?
-                                    ((adhb / adhk * 100) - (adhb_y1 / adhk_y1 * 100) / (adhb_y1 / adhk_y1 * 100) *
-                                        100) : "";
+                                    ((adhb / adhk * 100) / (adhb_y1 / adhk_y1 * 100) * 100 - 100) : "";
                                 const laju_implisit_adj = adhb != "" && adhk != "" && adhb_y1 != "" && adhk_y1 != "" ?
-                                    (((adhb + adhb_adj) / (adhk + adhk_adj) * 100) - (adhb_y1 / adhk_y1 * 100) /
-                                        (adhb_y1 / adhk_y1 * 100) * 100) : "";
+                                    (((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (adhb_y1 / adhk_y1 * 100) *
+                                        100) - 100 : "";
 
                                 rowHtml += `
                                     <td data-adhb="${adhb}"
@@ -597,13 +618,14 @@
         });
 
         $(document).on('input', 'input[type="text"]', function() {
-            this.value = this.value.replace(/[^0-9,.]/g, ''); // hanya angka dan titik
+            this.value = this.value.replace(/[^0-9,.-]/g, ''); // hanya angka dan titik
         });
 
         $(document).on('input', '.text_edit_adhb', function() {
             const input = $(this);
             const adhb_adj = parseNumberIndonesian(input.val()) || 0;
             const adhk_adj = parseNumberIndonesian(input.closest('td').nextAll().eq(2).find('input').val() || 0);
+
             const adhb_cell = input.closest('td').prev('td');
             const adhb_adj_cell = input.closest('td').nextAll('td').eq(0);
             const adhk_cell = input.closest('td').nextAll('td').eq(1);
@@ -626,15 +648,19 @@
             yty_adj_cell.text(adhb_y1 != "" && adhb_y1 != 0 ? formatNumber((adhb + adhb_adj - adhb_y1) / adhb_y1 * 100) : "");
             ctc_adj_cell.text(adhb_c1 != "" && adhb_c1 != 0 ? formatNumber((adhb_c + adhb_adj - adhb_c1) / adhb_c1 * 100) : "");
             implisit_adj_cell.text(adhk != "" && adhk != 0 ? formatNumber((adhb + adhb_adj) / (adhk + adhk_adj) * 100) : "");
+            laju_implisit_adj_cell.text(adhk != "" && adhk != 0 && adhk_y1 != "" && adhk_y1 != 0 ?
+                formatNumber((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (adhb_y1 / adhk_y1 * 100) * 100) - 100) : "");
 
-
-            formatedtext = formatText(input.val())
+            formatedtext = formatText(input.val());
             $(this).val(formatedtext);
 
         });
 
         $(document).on('input', '.text_edit_adhk', function() {
             const input = $(this);
+            const adhb_adj = parseNumberIndonesian(input.closest('td').prevAll().eq(2).find('input').val() || 0);
+            const adhk_adj = parseNumberIndonesian(input.val()) || 0;
+
             const adhb_cell = input.closest('td').prevAll().eq(3);
             const adhb_adj_cell = input.closest('td').prevAll('td').eq(0);
             const adhk_cell = input.closest('td').prevAll('td').eq(0);
@@ -642,25 +668,21 @@
             const qtq_adj_cell = input.closest('td').nextAll('td').eq(2);
             const yty_adj_cell = input.closest('td').nextAll('td').eq(4);
             const ctc_adj_cell = input.closest('td').nextAll('td').eq(6);
-            // const implisit_adj_cell = input.closest('td').nextAll('td').eq(8);
-            // const laju_implisit_adj_cell = input.closest('td').nextAll('td').eq(10);
+            const implisit_adj_cell = input.closest('td').nextAll('td').eq(8);
+            const laju_implisit_adj_cell = input.closest('td').nextAll('td').eq(10);
 
-            const adhb_adj = parseFloat(input.closest('td').prevAll().eq(2).find('input').val() || 0);
-            const adhk_adj = parseFloat(input.val()) || 0;
+            const adhb = parseNumberIndonesian(adhb_cell.text()) || 0;
+            const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
+            const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
+            const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
 
-            const adhb = parseFloat(adhb_cell.text()) || 0;
-            const adhk = parseFloat(adhk_cell.text()) || 0;
-            const adhb_y1 = adhb_cell.data('adhb_y1');
-            // const adhb_q1 = adhb_cell.data('adhb_q1');
-            // const adhb_c = adhb_cell.data('adhb_c');
-            // const adhb_c1 = adhb_cell.data('adhb_c1');
-            const adhk_y1 = adhk_cell.data('adhb_y1');
+            adhk_adj_cell.text(formatNumber(adhk + adhk_adj));
+            implisit_adj_cell.text(adhk != "" && adhk != 0 ? formatNumber((adhb + adhb_adj) / (adhk + adhk_adj) * 100) : "");
+            laju_implisit_adj_cell.text(adhk != "" && adhk != 0 && adhk_y1 != "" && adhk_y1 != 0 ?
+                formatNumber((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (adhb_y1 / adhk_y1 * 100) * 100) - 100) : "");
 
-            adhk_adj_cell.text((adhk + adhk_adj).toFixed(2));
-            // qtq_adj_cell.text(adhb_q1 != "" && adhb_q1 != 0 ? ((adhb + adhb_adj - adhb_q1) / adhb_q1 * 100).toFixed(2) : "");
-            // yty_adj_cell.text(adhb_y1 != "" && adhb_y1 != 0 ? ((adhb + adhb_adj - adhb_y1) / adhb_y1 * 100).toFixed(2) : "");
-            // ctc_adj_cell.text(adhb_c1 != "" && adhb_c1 != 0 ? ((adhb_c + adhb_adj - adhb_c1) / adhb_c1 * 100).toFixed(2) : "");
-            implisit_adj_cell.text(adhk != "" && adhk != 0 ? ((adhb + adhb_adj) / (adhk + adhk_adj) * 100).toFixed(2) : "");
+            formatedtext = formatText(input.val());
+            $(this).val(formatedtext);
         });
 
         $('#periodeModal').on('hidden.bs.modal', function() {
@@ -696,7 +718,7 @@
 
         function formatText(input) {
             // 1. Hapus semua karakter kecuali angka dan koma
-            value = input.replace(/[^\d,]/g, '');
+            value = input.replace(/[^\d,-]/g, '');
 
             // 2. Pisahkan bagian bulat dan desimal
             let parts = value.split(',');
@@ -711,6 +733,27 @@
 
             // 5. Update nilai input
             return formattedValue
+        }
+
+        function getHeaderColor(periode) {
+            triwulan = periode.substring(5, 6)
+            switch (triwulan) {
+                case "1":
+                    color_header = "bg-tw1"
+                    break;
+                case "2":
+                    color_header = "bg-tw2"
+                    break;
+                case "3":
+                    color_header = "bg-tw3"
+                    break;
+                case "4":
+                    color_header = "bg-tw4"
+                    break;
+                default:
+                    color_header = ""
+            }
+            return color_header;
         }
     </script>
 @endsection

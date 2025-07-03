@@ -5,12 +5,10 @@
                 <img src="{!! Auth::user()->fotoUrl !!}" class="rounded-circle user-photo" alt="User Profile Picture">
                 <div class="dropdown">
                     <span>Welcome,</span>
-                    <a href="javascript:void(0);" class="dropdown-toggle user-name"
-                        data-toggle="dropdown"><strong>{{ Auth::user()->name }}</strong></a>
+                    <a href="javascript:void(0);" class="dropdown-toggle user-name" data-toggle="dropdown"><strong>{{ Auth::user()->name }}</strong></a>
                     <ul class="dropdown-menu dropdown-menu-right account">
                         <li>
-                            <a href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Logout
                             </a>
 
@@ -35,8 +33,7 @@
                         <span>Upload</span></a>
                     <ul>
                         @can('import_pdrb')
-                            <li class="{{ request()->is('upload/import*') ? 'active' : '' }}"><a
-                                    href="{{ url('upload/import') }}">Angka PDRB</a></li>
+                            <li class="{{ request()->is('upload/import*') ? 'active' : '' }}"><a href="{{ url('upload/import') }}">Angka PDRB</a></li>
                         @endcan
                         @can('import_fenomena')
                             <li class="{{ request()->is('upload/fenomena_import*') ? 'active' : '' }}"><a
@@ -45,7 +42,8 @@
                     </ul>
                 </li>
 
-                <li class="{{ request()->is('pdrb_*') || request()->is('tabel/resume') ? 'active' : '' }}">
+                <li
+                    class="{{ request()->is('pdrb_*') || request()->is('tabel_resume') || request()->is('tabel_kabkot') || request()->is('tabel_history') ? 'active' : '' }}">
                     <a href="#Tabel" class="has-arrow"><i class="icon-calendar"></i>
                         <span>Tabel PDRB</span></a>
                     <ul>
@@ -71,31 +69,31 @@
                             </li>
                         @endcan
                         @can('tabel_history')
-                            <li class="{{ request()->is('pdrb_putaran*') ? 'active' : '' }}"><a
-                                    href="{{ url('pdrb_putaran/3.1') }}">Tabel History Putaran</a></li>
+                            <li class="{{ request()->is('pdrb_putaran*') ? 'active' : '' }}"><a href="{{ url('pdrb_putaran/3.1') }}">Tabel History
+                                    Putaran</a></li>
                         @endcan
                     </ul>
                 </li>
 
-                <li class="{{ request()->is('revisi*') ? 'active' : '' }}">
+                <li class="{{ request()->is('arah_revisi_total*') || request()->is('arah_revisi_kabkota*') ? 'active' : '' }}">
                     <a href="#Revisi" class="has-arrow"><i class="icon-directions"></i>
                         <span>Arah Revisi</span></a>
                     <ul>
                         @can('arah_revisi_total')
-                            <li class="{{ request()->is('revisi_total*') ? 'active' : '' }}"><a
-                                    href="{{ url('revisi_total/2.1') }}">Total</a></li>
+                            <li class="{{ request()->is('revisi_total*') ? 'active' : '' }}"><a href="{{ url('revisi_total/2.1') }}">Total</a></li>
                         @endcan
 
                         @can('arah_revisi_kabkota')
-                            <li class="{{ request()->is('revisi_kabkot*') ? 'active' : '' }}"><a
-                                    href="{{ url('revisi_kabkot/301') }}">Kab/Kota</a></li>
+                            <li class="{{ request()->is('revisi_kabkot*') ? 'active' : '' }}"><a href="{{ url('revisi_kabkot/301') }}">Kab/Kota</a></li>
                         @endcan
                     </ul>
                 </li>
 
-                <li class="">
-                    <a href="#Fenomena" class="has-arrow"><i class="fa fa-quote-right"></i>
-                        <span>Fenomena</span></a>
+                <li>
+                    <a href="{{ url('rekonsiliasi') }}" class="has-arrow">
+                        <i class="fa fa-quote-right"></i>
+                        <span>Fenomena</span>
+                    </a>
                     <ul>
                         @can('fenomena_total')
                             <li class=""><a href="#">Total</a></li>
@@ -106,7 +104,19 @@
                         @endcan
                     </ul>
                 </li>
+                <li class="{{ request()->is('rekonsiliasi*') || request()->is('simulasi*') ? 'active' : '' }}">
+                    <a href="#Rekonsiliasi" class="has-arrow"><i class="fa fa-pencil-square-o"></i>
+                        <span>Rekonsiliasi</span></a>
+                    <ul>
+                        @can('rekonsiliasi')
+                            <li class="{{ request()->is('rekonsiliasi*') ? 'active' : '' }}"><a href="{{ url('rekonsiliasi') }}">Rekonsiliasi</a></li>
+                        @endcan
 
+                        @can('simulasi')
+                            <li class="{{ request()->is('simulasi*') ? 'active' : '' }}"><a href="{{ url('simulasi') }}">Simulasi</a></li>
+                        @endcan
+                    </ul>
+                </li>
                 @hasrole('superadmin')
                     <li class="{{ request()->is('authorization/*') ? 'active' : '' }}">
                         <a href="#Superadmin" class="has-arrow"><i class="icon-settings"></i>
@@ -114,12 +124,12 @@
                         <ul>
                             <li class="{{ request()->is('authorization/permission') ? 'active' : '' }}"><a
                                     href="{{ url('authorization/permission') }}">Permission</a></li>
-                            <li class="{{ request()->is('authorization/role') ? 'active' : '' }}"><a
-                                    href="{{ url('authorization/role') }}">Role</a></li>
-                            <li class="{{ request()->is('authorization/user') ? 'active' : '' }}"><a
-                                    href="{{ url('authorization/user') }}">User Role</a></li>
-                            <li class="{{ request()->is('setting_app') ? 'active' : '' }}"><a
-                                    href="{{ url('setting_app') }}">Konfigurasi Aplikasi</a></li>
+                            <li class="{{ request()->is('authorization/role') ? 'active' : '' }}"><a href="{{ url('authorization/role') }}">Role</a>
+                            </li>
+                            <li class="{{ request()->is('authorization/user') ? 'active' : '' }}"><a href="{{ url('authorization/user') }}">User
+                                    Role</a></li>
+                            <li class="{{ request()->is('setting_app') ? 'active' : '' }}"><a href="{{ url('setting_app') }}">Konfigurasi Aplikasi</a>
+                            </li>
                         </ul>
                     </li>
                 @endhasrole

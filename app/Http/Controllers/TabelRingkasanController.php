@@ -1077,7 +1077,7 @@ class TabelRingkasanController extends Controller
                 if ($pdrb_hb && $pdrb_hk && $pdrb_hb_1 && $pdrb_hk_1) {
                     foreach ($komponens as $komp) {
                         $komp_id = $komp['id'];
-                        $row[$komp_id] = isset($pdrb_hk->$komp_id) && $pdrb_hk->$komp_id != 0 && isset($pdrb_hb_1->$komp_id) && $pdrb_hb_1->$komp_id != 0 && isset($pdrb_hk_1->$komp_id) && $pdrb_hk_1->$komp_id != 0 ? ((($pdrb_hb->$komp_id / $pdrb_hk->$komp_id) * 100 - ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id) * 100) / (($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id) * 100)) * 100 : null;
+                        $row[$komp_id] =  isset($pdrb_hb->$komp_id) && isset($pdrb_hk->$komp_id) && $pdrb_hk->$komp_id != 0 && isset($pdrb_hb_1->$komp_id) && $pdrb_hb_1->$komp_id != 0 && isset($pdrb_hk_1->$komp_id) && $pdrb_hk_1->$komp_id != 0 ? ((($pdrb_hb->$komp_id / $pdrb_hk->$komp_id) * 100 - ($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id) * 100) / (($pdrb_hb_1->$komp_id / $pdrb_hk_1->$komp_id) * 100)) * 100 : null;
                     }
                 }
                 $data[] = $row;
@@ -1090,7 +1090,16 @@ class TabelRingkasanController extends Controller
             if ($dk_hb_y0 && $dk_y0 && $dk_hb_y1 && $dk_y1) {
                 foreach ($komponens as $komp) {
                     $komp_id = $komp['id'];
-                    $data['total_kabkot'][$komp_id] = isset($dk_y0->$komp_id) && $dk_y0->$komp_id != 0 && isset($dk_hb_y1->$komp_id) && $dk_hb_y1->$komp_id != 0 && isset($dk_y1->$komp_id) && $dk_y1->$komp_id != 0 ? ((($pdrb_hb->$komp_id / $dk_y0->$komp_id) * 100 - ($dk_hb_y1->$komp_id / $dk_y1->$komp_id) * 100) / (($dk_hb_y1->$komp_id / $dk_y1->$komp_id) * 100)) * 100 : null;
+                    $data['total_kabkot'][$komp_id] =
+                        isset($dk_hb_y0->$komp_id)
+                        && isset($dk_y0->$komp_id)
+                        && $dk_y0->$komp_id != 0 &&
+                        isset($dk_hb_y1->$komp_id)
+                        && $dk_hb_y1->$komp_id != 0
+                        && isset($dk_y1->$komp_id)
+                        && $dk_y1->$komp_id != 0 ?
+                        ((($dk_hb_y0->$komp_id / $dk_y0->$komp_id) * 100 - ($dk_hb_y1->$komp_id / $dk_y1->$komp_id) * 100)
+                            / (($dk_hb_y1->$komp_id / $dk_y1->$komp_id) * 100)) * 100 : null;
                 }
             }
         } elseif ($id == '1.10') {
@@ -1142,7 +1151,15 @@ class TabelRingkasanController extends Controller
             if ($dk_hb_y0 && $dk_y0 && $dk_hb_q1 && $dk_q1) {
                 foreach ($komponens as $komp) {
                     $komp_id = $komp['id'];
-                    $data['total_kabkot'][$komp_id] = isset($dk_y0->$komp_id) && $dk_y0->$komp_id != 0 && isset($dk_hb_q1->$komp_id) && $dk_hb_q1->$komp_id != 0 && isset($dk_y1->$komp_id) && $dk_y1->$komp_id != 0 ? ((($pdrb_hb->$komp_id / $dk_y0->$komp_id) * 100 - ($dk_hb_q1->$komp_id / $dk_y1->$komp_id) * 100) / (($dk_hb_q1->$komp_id / $dk_y1->$komp_id) * 100)) * 100 : null;
+                    $data['total_kabkot'][$komp_id] =
+                        isset($dk_y0->$komp_id)
+                        && $dk_y0->$komp_id != 0
+                        && isset($dk_hb_q1->$komp_id)
+                        && $dk_hb_q1->$komp_id != 0
+                        && isset($dk_y1->$komp_id)
+                        && $dk_y1->$komp_id != 0 ?
+                        ((($dk_hb_y0->$komp_id / $dk_y0->$komp_id) * 100 - ($dk_hb_q1->$komp_id / $dk_y1->$komp_id) * 100)
+                            / (($dk_hb_q1->$komp_id / $dk_y1->$komp_id) * 100)) * 100 : null;
                 }
             }
         } elseif ($id == '1.15') {

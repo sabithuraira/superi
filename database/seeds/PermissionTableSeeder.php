@@ -17,16 +17,28 @@ class PermissionTableSeeder extends Seeder
         $role = Role::create(['name' => 'superadmin']);
         $role2 = Role::create(['name' => 'pemantau']);
         //add permission for all page
-        $arr = ['import_pdrb', 'import_fenomena', 'tabel_ringkasan', 'tabel_resume', 
-            'tabel_kabkot', 'tabel_history', 'arah_revisi_total', 'arah_revisi_kabkota', 'fenomena_total', 'fenomena_kabkota'];
+        $arr = [
+            'import_pdrb',
+            'import_fenomena',
+            'tabel_ringkasan',
+            'tabel_resume',
+            'tabel_kabkot',
+            'tabel_history',
+            'arah_revisi_total',
+            'arah_revisi_kabkota',
+            'fenomena_total',
+            'fenomena_kabkota',
+            'rekonsiliasi',
+            'simulasi'
+        ];
 
-        foreach($arr as $value){
+        foreach ($arr as $value) {
             Permission::create(['name' => $value]);
         }
-        
+
         $role->syncPermissions($arr);
-        $role2->syncPermissions(array_slice($arr,2));
-        
+        $role2->syncPermissions(array_slice($arr, 2));
+
         Role::create(['name' => 'approval_provinsi']);
         Role::create(['name' => 'approval_admin']);
     }

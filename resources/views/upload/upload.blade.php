@@ -530,6 +530,7 @@
                     }
                     return 0;
                 },
+
                 formatNumber(value) {
                     return new Intl.NumberFormat('id-ID', {
                         minimumFractionDigits: 2,
@@ -541,7 +542,6 @@
 
         $(document).ready(function() {
             vm.setDatas();
-
         });
     </script>
 @endsection

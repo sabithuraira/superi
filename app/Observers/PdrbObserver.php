@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Pdrb;
 use App\PdrbFinal;
+use App\Rekon;
 use App\SettingApp;
 
 class PdrbObserver
@@ -24,11 +25,11 @@ class PdrbObserver
         //                 ->where('kode_kab', $pdrb->kode_kab)
         //                 ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
         //                 ->first();
-        
+
         // if($pdrb_final!=null){
         //     $new_pdrb_final = $pdrb_final;
         // }
-        
+
         // $new_pdrb_final->tahun = $pdrb->tahun;
         // $new_pdrb_final->q = $pdrb->q;
         // $new_pdrb_final->adhb_or_adhk = $pdrb->adhb_or_adhk;
@@ -89,37 +90,47 @@ class PdrbObserver
      * @param  \App\Pdrb  $pdrb
      * @return void
      */
-    public function updated(Pdrb $pdrb){
+    public function updated(Pdrb $pdrb)
+    {
         //////
         $upload_tahun = date('Y');
         $upload_triwulan = 1;
-        
+
         $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
-        if($tahun_berlaku!=null) $upload_tahun = $tahun_berlaku->setting_value;
+        if ($tahun_berlaku != null) $upload_tahun = $tahun_berlaku->setting_value;
 
         $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
-        if($triwulan_berlaku!=null) $upload_triwulan = $triwulan_berlaku->setting_value;
+        if ($triwulan_berlaku != null) $upload_triwulan = $triwulan_berlaku->setting_value;
         /////////
 
         $pdrb_final = PdrbFinal::where('tahun', $pdrb->tahun)
-                        ->where('q', $pdrb->q)
-                        ->where('kode_prov', $pdrb->kode_prov)
-                        ->where('kode_kab', $pdrb->kode_kab)
-                        ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
-                        ->where('upload_tahun', $upload_tahun)
-                        ->where('upload_q', $upload_triwulan)
-                        ->first();
+            ->where('q', $pdrb->q)
+            ->where('kode_prov', $pdrb->kode_prov)
+            ->where('kode_kab', $pdrb->kode_kab)
+            ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
+            ->where('upload_tahun', $upload_tahun)
+            ->where('upload_q', $upload_triwulan)
+            ->first();
+        $rekon = Rekon::where('tahun', $pdrb->tahun)
+            ->where('q', $pdrb->q)
+            ->where('kode_prov', $pdrb->kode_prov)
+            ->where('kode_kab', $pdrb->kode_kab)
+            ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
+            ->where('upload_tahun', $upload_tahun)
+            ->where('upload_q', $upload_triwulan)
+            ->first();
 
-        if($pdrb->status_data==2){
+        if ($pdrb->status_data == 2) {
             $new_pdrb_final = new PdrbFinal;
+            $new_rekon = new Rekon();
 
-            if($pdrb_final!=null){
+            if ($pdrb_final != null) {
                 $new_pdrb_final = $pdrb_final;
             }
-            
+
             $new_pdrb_final->tahun = $pdrb->tahun;
             $new_pdrb_final->q = $pdrb->q;
-            
+
             $new_pdrb_final->upload_tahun = $upload_tahun;
             $new_pdrb_final->upload_q = $upload_triwulan;
 
@@ -174,6 +185,60 @@ class PdrbObserver
             $new_pdrb_final->c_8b     = $pdrb->c_8b;
             $new_pdrb_final->c_pdrb     = $pdrb->c_pdrb;
             $new_pdrb_final->save();
+
+            if ($rekon != null) {
+                $new_rekon = $rekon;
+            }
+            $new_rekon->revisi_ke = $rekon->revisi_ke;
+            $new_rekon->putaran = $rekon->putaran;
+            $new_rekon->status_data = $rekon->status_data;
+            $new_rekon->c_1 = $rekon->c_1;
+            $new_rekon->c_1a = $rekon->c_1a;
+            $new_rekon->c_1a_adj = null;
+            $new_rekon->c_1b = $rekon->c_1b;
+            $new_rekon->c_1b_adj = null;
+            $new_rekon->c_1c = $rekon->c_1c;
+            $new_rekon->c_1c_adj = null;
+            $new_rekon->c_1d = $rekon->c_1d;
+            $new_rekon->c_1d_adj = null;
+            $new_rekon->c_1e = $rekon->c_1e;
+            $new_rekon->c_1e_adj = null;
+            $new_rekon->c_1f = $rekon->c_1f;
+            $new_rekon->c_1f_adj = null;
+            $new_rekon->c_1g = $rekon->c_1g;
+            $new_rekon->c_1g_adj = null;
+            $new_rekon->c_1h = $rekon->c_1h;
+            $new_rekon->c_1h_adj = null;
+            $new_rekon->c_1i = $rekon->c_1i;
+            $new_rekon->c_1i_adj = null;
+            $new_rekon->c_1j = $rekon->c_1j;
+            $new_rekon->c_1j_adj = null;
+            $new_rekon->c_1k = $rekon->c_1k;
+            $new_rekon->c_1k_adj = null;
+            $new_rekon->c_1l = $rekon->c_1l;
+            $new_rekon->c_1l_adj = null;
+            $new_rekon->c_2 = $rekon->c_2;
+            $new_rekon->c_2_adj = null;
+            $new_rekon->c_3 = $rekon->c_3;
+            $new_rekon->c_3_adj = null;
+            $new_rekon->c_4 = $rekon->c_4;
+            $new_rekon->c_4a = $rekon->c_4a;
+            $new_rekon->c_4a_adj = null;
+            $new_rekon->c_4b = $rekon->c_4b;
+            $new_rekon->c_4b_adj = null;
+            $new_rekon->c_5 = $rekon->c_5;
+            $new_rekon->c_5_adj = null;
+            $new_rekon->c_6 = $rekon->c_6;
+            $new_rekon->c_6_adj = null;
+            $new_rekon->c_7 = $rekon->c_7;
+            $new_rekon->c_7_adj = null;
+            $new_rekon->c_pdrb = $rekon->c_pdrb;
+            $new_rekon->ketua_tim_id = $rekon->ketua_tim_id;
+            $new_rekon->pimpinan_id = $rekon->pimpinan_id;
+            $new_rekon->created_by = $rekon->created_by;
+            $new_rekon->updated_by = $rekon->updated_by;
+            $new_rekon->created_at = now();
+            $new_rekon->updated_at = now();
         }
         // elseif($pdrb->status_data==1){
         //     if($pdrb_final!=null){

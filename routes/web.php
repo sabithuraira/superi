@@ -101,6 +101,14 @@ Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {
 });
 
 
+Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {
+    Route::get('rekonsiliasi/', 'RekonsiliasiController@index');
+    Route::get('rekonsiliasi/get_data', 'RekonsiliasiController@get_data');
+    Route::post('rekonsiliasi/save_data', 'RekonsiliasiController@save_data');
+    Route::get('rekonsiliasi/sync_data', 'RekonsiliasiController@sync_data');
+});
+
+
 Route::group(['middleware' => ['permission:fenomena_total']], function () {});
 
 Route::group(['middleware' => ['permission:fenomena_kabkota']], function () {});

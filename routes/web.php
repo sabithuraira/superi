@@ -101,11 +101,19 @@ Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {
 });
 
 
-Route::group(['middleware' => ['permission:arah_revisi_kabkota']], function () {
+Route::group(['middleware' => ['permission:rekonsiliasi']], function () {
     Route::get('rekonsiliasi/', 'RekonsiliasiController@index');
     Route::get('rekonsiliasi/get_data', 'RekonsiliasiController@get_data');
     Route::post('rekonsiliasi/save_data', 'RekonsiliasiController@save_data');
     Route::get('rekonsiliasi/sync_data', 'RekonsiliasiController@sync_data');
+});
+
+Route::group(['middleware' => ['permission:simulasi']], function () {
+    Route::get('simulasi/', 'SimulasiController@index');
+    Route::get('simulasi/get_data', 'SimulasiController@get_data');
+    Route::get('simulasi/get_data_simulasi', 'SimulasiController@get_data_simulasi');
+    Route::post('simulasi/save_data', 'SimulasiController@save_data');
+    Route::get('simulasi/sync_data', 'SimulasiController@sync_data');
 });
 
 

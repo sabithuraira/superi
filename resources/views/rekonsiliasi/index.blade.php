@@ -9,6 +9,17 @@
 
 @section('css')
     <style>
+        /* Tambahkan di CSS Anda */
+        .modal.fade.show {
+            display: block !important;
+            opacity: 1 !important;
+            z-index: 1060 !important;
+        }
+
+        .modal-backdrop.fade.show {
+            z-index: 1050 !important;
+        }
+
         .dropdown-submenu {
             position: relative;
         }
@@ -228,7 +239,6 @@
 
 @section('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
-
     <script>
         var vm = new Vue({
             el: "#app_vue",
@@ -350,33 +360,33 @@
                                     parseFloat(row[periode + '_adhb']) : "";
                                 const adhb_adj = row[periode + '_adhb_adj'] !== null && row[periode + '_adhb_adj'] !==
                                     undefined ? parseFloat(row[periode + '_adhb_adj']) : 0;
-                                const adhb_q1 = row[periode + '_adhb_q1'] !== null && row[periode + '_adhb_q1'] !==
-                                    undefined ? parseFloat(row[periode + '_adhb_q1']) : "";
                                 const adhb_y1 = row[periode + '_adhb_y1'] !== null && row[periode + '_adhb_y1'] !==
                                     undefined ? parseFloat(row[periode + '_adhb_y1']) : "";
-                                const adhb_c = row[periode + '_adhb_c'] !== null && row[periode + '_adhb_c'] !==
-                                    undefined ? parseFloat(row[periode + '_adhb_c']) : "";
-                                const adhb_c1 = row[periode + '_adhb_c1'] !== null && row[periode + '_adhb_c1'] !==
-                                    undefined ? parseFloat(row[periode + '_adhb_c1']) : "";
+
                                 const adhk = row[periode + '_adhk'] !== null && row[periode + '_adhk'] !==
                                     undefined ? parseFloat(row[periode + '_adhk']) : "";
                                 const adhk_adj = row[periode + '_adhk_adj'] !== null && row[periode + '_adhk_adj'] !==
                                     undefined ? parseFloat(row[periode + '_adhk_adj']) : 0;
+                                const adhk_q1 = row[periode + '_adhk_q1'] !== null && row[periode + '_adhk_q1'] !==
+                                    undefined ? parseFloat(row[periode + '_adhk_q1']) : "";
                                 const adhk_y1 = row[periode + '_adhk_y1'] !== null && row[periode + '_adhk_y1'] !==
                                     undefined ? parseFloat(row[periode + '_adhk_y1']) : "";
+                                const adhk_c = row[periode + '_adhk_c'] !== null && row[periode + '_adhk_c'] !==
+                                    undefined ? parseFloat(row[periode + '_adhk_c']) : "";
+                                const adhk_c1 = row[periode + '_adhk_c1'] !== null && row[periode + '_adhk_c1'] !==
+                                    undefined ? parseFloat(row[periode + '_adhk_c1']) : "";
 
+                                const qtq = adhk != "" && adhk_q1 != "" ? (adhk - adhk_q1) / adhk_q1 * 100 : "";
+                                const qtq_adj = adhk != "" && adhk_q1 != "" ?
+                                    (adhk + adhk_adj - adhk_q1) / adhk_q1 * 100 : "";
 
-                                const qtq = adhb != "" && adhb_q1 != "" ? (adhb - adhb_q1) / adhb_q1 * 100 : "";
-                                const qtq_adj = adhb != "" && adhb_q1 != "" ?
-                                    (adhb + adhb_adj - adhb_q1) / adhb_q1 * 100 : "";
+                                const yty = adhk != "" && adhk_y1 != "" ? (adhk - adhk_y1) / adhk_y1 * 100 : "";
+                                const yty_adj = adhk != "" && adhk_y1 != "" ?
+                                    (adhk + adhk_adj - adhk_y1) / adhk_y1 * 100 : "";
 
-                                const yty = adhb != "" && adhb_y1 != "" ? (adhb - adhb_y1) / adhb_y1 * 100 : "";
-                                const yty_adj = adhb != "" && adhb_y1 != "" ?
-                                    (adhb + adhb_adj - adhb_y1) / adhb_y1 * 100 : "";
-
-                                const ctc = adhb_c != "" && adhb_c1 != "" ? (adhb_c - adhb_c1) / adhb_c1 * 100 : "";
-                                const ctc_adj = adhb_c != "" && adhb_c1 != "" ?
-                                    (adhb_c + adhb_adj - adhb_c1) / adhb_c1 * 100 : "";
+                                const ctc = adhk_c != "" && adhk_c1 != "" ? (adhk_c - adhk_c1) / adhk_c1 * 100 : "";
+                                const ctc_adj = adhk_c != "" && adhk_c1 != "" ?
+                                    (adhk_c + adhk_adj - adhk_c1) / adhk_c1 * 100 : "";
 
                                 const implisit = adhb != "" && adhk != "" ? (adhb / adhk * 100) : "";
                                 const implisit_adj = adhb != "" && adhk != "" ?
@@ -391,10 +401,7 @@
                                 rowHtml += `
                                     <td data-adhb="${adhb}"
                                         data-adhb_adj="${adhb_adj}"
-                                        data-adhb_q1="${adhb_q1}"
-                                        data-adhb_y1="${adhb_y1}"
-                                        data-adhb_c="${adhb_c}"
-                                        data-adhb_c1="${adhb_c1}" >
+                                        data-adhb_y1="${adhb_y1}" >
                                         ${formatNumber(adhb)}
                                     </td>
                                     <td>
@@ -408,7 +415,10 @@
                                     <td>${formatNumber(adhb + adhb_adj)}</td>
                                     <td data-adhk="${adhk}"
                                         data-adhk_adj="${adhk_adj}"
-                                        data-adhk_y1="${adhk_y1}" >
+                                        data-adhk_y1="${adhk_y1}"
+                                        data-adhk_q1="${adhk_q1}"
+                                        data-adhk_c="${adhk_c}"
+                                        data-adhk_c1="${adhk_c1}">
                                         ${formatNumber(adhk)}
                                     </td>
                                     <td>
@@ -419,16 +429,16 @@
                                         inputmode="decimal" pattern="^\d+(\.\d{0,2})?$" >
                                     </td>
                                     <td>${formatNumber(adhk + adhk_adj)}</td>
-                                    <td>${formatNumber(qtq)}</td>
-                                    <td>${formatNumber(qtq_adj)}</td>
-                                    <td>${formatNumber(yty)}</td>
-                                    <td>${formatNumber(yty_adj)}</td>
-                                    <td>${formatNumber(ctc)}</td>
-                                    <td>${formatNumber(ctc_adj)}</td>
-                                    <td>${formatNumber(implisit)}</td>
-                                    <td>${formatNumber(implisit_adj)}</td>
-                                    <td>${formatNumber(laju_implisit)}</td>
-                                    <td>${formatNumber(laju_implisit_adj)}</td>
+                                    <td style="${qtq > 0 ? 'background:lightgreen' : qtq < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(qtq)}</td>
+                                    <td style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(qtq_adj)}</td>
+                                    <td style="${yty > 0 ? 'background:lightgreen' : yty < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(yty)}</td>
+                                    <td style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(yty_adj)}</td>
+                                    <td style="${ctc > 0 ? 'background:lightgreen' : ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(ctc)}</td>
+                                    <td style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(ctc_adj)}</td>
+                                    <td style="${implisit > 0 ? 'background:lightgreen' : implisit < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit)}</td>
+                                    <td style="${implisit_adj > 0 ? 'background:lightgreen' : implisit_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit_adj)}</td>
+                                    <td style="${laju_implisit > 0 ? 'background:lightgreen' : laju_implisit < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit)}</td>
+                                    <td style="${laju_implisit_adj > 0 ? 'background:lightgreen' : laju_implisit_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_adj)}</td>
                                 `;
                             });
 
@@ -629,27 +639,26 @@
             const adhb_cell = input.closest('td').prev('td');
             const adhb_adj_cell = input.closest('td').nextAll('td').eq(0);
             const adhk_cell = input.closest('td').nextAll('td').eq(1);
-            const qtq_adj_cell = input.closest('td').nextAll('td').eq(5);
-            const yty_adj_cell = input.closest('td').nextAll('td').eq(8);
-            const ctc_adj_cell = input.closest('td').nextAll('td').eq(9);
             const implisit_adj_cell = input.closest('td').nextAll('td').eq(11);
             const laju_implisit_adj_cell = input.closest('td').nextAll('td').eq(13);
 
             const adhb = parseNumberIndonesian(adhb_cell.text()) || 0;
             const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
-            const adhb_q1 = parseNumberIndonesian(adhb_cell.data('adhb_q1'));
             const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
-            const adhb_c = parseNumberIndonesian(adhb_cell.data('adhb_c'));
-            const adhb_c1 = parseNumberIndonesian(adhb_cell.data('adhb_c1'));
             const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
 
-            adhb_adj_cell.text(formatNumber(adhb + adhb_adj));
-            qtq_adj_cell.text(adhb_q1 != "" && adhb_q1 != 0 ? formatNumber((adhb + adhb_adj - adhb_q1) / adhb_q1 * 100) : "");
-            yty_adj_cell.text(adhb_y1 != "" && adhb_y1 != 0 ? formatNumber((adhb + adhb_adj - adhb_y1) / adhb_y1 * 100) : "");
-            ctc_adj_cell.text(adhb_c1 != "" && adhb_c1 != 0 ? formatNumber((adhb_c + adhb_adj - adhb_c1) / adhb_c1 * 100) : "");
-            implisit_adj_cell.text(adhk != "" && adhk != 0 ? formatNumber((adhb + adhb_adj) / (adhk + adhk_adj) * 100) : "");
-            laju_implisit_adj_cell.text(adhk != "" && adhk != 0 && adhk_y1 != "" && adhk_y1 != 0 ?
-                formatNumber((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (adhb_y1 / adhk_y1 * 100) * 100) - 100) : "");
+            adhb_adj_val = adhb + adhb_adj;
+            implisit_adj_val = adhk != "" && adhk != 0 ? (adhb + adhb_adj) / (adhk + adhk_adj) * 100 : "";
+            laju_implisit_adj_val = adhk != "" && adhk != 0 && adhk_y1 != "" && adhk_y1 != 0 ? ((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (
+                adhb_y1 / adhk_y1 * 100) * 100) - 100) : "";
+
+            adhb_adj_cell.text(formatNumber(adhb_adj_val));
+            implisit_adj_cell.text(formatNumber(implisit_adj_val));
+            laju_implisit_adj_cell.text(formatNumber(laju_implisit_adj_val));
+
+            implisit_adj_cell.css('background', implisit_adj_val > 0 ? 'lightgreen' : implisit_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            laju_implisit_adj_cell.css('background', laju_implisit_adj_val > 0 ? 'lightgreen' : laju_implisit_adj_val < 0 ? 'lemonchiffon' :
+                'transparent');
 
             formatedtext = formatText(input.val());
             $(this).val(formatedtext);
@@ -675,11 +684,31 @@
             const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
             const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
             const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
+            const adhk_q1 = parseNumberIndonesian(adhk_cell.data('adhk_q1'));
+            const adhk_c = parseNumberIndonesian(adhk_cell.data('adhk_c'));
+            const adhk_c1 = parseNumberIndonesian(adhk_cell.data('adhk_c1'));
 
-            adhk_adj_cell.text(formatNumber(adhk + adhk_adj));
-            implisit_adj_cell.text(adhk != "" && adhk != 0 ? formatNumber((adhb + adhb_adj) / (adhk + adhk_adj) * 100) : "");
-            laju_implisit_adj_cell.text(adhk != "" && adhk != 0 && adhk_y1 != "" && adhk_y1 != 0 ?
-                formatNumber((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (adhb_y1 / adhk_y1 * 100) * 100) - 100) : "");
+            adhk_adj_val = adhk + adhk_adj;
+            qtq_adj_val = adhk_q1 != "" && adhk_q1 != 0 ? (adhk + adhk_adj - adhk_q1) / adhk_q1 * 100 : "";
+            yty_adj_val = adhk_y1 != "" && adhk_y1 != 0 ? (adhk + adhk_adj - adhk_y1) / adhk_y1 * 100 : "";
+            ctc_adj_val = adhk_c1 != "" && adhk_c1 != 0 ? (adhk_c + adhk_adj - adhk_c1) / adhk_c1 * 100 : "";
+            implisit_adj_val = adhk != "" && adhk != 0 ? (adhb + adhb_adj) / (adhk + adhk_adj) * 100 : "";
+            laju_implisit_adj_val = adhk != "" && adhk != 0 && adhk_y1 != "" && adhk_y1 != 0 ? ((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) / (
+                adhb_y1 / adhk_y1 * 100) * 100) - 100) : "";
+
+            adhk_adj_cell.text(formatNumber(adhk_adj_val));
+            qtq_adj_cell.text(formatNumber(qtq_adj_val))
+            yty_adj_cell.text(formatNumber(yty_adj_val))
+            ctc_adj_cell.text(formatNumber(ctc_adj_val));
+            implisit_adj_cell.text(formatNumber(implisit_adj_val));
+            laju_implisit_adj_cell.text(formatNumber(laju_implisit_adj_val));
+
+            qtq_adj_cell.css('background', qtq_adj_val > 0 ? 'lightgreen' : qtq_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            yty_adj_cell.css('background', yty_adj_val > 0 ? 'lightgreen' : yty_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            ctc_adj_cell.css('background', ctc_adj_val > 0 ? 'lightgreen' : ctc_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            implisit_adj_cell.css('background', implisit_adj_val > 0 ? 'lightgreen' : implisit_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            laju_implisit_adj_cell.css('background', laju_implisit_adj_val > 0 ? 'lightgreen' : laju_implisit_adj_val < 0 ? 'lemonchiffon' :
+                'transparent');
 
             formatedtext = formatText(input.val());
             $(this).val(formatedtext);
@@ -687,9 +716,15 @@
 
         $('#periodeModal').on('hidden.bs.modal', function() {
             // Pindahkan fokus ke tombol yang relevan di luar modal
-            $('.modal-backdrop').remove();
+            $('body').find('.modal-backdrop').remove();
+            // $('.modal-backdrop').remove();
             $('body').removeClass('modal-open');
             $('body').focus();
+        });
+        $('#periodeModal').on('shown.bs.modal', function() {
+            // Pastikan z-index modal lebih tinggi dari backdrop
+            $(this).css('z-index', 1060);
+            $('.modal-backdrop').css('z-index', 1050);
         });
 
         function formatNumber(num) {

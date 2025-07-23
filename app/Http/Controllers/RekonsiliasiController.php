@@ -77,6 +77,13 @@ class RekonsiliasiController extends Controller
                     $q_q1 = 4;
                 }
 
+                $adhb_q1 = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                    ->where('kode_kab', $id_wil)
+                    ->where('tahun', $tahun_q1)
+                    ->where('q', $q_q1)
+                    ->where('adhb_or_adhk', 1)
+                    ->first();
+
                 $adhk_q1 = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
                     ->where('kode_kab', $id_wil)
                     ->where('tahun', $tahun_q1)
@@ -116,18 +123,27 @@ class RekonsiliasiController extends Controller
                     ->wherein('q', $q_c)
                     ->where('adhb_or_adhk', 2)
                     ->first();
-
+                // dd($adhk_c1);
+                // adhb
                 $row[$periode . '_adhb_id'] = $adhb ? $adhb->id : null;
                 $row[$periode . '_adhb'] = $adhb ? $adhb->$kolom : null;
                 $row[$periode . '_adhb_adj'] = $adhb ? $adhb->$kolom_adj : null;
+                $row[$periode . '_adhb_q1'] = $adhb_q1 ? $adhb_q1->$kolom : null;
+                $row[$periode . '_adhb_q1_adj'] = $adhb_q1 ? $adhb_q1->$kolom_adj : null;
                 $row[$periode . '_adhb_y1'] = $adhb_y1 ? $adhb_y1->$kolom : null;
+                $row[$periode . '_adhb_y1_adj'] = $adhb_y1 ? $adhb_y1->$kolom_adj : null;
+                // adhk
                 $row[$periode . '_adhk_id'] = $adhk ? $adhk->id : null;
                 $row[$periode . '_adhk'] = $adhk ? $adhk->$kolom : null;
                 $row[$periode . '_adhk_adj'] = $adhk ? $adhk->$kolom_adj : null;
                 $row[$periode . '_adhk_q1'] = $adhk_q1 ? $adhk_q1->$kolom : null;
+                $row[$periode . '_adhk_q1_adj'] = $adhk_q1 ? $adhk_q1->$kolom_adj : null;
                 $row[$periode . '_adhk_y1'] = $adhk_y1 ? $adhk_y1->$kolom : null;
+                $row[$periode . '_adhk_y1_adj'] = $adhk_y1 ? $adhk_y1->$kolom_adj : null;
                 $row[$periode . '_adhk_c'] = $adhk_c ? $adhk_c->$kolom : null;
+                $row[$periode . '_adhk_c_adj'] = $adhk_c ? $adhk_c->$kolom_adj : null;
                 $row[$periode . '_adhk_c1'] = $adhk_c1 ? $adhk_c1->$kolom : null;
+                $row[$periode . '_adhk_c1_adj'] = $adhk_c1 ? $adhk_c1->$kolom_adj : null;
             }
 
             $datas[] = $row;

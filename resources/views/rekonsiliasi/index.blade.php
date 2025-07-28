@@ -871,8 +871,8 @@
 
             // ADHK C
             for (var q_c = 1; q_c <= quarter; q_c++) {
-                var str_c = year + 'Q' + quarter;
-                var str_c1 = (year - 1) + 'Q' + quarter;
+                var str_c = year + 'Q' + q_c;
+                var str_c1 = (year - 1) + 'Q' + q_c;
                 let input_adhk_c = $('#' + str_c + '_adhk_adj')
                 if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
                     adhk_c_adj = adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
@@ -888,7 +888,6 @@
                 }
             }
 
-
             adhk_adj_val = adhk + adhk_adj;
             qtq_adj_val = adhk_q1 + adhk_q1_adj != 0 ?
                 ((adhk + adhk_adj) - (adhk_q1 + adhk_q1_adj)) / (adhk_q1 + adhk_q1_adj) * 100 : "";
@@ -896,7 +895,6 @@
                 ((adhk + adhk_adj) - (adhk_y1 + adhk_y1_adj)) / (adhk_y1 + adhk_y1_adj) * 100 : "";
             ctc_adj_val = adhk_c1 + adhk_c1_adj != 0 ?
                 ((adhk_c + adhk_c_adj) - (adhk_c1 + adhk_c1_adj)) / (adhk_c1 + adhk_c1_adj) * 100 : "";
-            console.log('ctc_adj_val : ' + ctc_adj_val)
             implisit_adj_val = adhk + adhk_adj != 0 ? (adhb + adhb_adj) / (adhk + adhk_adj) * 100 : "";
             laju_implisit_qtq_adj_val = adhk + adhk_adj != 0 &&
                 adhk_q1 + adhk_q1_adj != 0 ?
@@ -951,6 +949,9 @@
             const adhb_cell = input.closest('td').prevAll('td').eq(6);
             const adhb_adj_cell = input.closest('td').prevAll('td').eq(4);
             const adhb_adj_input = input.closest('td').prevAll('td').eq(5).find('input');
+            const yty_adj_input = input.closest('td').nextAll('td').eq(1).find('input');
+            const ctc_adj_input = input.closest('td').nextAll('td').eq(3).find('input');
+            const indeks_implisit_adj_cell = input.closest('td').nextAll('td').eq(5);
             const laju_implisit_qtq_adj_cell = input.closest('td').nextAll('td').eq(7);
             const laju_implisit_yty_adj_cell = input.closest('td').nextAll('td').eq(9);
 
@@ -959,13 +960,27 @@
             const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
             const adhb_q1 = parseNumberIndonesian(adhb_cell.data('adhb_q1'));
             const adhk_q1 = parseNumberIndonesian(adhk_cell.data('adhk_q1'));
+            const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
+            const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
+            const adhk_c = parseNumberIndonesian(adhk_cell.data('adhk_c'));
+            const adhk_c1 = parseNumberIndonesian(adhk_cell.data('adhk_c1'));
             const qtq_adj = parseNumberIndonesian(input.val()) || 0;
             let adhk_adj_val;
             let adhb_adj_val;
             let adhb_q1_adj;
             let adhk_q1_adj;
+            let adhb_y1_adj;
+            let adhk_y1_adj;
+            let yty_adj;
+            let ctc_adj;
+            let adhk_c_adj = 0;
+            let adhk_c1_adj = 0;
+            let indeks_implisit_adj;
+            let laju_implisit_qtq_adj;
+            let laju_implisit_yty_adj;
 
-            // calculate
+
+            // calculate adhk
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
             let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
             if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
@@ -979,52 +994,409 @@
             } else {
                 adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
             }
-
             adhk_adj_val = ((qtq_adj * (adhk_q1 + adhk_q1_adj) / 100) + (adhk_q1 + adhk_q1_adj)) - adhk;
-            // set value
             adhk_adj_cell.text(formatNumber(adhk_adj_val + adhk));
             adhk_adj_input.val(formatNumber(adhk_adj_val));
-            // set style
             adhk_adj_cell.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
-            adhk_adj_input.closest('td').css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' :
-                'transparent');
+            adhk_adj_input.closest('td').css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ?
+                'lemonchiffon' : 'transparent');
             adhk_adj_input.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
 
+            // caculate yty
+            let str_y1 = (year - 1) + 'Q' + quarter;
+            let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
+            if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
+                adhk_y1_adj = parseNumberIndonesian(input_adhk_q1.val());
+            } else {
+                adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
+            }
+            let input_adhb_y1 = $('#' + str_y1 + '_adhk_adj');
+            if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
+                adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
+            } else {
+                adhb_y1_adj = parseNumberIndonesian(adhb_cell.data('adhb_y1_adj'));
+            }
+
+            yty_adj = adhk_y1 + adhk_y1_adj != 0 ? ((adhk + adhk_adj_val) - (adhk_y1 + adhk_y1_adj)) / (adhk_y1 + adhk_y1_adj) * 100 : "";
+            yty_adj_input.val(formatNumber(yty_adj));
+            yty_adj_input.css('background', yty_adj > 0 ? 'lightgreen' : yty_adj < 0 ? 'lemonchiffon' : 'transparent');
+            yty_adj_input.closest('td').css('background', yty_adj > 0 ? 'lightgreen' : yty_adj < 0 ? 'lemonchiffon' : 'transparent');
+
+            // calculate ctc
+            for (var q_c = 1; q_c <= quarter; q_c++) {
+                var str_c = year + 'Q' + q_c;
+                var str_c1 = (year - 1) + 'Q' + q_c;
+                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
+                    adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
+                } else {
+                    adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
+                }
+
+                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
+                    adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
+                } else {
+                    adhk_c1_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c1_adj')) : 0;
+                }
+            }
+
+            ctc_adj = adhk_c1 + adhk_c1_adj != 0 ? ((adhk_c + adhk_c_adj) - (adhk_c1 + adhk_c1_adj)) / (adhk_c1 + adhk_c1_adj) * 100 : "";
+            ctc_adj_input.val(formatNumber(ctc_adj));
+            ctc_adj_input.css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
+            ctc_adj_input.closest('td').css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
 
             if (implisit_toggle) {
-                // implisit Berubah (adhb tetap)
+                // implisit Berubah (adhb tetap) cari nilai implisit qtq
                 adhb_adj_val = parseNumberIndonesian(adhb_adj_input.val());
-                laju_implisit_qtq_adj_val = adhk + adhk_adj_val != 0 && adhk_q1 + adhk_q1_adj != 0 ?
+                laju_implisit_qtq_adj = adhk + adhk_adj_val != 0 && adhk_q1 + adhk_q1_adj != 0 ?
                     ((((adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100) /
                         ((adhb_q1 + adhb_q1_adj) / (adhk_q1 + adhk_q1_adj) * 100) * 100) - 100) : "";
-
-                // set value
-                laju_implisit_qtq_adj_cell.text(formatNumber(laju_implisit_qtq_adj_val));
-                // set style
-                laju_implisit_qtq_adj_cell.css('background', laju_implisit_qtq_adj_val > 0 ? 'lightgreen' : laju_implisit_qtq_adj_val < 0 ?
+                laju_implisit_qtq_adj_cell.text(formatNumber(laju_implisit_qtq_adj));
+                laju_implisit_qtq_adj_cell.css('background', laju_implisit_qtq_adj > 0 ? 'lightgreen' : laju_implisit_qtq_adj < 0 ?
                     'lemonchiffon' : 'transparent');
             } else {
-                // Implisit tetap (adhb berubah)
+                // Implisit tetap (adhb berubah) cari nilai adhb
                 const laju_implisit_qtq_adj_val = parseNumberIndonesian(laju_implisit_qtq_adj_cell.text()) || 0;
-                adhb_adj_val = (adhk + adhk_adj_val) * (adhb_q1 + adhb_q1_adj) * (laju_implisit_qtq_adj_val + 100) /
-                    (100 * (adhk_q1 + adhk_q1_adj));
-
-                console.log(adhb_adj_val);
-                // set value
-                // adhk_adj_input.val(formatNumber(adhk_adj_val));2
-                adhb_adj_cell.text(formatNumber(adhb_adj_val))
-                adhb_adj_input.val(formatNumber(adhb_adj_val - adhb))
-
-                // set css
+                adhb_adj_val = ((adhk + adhk_adj_val) * (adhb_q1 + adhb_q1_adj) * (laju_implisit_qtq_adj_val + 100) /
+                    (100 * (adhk_q1 + adhk_q1_adj))) - adhb;
+                adhb_adj_cell.text(formatNumber(adhb_adj_val + adhb))
+                adhb_adj_input.val(formatNumber(adhb_adj_val))
                 adhb_adj_cell.css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ? 'lemonchiffon' : 'transparent');
                 adhb_adj_input.css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ? 'lemonchiffon' : 'transparent');
                 adhb_adj_input.closest('td').css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ?
                     'lemonchiffon' : 'transparent');
             }
+            indeks_implisit_adj = (adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100;
+            indeks_implisit_adj_cell.text(formatNumber(indeks_implisit_adj));
+            indeks_implisit_adj_cell.css('background', indeks_implisit_adj > 0 ? 'lightgreen' : indeks_implisit_adj < 0 ?
+                'lemonchiffon' : 'transparent');
 
-            // set text on input
+            laju_implisit_yty_adj = adhk + adhk_adj_val != 0 && adhk_y1 + adhk_y1_adj != 0 ?
+                ((((adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100) /
+                    ((adhb_y1 + adhb_y1_adj) / (adhk_y1 + adhk_y1_adj) * 100) * 100) - 100) : "";
+            laju_implisit_yty_adj_cell.text(formatNumber(laju_implisit_yty_adj));
+            laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj > 0 ? 'lightgreen' : laju_implisit_yty_adj < 0 ?
+                'lemonchiffon' : 'transparent');
+
             formatedtext = formatText(input.val());
             $(this).val(formatedtext);
+            input.css('background', parseNumberIndonesian(input.val()) > 0 ? 'lightgreen' : parseNumberIndonesian(input.val()) < 0 ?
+                'lemonchiffon' : 'transparent');
+            input.closest('td').css('background', parseNumberIndonesian(input.val()) > 0 ? 'lightgreen' : parseNumberIndonesian(input.val()) < 0 ?
+                'lemonchiffon' : 'transparent');
+        })
+
+        $(document).on('input', '.text_edit_yty_adj', function() {
+            const input = $(this);
+            const periode = input.data('periode');
+            let q_split = periode.split('Q');
+            let year = parseInt(q_split[0]);
+            let quarter = parseInt(q_split[1]);
+
+            const adhk_cell = input.closest('td').prevAll('td').eq(5);
+            const adhk_adj_cell = input.closest('td').prevAll('td').eq(3);
+            const adhk_adj_input = input.closest('td').prevAll('td').eq(4).find('input');
+
+            const adhb_cell = input.closest('td').prevAll('td').eq(8);
+            const adhb_adj_cell = input.closest('td').prevAll('td').eq(6);
+            const adhb_adj_input = input.closest('td').prevAll('td').eq(7).find('input');
+            const qtq_adj_input = input.closest('td').prevAll('td').eq(1).find('input');
+            const ctc_adj_input = input.closest('td').nextAll('td').eq(1).find('input');
+            const indeks_implisit_adj_cell = input.closest('td').nextAll('td').eq(3);
+            const laju_implisit_qtq_adj_cell = input.closest('td').nextAll('td').eq(5);
+            const laju_implisit_yty_adj_cell = input.closest('td').nextAll('td').eq(7);
+
+            // getting value
+            const adhb = parseNumberIndonesian(adhb_cell.text()) || 0;
+            const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
+            const adhb_q1 = parseNumberIndonesian(adhb_cell.data('adhb_q1'));
+            const adhk_q1 = parseNumberIndonesian(adhk_cell.data('adhk_q1'));
+            const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
+            const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
+            const adhk_c = parseNumberIndonesian(adhk_cell.data('adhk_c'));
+            const adhk_c1 = parseNumberIndonesian(adhk_cell.data('adhk_c1'));
+            const yty_adj = parseNumberIndonesian(input.val()) || 0;
+            let adhk_adj_val;
+            let adhb_adj_val;
+            let adhb_q1_adj;
+            let adhk_q1_adj;
+            let adhb_y1_adj;
+            let adhk_y1_adj;
+            let qtq_adj;
+            let ctc_adj;
+            let adhk_c_adj = 0;
+            let adhk_c1_adj = 0;
+            let indeks_implisit_adj;
+            let laju_implisit_qtq_adj;
+            let laju_implisit_yty_adj;
+
+            // calculate adhk
+            let str_y1 = (year - 1) + 'Q' + quarter;
+            let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
+            if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
+                adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
+            } else {
+                adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
+            }
+            let input_adhb_y1 = $('#' + str_y1 + '_adhb_adj');
+            if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
+                adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
+            } else {
+                adhb_y1_adj = parseNumberIndonesian(adhb_cell.data('adhb_y1_adj'));
+            }
+            adhk_adj_val = ((yty_adj * (adhk_y1 + adhk_y1_adj) / 100) + (adhk_y1 + adhk_y1_adj)) - adhk;
+            adhk_adj_cell.text(formatNumber(adhk_adj_val + adhk));
+            adhk_adj_input.val(formatNumber(adhk_adj_val));
+            adhk_adj_cell.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            adhk_adj_input.closest('td').css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' :
+                'transparent');
+            adhk_adj_input.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+
+            // calculate qtq
+            let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
+            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
+                adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
+            } else {
+                adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
+            }
+            let input_adhb_q1 = $('#' + str_q1 + '_adhk_adj');
+            if (input_adhb_q1.length > 0 && input_adhk_q1.is('input')) {
+                adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
+            } else {
+                adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
+            }
+            qtq_adj = adhk_q1 + adhk_q1_adj != 0 ? ((adhk + adhk_adj_val) - (adhk_q1 + adhk_q1_adj)) / (adhk_q1 + adhk_q1_adj) * 100 : "";
+            qtq_adj_input.val(formatNumber(qtq_adj));
+            qtq_adj_input.css('background', qtq_adj > 0 ? 'lightgreen' : qtq_adj < 0 ? 'lemonchiffon' : 'transparent');
+            qtq_adj_input.closest('td').css('background', qtq_adj > 0 ? 'lightgreen' : qtq_adj < 0 ? 'lemonchiffon' : 'transparent');
+
+            // calcutate ctc
+            for (var q_c = 1; q_c <= quarter; q_c++) {
+                var str_c = year + 'Q' + q_c;
+                var str_c1 = (year - 1) + 'Q' + q_c;
+                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
+                    adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
+                } else {
+                    adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
+                }
+
+                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
+                    adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
+                } else {
+                    adhk_c1_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c1_adj')) : 0;
+                }
+            }
+            ctc_adj = adhk_c1 + adhk_c1_adj != 0 ? ((adhk_c + adhk_c_adj) - (adhk_c1 + adhk_c1_adj)) / (adhk_c1 + adhk_c1_adj) * 100 : "";
+            ctc_adj_input.val(formatNumber(ctc_adj));
+            ctc_adj_input.css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
+            ctc_adj_input.closest('td').css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
+
+
+            if (implisit_toggle) {
+                // implisit Berubah (adhb tetap) cari nilai implisit qtq
+                adhb_adj_val = parseNumberIndonesian(adhb_adj_input.val());
+                laju_implisit_yty_adj = adhk + adhk_adj_val != 0 && adhk_y1 + adhk_y1_adj != 0 ?
+                    ((((adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100) /
+                        ((adhb_y1 + adhb_y1_adj) / (adhk_y1 + adhk_y1_adj) * 100) * 100) - 100) : "";
+                laju_implisit_yty_adj_cell.text(formatNumber(laju_implisit_yty_adj));
+                laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj > 0 ? 'lightgreen' : laju_implisit_yty_adj < 0 ?
+                    'lemonchiffon' : 'transparent');
+            } else {
+                // Implisit tetap (adhb berubah) cari nilai adhb
+                laju_implisit_yty_adj = parseNumberIndonesian(laju_implisit_yty_adj_cell.text()) || 0;
+                adhb_adj_val = ((adhk + adhk_adj_val) * (adhb_y1 + adhb_y1_adj) * (laju_implisit_yty_adj + 100) /
+                    (100 * (adhk_y1 + adhk_y1_adj))) - adhb;
+                adhb_adj_cell.text(formatNumber(adhb_adj_val + adhb))
+                adhb_adj_input.val(formatNumber(adhb_adj_val))
+                adhb_adj_cell.css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+                adhb_adj_input.css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+                adhb_adj_input.closest('td').css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ?
+                    'lemonchiffon' : 'transparent');
+            }
+            indeks_implisit_adj = (adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100;
+            indeks_implisit_adj_cell.text(formatNumber(indeks_implisit_adj));
+            indeks_implisit_adj_cell.css('background', indeks_implisit_adj > 0 ? 'lightgreen' : indeks_implisit_adj < 0 ?
+                'lemonchiffon' : 'transparent');
+
+            laju_implisit_qtq_adj = adhk + adhk_adj_val != 0 && adhk_q1 + adhk_q1_adj != 0 ?
+                ((((adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100) /
+                    ((adhb_q1 + adhb_q1_adj) / (adhk_q1 + adhk_q1_adj) * 100) * 100) - 100) : "";
+            laju_implisit_qtq_adj_cell.text(formatNumber(laju_implisit_qtq_adj));
+            laju_implisit_qtq_adj_cell.css('background', laju_implisit_qtq_adj > 0 ? 'lightgreen' : laju_implisit_qtq_adj < 0 ?
+                'lemonchiffon' : 'transparent');
+
+            formatedtext = formatText(input.val());
+            $(this).val(formatedtext);
+            input.css('background', parseNumberIndonesian(input.val()) > 0 ? 'lightgreen' : parseNumberIndonesian(input.val()) < 0 ?
+                'lemonchiffon' : 'transparent');
+            input.closest('td').css('background', parseNumberIndonesian(input.val()) > 0 ? 'lightgreen' : parseNumberIndonesian(input.val()) < 0 ?
+                'lemonchiffon' : 'transparent');
+
+        })
+
+        $(document).on('input', '.text_edit_ctc_adj', function() {
+            const input = $(this);
+            const periode = input.data('periode');
+            let q_split = periode.split('Q');
+            let year = parseInt(q_split[0]);
+            let quarter = parseInt(q_split[1]);
+
+            const adhk_cell = input.closest('td').prevAll('td').eq(7);
+            const adhk_adj_cell = input.closest('td').prevAll('td').eq(5);
+            const adhk_adj_input = input.closest('td').prevAll('td').eq(6).find('input');
+
+            const adhb_cell = input.closest('td').prevAll('td').eq(10);
+            const adhb_adj_cell = input.closest('td').prevAll('td').eq(8);
+            const adhb_adj_input = input.closest('td').prevAll('td').eq(9).find('input');
+            const qtq_adj_input = input.closest('td').prevAll('td').eq(3).find('input');
+            const yty_adj_input = input.closest('td').prevAll('td').eq(1).find('input');
+            const indeks_implisit_adj_cell = input.closest('td').nextAll('td').eq(1);
+            const laju_implisit_qtq_adj_cell = input.closest('td').nextAll('td').eq(3);
+            const laju_implisit_yty_adj_cell = input.closest('td').nextAll('td').eq(5);
+
+            // getting value
+            const adhb = parseNumberIndonesian(adhb_cell.text()) || 0;
+            const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
+            const adhb_q1 = parseNumberIndonesian(adhb_cell.data('adhb_q1'));
+            const adhk_q1 = parseNumberIndonesian(adhk_cell.data('adhk_q1'));
+            const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
+            const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
+            const adhk_c = parseNumberIndonesian(adhk_cell.data('adhk_c'));
+            const adhk_c1 = parseNumberIndonesian(adhk_cell.data('adhk_c1'));
+            const ctc_adj = parseNumberIndonesian(input.val()) || 0;
+            let adhk_adj_val;
+            let adhb_adj_val;
+            let adhb_q1_adj;
+            let adhk_q1_adj;
+            let adhb_y1_adj;
+            let adhk_y1_adj;
+            let qtq_adj;
+            let yty_adj;
+            let adhk_c_adj = 0;
+            let adhk_c1_adj = 0;
+            let indeks_implisit_adj;
+            let laju_implisit_qtq_adj;
+            let laju_implisit_yty_adj;
+
+            adhk_adj_val = ((yty_adj * (adhk_y1 + adhk_y1_adj) / 100) + (adhk_y1 + adhk_y1_adj)) - adhk;
+
+            // calcutate ctc
+            for (var q_c = 1; q_c <= quarter; q_c++) {
+                var str_c = year + 'Q' + q_c;
+                var str_c1 = (year - 1) + 'Q' + q_c;
+                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
+                    adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
+                } else {
+                    adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
+                }
+
+                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
+                    adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
+                } else {
+                    adhk_c1_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c1_adj')) : 0;
+                }
+            }
+            ctc_adj = adhk_c1 + adhk_c1_adj != 0 ? ((adhk_c + adhk_c_adj) - (adhk_c1 + adhk_c1_adj)) / (adhk_c1 + adhk_c1_adj) * 100 : "";
+            ctc_adj_input.val(formatNumber(ctc_adj));
+            ctc_adj_input.css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
+            ctc_adj_input.closest('td').css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
+
+
+
+
+
+
+
+
+            // calculate adhk
+            let str_y1 = (year - 1) + 'Q' + quarter;
+            let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
+            if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
+                adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
+            } else {
+                adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
+            }
+            let input_adhb_y1 = $('#' + str_y1 + '_adhb_adj');
+            if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
+                adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
+            } else {
+                adhb_y1_adj = parseNumberIndonesian(adhb_cell.data('adhb_y1_adj'));
+            }
+            adhk_adj_val = ((yty_adj * (adhk_y1 + adhk_y1_adj) / 100) + (adhk_y1 + adhk_y1_adj)) - adhk;
+            adhk_adj_cell.text(formatNumber(adhk_adj_val + adhk));
+            adhk_adj_input.val(formatNumber(adhk_adj_val));
+            adhk_adj_cell.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            adhk_adj_input.closest('td').css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' :
+                'transparent');
+            adhk_adj_input.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+
+            // calculate qtq
+            let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
+            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
+                adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
+            } else {
+                adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
+            }
+            let input_adhb_q1 = $('#' + str_q1 + '_adhk_adj');
+            if (input_adhb_q1.length > 0 && input_adhk_q1.is('input')) {
+                adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
+            } else {
+                adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
+            }
+            qtq_adj = adhk_q1 + adhk_q1_adj != 0 ? ((adhk + adhk_adj_val) - (adhk_q1 + adhk_q1_adj)) / (adhk_q1 + adhk_q1_adj) * 100 : "";
+            qtq_adj_input.val(formatNumber(qtq_adj));
+            qtq_adj_input.css('background', qtq_adj > 0 ? 'lightgreen' : qtq_adj < 0 ? 'lemonchiffon' : 'transparent');
+            qtq_adj_input.closest('td').css('background', qtq_adj > 0 ? 'lightgreen' : qtq_adj < 0 ? 'lemonchiffon' : 'transparent');
+
+
+
+            if (implisit_toggle) {
+                // implisit Berubah (adhb tetap) cari nilai implisit qtq
+                adhb_adj_val = parseNumberIndonesian(adhb_adj_input.val());
+                laju_implisit_yty_adj = adhk + adhk_adj_val != 0 && adhk_y1 + adhk_y1_adj != 0 ?
+                    ((((adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100) /
+                        ((adhb_y1 + adhb_y1_adj) / (adhk_y1 + adhk_y1_adj) * 100) * 100) - 100) : "";
+                laju_implisit_yty_adj_cell.text(formatNumber(laju_implisit_yty_adj));
+                laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj > 0 ? 'lightgreen' : laju_implisit_yty_adj < 0 ?
+                    'lemonchiffon' : 'transparent');
+            } else {
+                // Implisit tetap (adhb berubah) cari nilai adhb
+                laju_implisit_yty_adj = parseNumberIndonesian(laju_implisit_yty_adj_cell.text()) || 0;
+                adhb_adj_val = ((adhk + adhk_adj_val) * (adhb_y1 + adhb_y1_adj) * (laju_implisit_yty_adj + 100) /
+                    (100 * (adhk_y1 + adhk_y1_adj))) - adhb;
+                adhb_adj_cell.text(formatNumber(adhb_adj_val + adhb))
+                adhb_adj_input.val(formatNumber(adhb_adj_val))
+                adhb_adj_cell.css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+                adhb_adj_input.css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+                adhb_adj_input.closest('td').css('background', adhb_adj_val > 0 ? 'lightgreen' : adhb_adj_val < 0 ?
+                    'lemonchiffon' : 'transparent');
+            }
+            indeks_implisit_adj = (adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100;
+            indeks_implisit_adj_cell.text(formatNumber(indeks_implisit_adj));
+            indeks_implisit_adj_cell.css('background', indeks_implisit_adj > 0 ? 'lightgreen' : indeks_implisit_adj < 0 ?
+                'lemonchiffon' : 'transparent');
+
+            laju_implisit_qtq_adj = adhk + adhk_adj_val != 0 && adhk_q1 + adhk_q1_adj != 0 ?
+                ((((adhb + adhb_adj_val) / (adhk + adhk_adj_val) * 100) /
+                    ((adhb_q1 + adhb_q1_adj) / (adhk_q1 + adhk_q1_adj) * 100) * 100) - 100) : "";
+            laju_implisit_qtq_adj_cell.text(formatNumber(laju_implisit_qtq_adj));
+            laju_implisit_qtq_adj_cell.css('background', laju_implisit_qtq_adj > 0 ? 'lightgreen' : laju_implisit_qtq_adj < 0 ?
+                'lemonchiffon' : 'transparent');
+
+            formatedtext = formatText(input.val());
+            $(this).val(formatedtext);
+            input.css('background', parseNumberIndonesian(input.val()) > 0 ? 'lightgreen' : parseNumberIndonesian(input.val()) < 0 ?
+                'lemonchiffon' : 'transparent');
+            input.closest('td').css('background', parseNumberIndonesian(input.val()) > 0 ? 'lightgreen' : parseNumberIndonesian(input.val()) < 0 ?
+                'lemonchiffon' : 'transparent');
+
         })
 
         $('#periodeModal').on('hidden.bs.modal', function() {

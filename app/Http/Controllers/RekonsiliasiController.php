@@ -106,8 +106,32 @@ class RekonsiliasiController extends Controller
                     ->first();
 
                 $q_c = [];
+                $adhk_c_q = []; // Simpan hasil query untuk tahun sekarang
+                $adhk_c1_q = []; // Simpan hasil query untuk tahun sebelumnya
+
                 for ($i = 1; $i <= $arr_periode[1]; $i++) {
                     $q_c[] = $i;
+
+
+                    $adhk_c_q[$i] = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                        ->where('kode_kab', $id_wil)
+                        ->where('tahun', $arr_periode[0])
+                        ->wherein('q', [$i])
+                        ->where('adhb_or_adhk', 2)
+                        ->first();
+
+                    $adhk_c1_q[$i] = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                        ->where('kode_kab', $id_wil)
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->wherein('q', [$i])
+                        ->where('adhb_or_adhk', 2)
+                        ->first();
+                    // dd($adhk_c1_q);
+
+                    $row[$periode . '_adhk_c_q'][$i] = $adhk_c_q[$i] ? $adhk_c_q[$i]->$kolom : null;
+                    $row[$periode . '_adhk_c_q_adj'][$i] = $adhk_c_q[$i] ? $adhk_c_q[$i]->$kolom_adj : null;
+                    $row[$periode . '_adhk_c1_q'][$i] = $adhk_c1_q[$i] ? $adhk_c1_q[$i]->$kolom : null;
+                    $row[$periode . '_adhk_c1_q_adj'][$i] = $adhk_c1_q[$i] ? $adhk_c1_q[$i]->$kolom_adj : null;
                 }
 
                 $adhk_c = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)

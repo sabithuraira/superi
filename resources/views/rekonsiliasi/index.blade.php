@@ -140,6 +140,11 @@
                                         <label class="text-white">Simpan</label>
                                         <button class="btn btn-success w-100" type="button" id="simpan" @click="saveDatas">Simpan</button>
                                     </div>
+                                    <div class="form-group col-sm-6 col-md-2 ">
+                                        <label class="text-white">Export</label>
+                                        <button class="btn btn-success w-100" type="button" id="export" onclick="exportExcelWithCustomStyles()">Export
+                                            <i class="fa fa-download"></i></button>
+                                    </div>
                                     <div class="col text-right">
                                         <label class="text-white">Implisit</label>
                                         <input type="checkbox" checked data-toggle="toggle" data-on="Implisit Berubah" data-off="Implisit Tetap"
@@ -243,6 +248,10 @@
 @section('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/bootstrap4-toggle.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/blob-polyfill@4.0.20210208/dist/Blob.min.js"></script><!-- Tambahkan di head atau sebelum script Anda -->
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
     <script>
         var vm = new Vue({
             el: "#app_vue",
@@ -403,6 +412,12 @@
                                 const adhk_c1_adj = row[periode + '_adhk_c1_adj'] !== null && row[periode +
                                     '_adhk_c1_adj'] !== undefined ? parseFloat(row[periode + '_adhk_c1_adj']) : "";
 
+
+                                const adhk_c_q = JSON.stringify(row[periode + '_adhk_c_q']);
+                                const adhk_c_q_adj = JSON.stringify(row[periode + '_adhk_c_q_adj'])
+                                const adhk_c_q1 = JSON.stringify(row[periode + '_adhk_c_q1'])
+                                const adhk_c_q1_adj = JSON.stringify(row[periode + '_adhk_c_q1_adj'])
+
                                 // Pertumbuhan ALL
                                 const qtq = adhk != "" && adhk_q1 != "" ? (adhk - adhk_q1) / adhk_q1 * 100 : "";
                                 const qtq_adj = adhk_q1 + adhk_q1_adj != "" ?
@@ -465,7 +480,12 @@
                                         data-adhk_c="${adhk_c}"
                                         data-adhk_c_adj="${adhk_c_adj}"
                                         data-adhk_c1="${adhk_c1}"
-                                        data-adhk_c1_adj="${adhk_c1_adj}">
+                                        data-adhk_c1_adj="${adhk_c1_adj}"
+                                        data-adhk_c_q='${adhk_c_q}'
+                                        data-adhk_c_q_adj='${adhk_c_q_adj}'
+                                        data-adhk_c_q1='${adhk_c_q1}'
+                                        data-adhk_c_q1_adj='${adhk_c_q1_adj}'
+                                        >
                                         ${formatNumber(adhk)}
                                     </td>
                                     <td>
@@ -1281,14 +1301,14 @@
             let indeks_implisit_adj;
             let laju_implisit_qtq_adj;
             let laju_implisit_yty_adj;
+            let adhk_c_q1_adj = 0;
 
-            adhk_adj_val = ((yty_adj * (adhk_y1 + adhk_y1_adj) / 100) + (adhk_y1 + adhk_y1_adj)) - adhk;
-
-            // calcutate ctc
+            // calculate adhk
             for (var q_c = 1; q_c <= quarter; q_c++) {
                 var str_c = year + 'Q' + q_c;
                 var str_c1 = (year - 1) + 'Q' + q_c;
                 let input_adhk_c = $('#' + str_c + '_adhk_adj')
+
                 if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
                     adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
                 } else {
@@ -1301,20 +1321,24 @@
                 } else {
                     adhk_c1_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c1_adj')) : 0;
                 }
+
+                if (q_c < quarter) {
+                    adhk_c_q1_adj += adhk_c_adj;
+                }
             }
-            ctc_adj = adhk_c1 + adhk_c1_adj != 0 ? ((adhk_c + adhk_c_adj) - (adhk_c1 + adhk_c1_adj)) / (adhk_c1 + adhk_c1_adj) * 100 : "";
-            ctc_adj_input.val(formatNumber(ctc_adj));
-            ctc_adj_input.css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
-            ctc_adj_input.closest('td').css('background', ctc_adj > 0 ? 'lightgreen' : ctc_adj < 0 ? 'lemonchiffon' : 'transparent');
+
+            adhk_c_adj_val = ((ctc_adj * (adhk_c1 + adhk_c1_adj) / 100) + (adhk_c1 + adhk_c1_adj)) - adhk_c;
+            adhk_adj_val = adhk_c_adj_val - adhk_c_q1_adj;
+
+            adhk_adj_cell.text(formatNumber(adhk_adj_val + adhk));
+            adhk_adj_input.val(formatNumber(adhk_adj_val));
+            adhk_adj_cell.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            adhk_adj_input.closest('td').css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ?
+                'lemonchiffon' : 'transparent');
+            adhk_adj_input.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
 
 
-
-
-
-
-
-
-            // calculate adhk
+            // calcutate yty
             let str_y1 = (year - 1) + 'Q' + quarter;
             let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
             if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
@@ -1328,13 +1352,11 @@
             } else {
                 adhb_y1_adj = parseNumberIndonesian(adhb_cell.data('adhb_y1_adj'));
             }
-            adhk_adj_val = ((yty_adj * (adhk_y1 + adhk_y1_adj) / 100) + (adhk_y1 + adhk_y1_adj)) - adhk;
-            adhk_adj_cell.text(formatNumber(adhk_adj_val + adhk));
-            adhk_adj_input.val(formatNumber(adhk_adj_val));
-            adhk_adj_cell.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
-            adhk_adj_input.closest('td').css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' :
-                'transparent');
-            adhk_adj_input.css('background', adhk_adj_val > 0 ? 'lightgreen' : adhk_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            yty_adj = adhk_y1 + adhk_y1_adj != 0 ? ((adhk + adhk_adj_val) - (adhk_y1 + adhk_y1_adj)) / (adhk_y1 + adhk_y1_adj) * 100 : "";
+            yty_adj_input.val(formatNumber(yty_adj));
+            yty_adj_input.css('background', yty_adj > 0 ? 'lightgreen' : yty_adj < 0 ? 'lemonchiffon' : 'transparent');
+            yty_adj_input.closest('td').css('background', yty_adj > 0 ? 'lightgreen' : yty_adj < 0 ? 'lemonchiffon' : 'transparent');
+
 
             // calculate qtq
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
@@ -1354,7 +1376,6 @@
             qtq_adj_input.val(formatNumber(qtq_adj));
             qtq_adj_input.css('background', qtq_adj > 0 ? 'lightgreen' : qtq_adj < 0 ? 'lemonchiffon' : 'transparent');
             qtq_adj_input.closest('td').css('background', qtq_adj > 0 ? 'lightgreen' : qtq_adj < 0 ? 'lemonchiffon' : 'transparent');
-
 
 
             if (implisit_toggle) {
@@ -1478,6 +1499,140 @@
                     color_header = ""
             }
             return color_header;
+        }
+
+
+        function exportExcelWithCustomStyles() {
+            // 1. Clone tabel
+            const table = document.getElementById('tabel-output').cloneNode(true);
+
+            // 2. Handle input values
+            $(table).find('td input').each(function() {
+                const value = $(this).val();
+                $(this).parent().html(value);
+            });
+
+            // 3. Tambahkan referensi cell
+            $(table).find('td, th').each(function() {
+                const $cell = $(this);
+                const row = $cell.parent().index();
+                const col = $cell.index();
+                $cell.attr('data-xls-ref', XLSX.utils.encode_cell({
+                    r: row,
+                    c: col
+                }));
+            });
+
+            // 4. Ekspor ke workbook
+            const workbook = XLSX.utils.table_to_book(table, {
+                raw: true,
+                display: false,
+                sheetRows: 0,
+                cellStyles: true
+            });
+
+            // 5. Apply styling
+            const ws = workbook.Sheets[workbook.SheetNames[0]];
+            ws['!cols'] = []; // Untuk set column width
+            ws['!rows'] = []; // Untuk set row height
+            const range = XLSX.utils.decode_range(ws['!ref']);
+
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                ws['!rows'][R] = {
+                    hpx: 20,
+                    alignment: {
+                        vertical: 'center',
+                        horizontal: 'center'
+                    }
+                };
+
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cell_ref = XLSX.utils.encode_cell({
+                        c: C,
+                        r: R
+                    });
+                    if (!ws[cell_ref]) continue;
+
+                    // Inisialisasi style
+                    ws[cell_ref].t = 's'; // Tipe data: string
+                    ws[cell_ref].s = {
+                        alignment: {
+                            horizontal: 'center',
+                            vertical: 'center'
+                        }
+                    };
+
+                    const cell_dom = $(table).find(`[data-xls-ref="${cell_ref}"]`)[0];
+                    if (!cell_dom) continue;
+
+                    // Override alignment jika ada spesifik
+                    const align = $(cell_dom).css('text-align') ||
+                        ($(cell_dom).hasClass('text-left') ? 'left' :
+                            $(cell_dom).hasClass('text-right') ? 'right' : null);
+
+                    if (align) {
+                        ws[cell_ref].s.alignment.horizontal = align;
+                    }
+
+                    // Handle warna (dari solusi sebelumnya)
+                    applyCellColors(ws, cell_ref, cell_dom);
+                }
+            }
+
+            // 6. Export
+            XLSX.writeFile(workbook, "Rekomens_output.xlsx", {
+                bookType: 'xlsx',
+                type: 'array',
+                cellStyles: true
+            });
+        }
+
+        // Helper function untuk warna
+        function applyCellColors(ws, cell_ref, cell_dom) {
+            const colorMap = {
+                'bg-tw1': 'FFEE8E',
+                'bg-tw2': 'A6FF98',
+                'bg-tw3': 'A3C6FA',
+                'bg-tw4': 'FF8E8E',
+                'lightgreen': '90EE90',
+                'lemonchiffon': 'fffacd'
+            };
+
+            // Cek inline style
+            const inlineBg = $(cell_dom).css('background-color');
+            if (inlineBg && inlineBg !== 'rgba(0, 0, 0, 0)') {
+                ws[cell_ref].s.fill = {
+                    patternType: 'solid',
+                    fgColor: {
+                        rgb: rgbToHex(inlineBg)
+                    }
+                };
+            }
+
+            // Cek class
+            const classes = $(cell_dom).attr('class') || '';
+            Object.entries(colorMap).forEach(([cls, hex]) => {
+                if (classes.includes(cls)) {
+                    ws[cell_ref].s.fill = {
+                        patternType: 'solid',
+                        fgColor: {
+                            rgb: hex
+                        }
+                    };
+                }
+            });
+        }
+
+        function rgbToHex(rgb) {
+            // Konversi rgb(r,g,b) ke hex
+            const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+            if (!match) return null;
+
+            const r = parseInt(match[1]).toString(16).padStart(2, '0');
+            const g = parseInt(match[2]).toString(16).padStart(2, '0');
+            const b = parseInt(match[3]).toString(16).padStart(2, '0');
+
+            return r.toUpperCase() + g.toUpperCase() + b.toUpperCase();
         }
     </script>
 @endsection

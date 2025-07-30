@@ -142,7 +142,7 @@
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 ">
                                         <label class="text-white">Export</label>
-                                        <button class="btn btn-success w-100" type="button" id="export" onclick="exportExcelWithCustomStyles()">Export
+                                        <button class="btn btn-success w-100" type="button" id="export" onclick="exportHtmlTableToExcel()">Export
                                             <i class="fa fa-download"></i></button>
                                     </div>
                                     <div class="col text-right">
@@ -248,10 +248,7 @@
 @section('scripts')
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/bootstrap4-toggle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/blob-polyfill@4.0.20210208/dist/Blob.min.js"></script><!-- Tambahkan di head atau sebelum script Anda -->
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
     <script>
         var vm = new Vue({
             el: "#app_vue",
@@ -1501,138 +1498,69 @@
             return color_header;
         }
 
+        function exportHtmlTableToExcel() {
+            const table = document.getElementById("tabel-output").cloneNode(true);
 
-        function exportExcelWithCustomStyles() {
-            // 1. Clone tabel
-            const table = document.getElementById('tabel-output').cloneNode(true);
-
-            // 2. Handle input values
-            $(table).find('td input').each(function() {
-                const value = $(this).val();
-                $(this).parent().html(value);
-            });
-
-            // 3. Tambahkan referensi cell
-            $(table).find('td, th').each(function() {
-                const $cell = $(this);
-                const row = $cell.parent().index();
-                const col = $cell.index();
-                $cell.attr('data-xls-ref', XLSX.utils.encode_cell({
-                    r: row,
-                    c: col
-                }));
-            });
-
-            // 4. Ekspor ke workbook
-            const workbook = XLSX.utils.table_to_book(table, {
-                raw: true,
-                display: false,
-                sheetRows: 0,
-                cellStyles: true
-            });
-
-            // 5. Apply styling
-            const ws = workbook.Sheets[workbook.SheetNames[0]];
-            ws['!cols'] = []; // Untuk set column width
-            ws['!rows'] = []; // Untuk set row height
-            const range = XLSX.utils.decode_range(ws['!ref']);
-
-            for (let R = range.s.r; R <= range.e.r; ++R) {
-                ws['!rows'][R] = {
-                    hpx: 20,
-                    alignment: {
-                        vertical: 'center',
-                        horizontal: 'center'
-                    }
-                };
-
-                for (let C = range.s.c; C <= range.e.c; ++C) {
-                    const cell_ref = XLSX.utils.encode_cell({
-                        c: C,
-                        r: R
-                    });
-                    if (!ws[cell_ref]) continue;
-
-                    // Inisialisasi style
-                    ws[cell_ref].t = 's'; // Tipe data: string
-                    ws[cell_ref].s = {
-                        alignment: {
-                            horizontal: 'center',
-                            vertical: 'center'
-                        }
-                    };
-
-                    const cell_dom = $(table).find(`[data-xls-ref="${cell_ref}"]`)[0];
-                    if (!cell_dom) continue;
-
-                    // Override alignment jika ada spesifik
-                    const align = $(cell_dom).css('text-align') ||
-                        ($(cell_dom).hasClass('text-left') ? 'left' :
-                            $(cell_dom).hasClass('text-right') ? 'right' : null);
-
-                    if (align) {
-                        ws[cell_ref].s.alignment.horizontal = align;
-                    }
-
-                    // Handle warna (dari solusi sebelumnya)
-                    applyCellColors(ws, cell_ref, cell_dom);
-                }
-            }
-
-            // 6. Export
-            XLSX.writeFile(workbook, "Rekomens_output.xlsx", {
-                bookType: 'xlsx',
-                type: 'array',
-                cellStyles: true
-            });
-        }
-
-        // Helper function untuk warna
-        function applyCellColors(ws, cell_ref, cell_dom) {
-            const colorMap = {
-                'bg-tw1': 'FFEE8E',
-                'bg-tw2': 'A6FF98',
-                'bg-tw3': 'A3C6FA',
-                'bg-tw4': 'FF8E8E',
-                'lightgreen': '90EE90',
-                'lemonchiffon': 'fffacd'
+            // Peta class ke warna background
+            const bgColorMap = {
+                "bg-tw1": "#ffee8e",
+                "bg-tw2": "#a6ff98",
+                "bg-tw3": "#a3c6fa",
+                "bg-tw4": "#ff8e8e"
             };
 
-            // Cek inline style
-            const inlineBg = $(cell_dom).css('background-color');
-            if (inlineBg && inlineBg !== 'rgba(0, 0, 0, 0)') {
-                ws[cell_ref].s.fill = {
-                    patternType: 'solid',
-                    fgColor: {
-                        rgb: rgbToHex(inlineBg)
-                    }
-                };
-            }
-
-            // Cek class
-            const classes = $(cell_dom).attr('class') || '';
-            Object.entries(colorMap).forEach(([cls, hex]) => {
-                if (classes.includes(cls)) {
-                    ws[cell_ref].s.fill = {
-                        patternType: 'solid',
-                        fgColor: {
-                            rgb: hex
-                        }
-                    };
+            // Ganti isi <td> yang punya <input> jadi value dari input
+            Array.from(table.querySelectorAll("td")).forEach(td => {
+                const input = td.querySelector("input");
+                if (input) {
+                    td.textContent = input.value;
                 }
             });
-        }
 
-        function rgbToHex(rgb) {
-            // Konversi rgb(r,g,b) ke hex
-            const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-            if (!match) return null;
+            // Tambahkan border dan ambil style dari class
+            table.style.borderCollapse = "collapse";
+            Array.from(table.querySelectorAll("th, td")).forEach(cell => {
+                cell.style.border = "1px solid black";
+                cell.style.padding = "4px";
+                cell.style.textAlign = "center"; // default align center
 
-            const r = parseInt(match[1]).toString(16).padStart(2, '0');
-            const g = parseInt(match[2]).toString(16).padStart(2, '0');
-            const b = parseInt(match[3]).toString(16).padStart(2, '0');
+                // Cek class untuk alignment Bootstrap
+                if (cell.classList.contains("text-left")) {
+                    cell.style.textAlign = "left";
+                } else if (cell.classList.contains("text-right")) {
+                    cell.style.textAlign = "right";
+                }
 
-            return r.toUpperCase() + g.toUpperCase() + b.toUpperCase();
+                // Cek class untuk background color
+                for (let className of cell.classList) {
+                    if (bgColorMap[className]) {
+                        cell.style.backgroundColor = bgColorMap[className];
+                        break;
+                    }
+                }
+            });
+
+            // Buat HTML final
+            const html = `
+                    <html>
+                        <head><meta charset="utf-8"></head>
+                        <body>
+                            ${table.outerHTML}
+                        </body>
+                    </html>
+                `;
+
+            // Ekspor sebagai .xls
+            const blob = new Blob(['\ufeff', html], {
+                type: 'application/vnd.ms-excel'
+            });
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = "[Rekomends]-Rekon-output.xls";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 @endsection

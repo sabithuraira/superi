@@ -15,10 +15,14 @@ use Illuminate\Support\Facades\Auth;
 class UploadController extends Controller
 {
     //
-    public function upload()
+    public function upload(Request $request)
     {
         $auth = Auth::user();
+
         $wilayah = $auth->kdkab;
+        if ($request->get('wilayah')) {
+            $wilayah = $request->get('wilayah');
+        }
         // $wilayah = '74';
         $tahun = date('Y');
         $triwulan = 1;
@@ -56,6 +60,7 @@ class UploadController extends Controller
 
         if (strlen($request->get('wilayah')) > 0) {
             $wilayah = $request->get('wilayah');
+            // dd($request->get('wilayah'));
         }
 
         if ($wilayah != $auth->kdkab) {
@@ -110,7 +115,7 @@ class UploadController extends Controller
                 }
             }
 
-            return redirect('upload/import')->with('success', 'Data berhasil disimpan');
+            return redirect('upload/import?wilayah=' . $wilayah)->with('success', 'Data berhasil disimpan');
         } else {
             $str_date = date('Y-m-d h:i:s');
             return Excel::download(new PdrbExport($wilayah), 'pdrb_' . $str_date . '.xlsx');

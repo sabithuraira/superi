@@ -114,6 +114,23 @@
             <div class="card">
                 <div class="header">
                     <h2>Rekonsiliasi</h2>
+
+                    <div class="alert alert-info">
+                        <ul>
+                            <li>Menu rekonsiliasi berfungsi sebagai alat untuk melakukan rekonsiliasi seluruh kabupaten/kota</li>
+                            <li>Isian input dapat menghitung secara otomatis nilai pertumbuhan dan nilai implisit</li>
+                            <li>Fungsi Tombol Toogle Implisit berubah(Sebelah Kanan)</li>
+                            <ul>
+                                <li>toogle pilihan Implisit Berubah(adhb tetap) dan Implisit Tetap(adhb berubah)</li>
+                                <li><b>Implisit Tetap</b> akan berfungsi ketika menginput nilai pertumbuhan bukan nilai komponennya</li>
+                                <li><b>Implisit Berubah(adhb tetap)</b>: ketika input pada kolom pertumubuhan(qtq,yty,cyc) maka akan mengubah nilai adj
+                                    adhk tanpa mengubah nilai adhb</li>
+                            </ul>
+                            <li>Tombol simpan akan melakukan proses simpan nilai adj ke server, tapi apabila admin approve nilai baru maka adj dari 0 lagi
+                            </li>
+                            <li>Tombol export untuk download data dalam XLS tapi tidak menyimpan data ke server</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="body">
                     <div class="row">
@@ -459,13 +476,16 @@
                                         ${formatNumber(adhb)}
                                     </td>
                                     <td>
-                                        <input id="${periode + '_adhb_adj'}"
+                                        <input id="${periode + '_'+ row['kode_kab'] + '_adhb_adj'}"
                                         value="${formatNumber(adhb_adj)}"
                                         data-id="${row[periode + '_adhb_id']}"
+                                        data-kode_kab="${row['kode_kab']}"
                                         data-periode="${periode}"
-                                        class="text_edit_adhb"
+                                        class="text_edit_adhb ${row['kode_kab']}"
                                         type="text" inputmode="decimal"
-                                        pattern="^\d+(\.\d{0,2})?$" >
+                                        pattern="^\d+(\.\d{0,2})?$"
+                                        ${row[periode+'_adhb_id'] == null?'disabled':''}
+                                        >
                                     </td>
                                     <td id="cell_adhb_adj_${periode}">${formatNumber(adhb + adhb_adj)}</td>
                                     <td data-adhk="${adhk}"
@@ -486,12 +506,15 @@
                                         ${formatNumber(adhk)}
                                     </td>
                                     <td>
-                                        <input id="${periode + '_adhk_adj'}"
+                                        <input id="${periode+ '_'+ row['kode_kab'] + '_adhk_adj'}"
                                         value="${formatNumber(adhk_adj)}"
                                         data-id="${row[periode + '_adhk_id']}"
+                                        data-kode_kab="${row['kode_kab']}"
                                         data-periode="${periode}"
                                         class="text_edit_adhk" type="text"
-                                        inputmode="decimal" pattern="^\d+(\.\d{0,2})?$" >
+                                        inputmode="decimal" pattern="^\d+(\.\d{0,2})?$"
+                                        ${row[periode+'_adhk_id'] == null?'disabled':''}
+                                        >
                                     </td>
                                     <td >${formatNumber(adhk + adhk_adj)}</td>
                                     <td style="${qtq > 0 ? 'background:lightgreen' : qtq < 0 ? 'background:lemonchiffon' : ''}">
@@ -563,33 +586,15 @@
                             $('#wait_progres').modal('toggle')
                             if (response.success) {
                                 swal("Sukses!", response.message || "Data berhasil disimpan", "success");
-                                // Swal.fire({
-                                //     icon: 'success',
-                                //     title: 'Sukses!',
-                                //     text: response.message ||
-                                //         'Data berhasil disimpan', // Gunakan pesan dari response atau default
-                                //     timer: 3000,
-                                //     showConfirmButton: false
-                                // });
                             } else {
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Peringatan',
-                                    text: response.message || 'Terjadi kesalahan'
-                                });
+                                swal("Error!", response.message || "Data gagal disimpan", "error");
                             }
-
                             console.log('Data berhasil dikirim', response);
-
                         },
                         error: function(xhr) {
                             console.error('Gagal mengirim data', xhr.responseText);
                             $('#wait_progres').modal('toggle')
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: xhr.responseJSON?.message || 'Terjadi kesalahan server'
-                            });
+                            swal("Error!", response.message || "Data gagal disimpan", "error");
                         }
                     });
 
@@ -714,6 +719,7 @@
         $(document).on('input', '.text_edit_adhb', function() {
             const input = $(this);
             const periode = input.data('periode');
+            const kode_kab = input.data('kode_kab');
             let q_split = periode.split('Q');
             let year = parseInt(q_split[0]);
             let quarter = parseInt(q_split[1]);
@@ -736,14 +742,14 @@
             let adhb_y1_adj;
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
             // ADHB Q1
-            let input_adhb_q1 = $('#' + str_q1 + '_adhb_adj');
+            let input_adhb_q1 = $('#' + str_q1 + "_" + kode_kab + '_adhb_adj');
             if (input_adhb_q1.length > 0 && input_adhb_q1.is('input')) {
                 adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
             } else {
                 adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
             }
             // ADHB Y1
-            let input_adhb_y1 = $('#' + (year - 1) + 'Q' + quarter + '_adhb_adj')
+            let input_adhb_y1 = $('#' + (year - 1) + 'Q' + quarter + "_" + kode_kab + '_adhb_adj')
             if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
                 adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
             } else {
@@ -758,14 +764,14 @@
             let adhk_y1_adj;
             // cek apakah ada input periode sebelumnya di tampilan layar
             // ADHK Q1
-            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhk_q1 = $('#' + str_q1 + "_" + kode_kab + '_adhk_adj');
             if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
             } else {
                 adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
             }
             // ADHK Y1
-            let input_adhk_y1 = $('#' + (year - 1) + 'Q' + quarter + '_adhk_adj')
+            let input_adhk_y1 = $('#' + (year - 1) + 'Q' + quarter + "_" + kode_kab + '_adhk_adj')
             if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
                 adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
             } else {
@@ -796,6 +802,7 @@
             laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj_val > 0 ? 'lightgreen' : laju_implisit_yty_adj_val < 0 ?
                 'lemonchiffon' : 'transparent');
 
+            totalkabkotadhb(periode)
             formatedtext = formatText(input.val());
             $(this).val(formatedtext);
 
@@ -803,6 +810,7 @@
 
         $(document).on('input', '.text_edit_adhk', function() {
             const input = $(this);
+            const kode_kab = input.data('kode_kab');
             const periode = input.data('periode');
             let q_split = periode.split('Q');
             let year = parseInt(q_split[0]);
@@ -840,14 +848,14 @@
             let adhb_y1_adj;
             // ADHB Q1
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
-            let input_adhb_q1 = $('#' + str_q1 + '_adhb_adj');
+            let input_adhb_q1 = $('#' + str_q1 + "_" + kode_kab + '_adhb_adj');
             if (input_adhb_q1.length > 0 && input_adhb_q1.is('input')) {
                 adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
             } else {
                 adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
             }
             // ADHB Y1
-            let input_adhb_y1 = $('#' + (year - 1) + 'Q' + quarter + '_adhb_adj')
+            let input_adhb_y1 = $('#' + (year - 1) + 'Q' + quarter + "_" + kode_kab + '_adhb_adj')
             if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
                 adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
             } else {
@@ -871,15 +879,19 @@
             // cek apakah ada input periode sebelumnya di tampilan layar
 
             // ADHK Q1
-            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhk_q1 = $('#' + str_q1 + "_" + kode_kab + '_adhk_adj');
+            // console.log('#' + str_q1 + "_" + kode_kab + '_adhk_adj')
+            // console.log(input_adhk_q1.data())
             if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
+                // jika input ada pada tampilan
                 adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
             } else {
+                // jika input tidak ada ambil dari attribute data
                 adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
             }
 
             // ADHK Y1
-            let input_adhk_y1 = $('#' + (year - 1) + 'Q' + quarter + '_adhk_adj')
+            let input_adhk_y1 = $('#' + (year - 1) + 'Q' + quarter + "_" + kode_kab + '_adhk_adj')
             if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
                 adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
             } else {
@@ -890,14 +902,15 @@
             for (var q_c = 1; q_c <= quarter; q_c++) {
                 var str_c = year + 'Q' + q_c;
                 var str_c1 = (year - 1) + 'Q' + q_c;
-                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                let input_adhk_c = $('#' + str_c + "_" + kode_kab + '_adhk_adj')
                 if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
+                    // console.log('isinput' + input_adhk_c.val())
                     adhk_c_adj = adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
                 } else {
                     adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
                 }
 
-                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                let input_adhk_c1 = $('#' + str_c1 + "_" + kode_kab + '_adhk_adj')
                 if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
                     adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
                 } else {
@@ -947,6 +960,7 @@
             laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj_val > 0 ? 'lightgreen' :
                 laju_implisit_yty_adj_val < 0 ? 'lemonchiffon' : 'transparent');
 
+            totalkabkotadhk(periode)
             formatedtext = formatText(input.val());
             $(this).val(formatedtext);
         });
@@ -954,6 +968,7 @@
         $(document).on('input', '.text_edit_qtq_adj', function() {
             const input = $(this);
             const periode = input.data('periode');
+            const kode_kab = input.data('kode_kab');
             let q_split = periode.split('Q');
             let year = parseInt(q_split[0]);
             let quarter = parseInt(q_split[1]);
@@ -999,13 +1014,13 @@
 
             // calculate adhk
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
-            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhk_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
             } else {
                 adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
             }
-            let input_adhb_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhb_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhb_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
             } else {
@@ -1021,13 +1036,13 @@
 
             // caculate yty
             let str_y1 = (year - 1) + 'Q' + quarter;
-            let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
+            let input_adhk_y1 = $('#' + str_y1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
                 adhk_y1_adj = parseNumberIndonesian(input_adhk_q1.val());
             } else {
                 adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
             }
-            let input_adhb_y1 = $('#' + str_y1 + '_adhk_adj');
+            let input_adhb_y1 = $('#' + str_y1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
                 adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
             } else {
@@ -1043,14 +1058,14 @@
             for (var q_c = 1; q_c <= quarter; q_c++) {
                 var str_c = year + 'Q' + q_c;
                 var str_c1 = (year - 1) + 'Q' + q_c;
-                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                let input_adhk_c = $('#' + str_c + '_' + kode_kab + '_adhk_adj')
                 if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
                     adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
                 } else {
                     adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
                 }
 
-                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                let input_adhk_c1 = $('#' + str_c1 + '_' + kode_kab + '_adhk_adj')
                 if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
                     adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
                 } else {
@@ -1107,6 +1122,7 @@
         $(document).on('input', '.text_edit_yty_adj', function() {
             const input = $(this);
             const periode = input.data('periode');
+            const kode_kab = input.data('kode_kab');
             let q_split = periode.split('Q');
             let year = parseInt(q_split[0]);
             let quarter = parseInt(q_split[1]);
@@ -1150,13 +1166,13 @@
 
             // calculate adhk
             let str_y1 = (year - 1) + 'Q' + quarter;
-            let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
+            let input_adhk_y1 = $('#' + str_y1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
                 adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
             } else {
                 adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
             }
-            let input_adhb_y1 = $('#' + str_y1 + '_adhb_adj');
+            let input_adhb_y1 = $('#' + str_y1 + '_' + kode_kab + '_adhb_adj');
             if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
                 adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
             } else {
@@ -1172,13 +1188,13 @@
 
             // calculate qtq
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
-            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhk_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
             } else {
                 adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
             }
-            let input_adhb_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhb_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhb_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
             } else {
@@ -1193,14 +1209,14 @@
             for (var q_c = 1; q_c <= quarter; q_c++) {
                 var str_c = year + 'Q' + q_c;
                 var str_c1 = (year - 1) + 'Q' + q_c;
-                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                let input_adhk_c = $('#' + str_c + '_' + kode_kab + '_adhk_adj')
                 if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
                     adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
                 } else {
                     adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
                 }
 
-                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                let input_adhk_c1 = $('#' + str_c1 + '_' + kode_kab + '_adhk_adj')
                 if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
                     adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
                 } else {
@@ -1304,7 +1320,7 @@
             for (var q_c = 1; q_c <= quarter; q_c++) {
                 var str_c = year + 'Q' + q_c;
                 var str_c1 = (year - 1) + 'Q' + q_c;
-                let input_adhk_c = $('#' + str_c + '_adhk_adj')
+                let input_adhk_c = $('#' + str_c + '_' + kode_kab + '_adhk_adj')
 
                 if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
                     adhk_c_adj += adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
@@ -1312,7 +1328,7 @@
                     adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
                 }
 
-                let input_adhk_c1 = $('#' + str_c1 + '_adhk_adj')
+                let input_adhk_c1 = $('#' + str_c1 + '_' + kode_kab + '_adhk_adj')
                 if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
                     adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
                 } else {
@@ -1337,13 +1353,13 @@
 
             // calcutate yty
             let str_y1 = (year - 1) + 'Q' + quarter;
-            let input_adhk_y1 = $('#' + str_y1 + '_adhk_adj');
+            let input_adhk_y1 = $('#' + str_y1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
                 adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
             } else {
                 adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
             }
-            let input_adhb_y1 = $('#' + str_y1 + '_adhb_adj');
+            let input_adhb_y1 = $('#' + str_y1 + '_' + kode_kab + '_adhb_adj');
             if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
                 adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
             } else {
@@ -1357,13 +1373,13 @@
 
             // calculate qtq
             let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
-            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhk_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
             } else {
                 adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
             }
-            let input_adhb_q1 = $('#' + str_q1 + '_adhk_adj');
+            let input_adhb_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
             if (input_adhb_q1.length > 0 && input_adhk_q1.is('input')) {
                 adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
             } else {
@@ -1424,6 +1440,7 @@
             $('body').removeClass('modal-open');
             $('body').focus();
         });
+
         $('#periodeModal').on('shown.bs.modal', function() {
             // Pastikan z-index modal lebih tinggi dari backdrop
             $(this).css('z-index', 1060);
@@ -1449,7 +1466,6 @@
         function parseNumberIndonesian(numStr) {
             // Jika input sudah number, langsung return
             if (typeof numStr === 'number') return numStr;
-            // console.log(numStr)
             // Hapus semua titik (ribuan), ganti koma (desimal) dengan titik
             const cleaned = numStr.toString()
                 .replace(/\./g, '') // Hapus semua .
@@ -1561,6 +1577,264 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        function totalkabkotadhb(periode) {
+            let sum = 0;
+            $(".text_edit_adhb").each(function() {
+                let kode = $(this).data("kode_kab");
+                let periode_input = $(this).data("periode");
+                if (kode !== "-" && kode !== "00" && periode === periode_input) {
+                    sum += parseNumberIndonesian($(this).val()) || 0;
+                }
+            });
+            // $(".text_edit_adhb[data-kode_kab='-'][data-periode='" + periode + "']").val(formatNumber(sum));
+
+            let q_split = periode.split('Q');
+            let year = parseInt(q_split[0]);
+            let quarter = parseInt(q_split[1]);
+
+            const input = $(".text_edit_adhb[data-kode_kab='-'][data-periode='" + periode + "']")
+            input.val(formatNumber(sum));
+            const adhb_adj = sum
+            const adhk_adj = parseNumberIndonesian(input.closest('td').nextAll().eq(2).find('input').val() || 0);
+
+            const adhb_cell = input.closest('td').prev('td');
+            const adhb_adj_cell = input.closest('td').nextAll('td').eq(0);
+
+            const adhk_cell = input.closest('td').nextAll('td').eq(1);
+            const adhk_adj_cell = input.closest('td').nextAll('td').eq(2);
+            const implisit_adj_cell = input.closest('td').nextAll('td').eq(11);
+            const laju_implisit_qtq_adj_cell = input.closest('td').nextAll('td').eq(13);
+            const laju_implisit_yty_adj_cell = input.closest('td').nextAll('td').eq(15);
+
+            const adhb = parseNumberIndonesian(adhb_cell.text()) || 0;
+            const adhb_q1 = parseNumberIndonesian(adhb_cell.data('adhb_q1'));
+            const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
+            let adhb_q1_adj;
+            let adhb_y1_adj;
+            // adhb_adj_val = adhb + adhb_adj;
+            // adhb_adj_cell.text(formatNumber(adhb_adj_val));
+            let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
+            // ADHB Q1
+            let input_adhb_q1 = $('#' + str_q1 + '_adhb_adj');
+            if (input_adhb_q1.length > 0 && input_adhb_q1.is('input')) {
+                adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
+            } else {
+                adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
+            }
+            // ADHB Y1
+            let input_adhb_y1 = $('#' + (year - 1) + 'Q' + quarter + '_adhb_adj')
+            if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
+                adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
+            } else {
+                adhb_y1_adj = parseNumberIndonesian(adhb_cell.data('adhb_y1_adj'));
+            }
+
+            // ADHK
+            const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
+            const adhk_q1 = parseNumberIndonesian(adhk_cell.data('adhk_q1'));
+            const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
+            let adhk_q1_adj;
+            let adhk_y1_adj;
+            // cek apakah ada input periode sebelumnya di tampilan layar
+            // ADHK Q1
+            let input_adhk_q1 = $('#' + str_q1 + '_adhk_adj');
+            if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
+                adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
+            } else {
+                adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
+            }
+            // ADHK Y1
+            let input_adhk_y1 = $('#' + (year - 1) + 'Q' + quarter + '_adhk_adj')
+            if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
+                adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
+            } else {
+                adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
+            }
+
+            adhb_adj_val = adhb + adhb_adj;
+            implisit_adj_val = adhk + adhk_adj != 0 ? (adhb + adhb_adj) / (adhk + adhk_adj) * 100 : "";
+            laju_implisit_qtq_adj_val = adhk + adhk_adj != 0 &&
+                adhk_q1 + adhk_q1_adj != 0 ?
+                ((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) /
+                    ((adhb_q1 + adhb_q1_adj) / (adhk_q1 + adhk_q1_adj) * 100) * 100) - 100) : "";
+            laju_implisit_yty_adj_val =
+                adhk + adhk_adj != 0 &&
+                adhk_y1 + adhk_y1_adj != 0 ?
+                ((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) /
+                    ((adhb_y1 + adhb_y1_adj) / (adhk_y1 + adhk_y1_adj) * 100) * 100) - 100) : "";
+
+
+            adhb_adj_cell.text(formatNumber(adhb_adj_val));
+            implisit_adj_cell.text(formatNumber(implisit_adj_val));
+            laju_implisit_qtq_adj_cell.text(formatNumber(laju_implisit_qtq_adj_val));
+            laju_implisit_yty_adj_cell.text(formatNumber(laju_implisit_yty_adj_val));
+
+            implisit_adj_cell.css('background', implisit_adj_val > 0 ? 'lightgreen' : implisit_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            laju_implisit_qtq_adj_cell.css('background', laju_implisit_qtq_adj_val > 0 ? 'lightgreen' : laju_implisit_qtq_adj_val < 0 ?
+                'lemonchiffon' : 'transparent');
+            laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj_val > 0 ? 'lightgreen' : laju_implisit_yty_adj_val < 0 ?
+                'lemonchiffon' : 'transparent');
+
+        }
+
+        function totalkabkotadhk(periode) {
+            let sum = 0;
+            $(".text_edit_adhk").each(function() {
+                let kode = $(this).data("kode_kab");
+                let periode_input = $(this).data("periode");
+                if (kode !== "-" && kode !== "00" && periode === periode_input) {
+                    sum += parseNumberIndonesian($(this).val()) || 0;
+                }
+            });
+            // $(".text_edit_adhb[data-kode_kab='-'][data-periode='" + periode + "']").val(formatNumber(sum));
+
+            let q_split = periode.split('Q');
+            let year = parseInt(q_split[0]);
+            let quarter = parseInt(q_split[1]);
+
+            const input = $(".text_edit_adhk[data-kode_kab='-'][data-periode='" + periode + "']")
+            input.val(formatNumber(sum));
+            const kode_kab = input.data('kode_kab')
+            const adhk_adj = sum;
+            const adhb_adj = parseNumberIndonesian(input.closest('td').prevAll().eq(2).find('input').val() || 0);
+
+
+            const adhb_cell = input.closest('td').prevAll().eq(3);
+            const adhb_adj_cell = input.closest('td').prevAll('td').eq(1);
+
+            const adhk_cell = input.closest('td').prevAll('td').eq(0);
+            const adhk_adj_cell = input.closest('td').nextAll('td').eq(0);
+
+            const qtq_adj_cell = input.closest('td').nextAll('td').eq(2);
+            const qtq_adj_input = qtq_adj_cell.find('input');
+
+            const yty_adj_cell = input.closest('td').nextAll('td').eq(4);
+            const yty_adj_input = yty_adj_cell.find('input');
+
+            const ctc_adj_cell = input.closest('td').nextAll('td').eq(6);
+            const ctc_adj_input = ctc_adj_cell.find('input');
+
+            const implisit_adj_cell = input.closest('td').nextAll('td').eq(8);
+            const laju_implisit_qtq_adj_cell = input.closest('td').nextAll('td').eq(10);
+            const laju_implisit_yty_adj_cell = input.closest('td').nextAll('td').eq(12);
+
+            // Nilai ADHB
+            const adhb = parseNumberIndonesian(adhb_cell.text()) || 0;
+            const adhb_q1 = parseNumberIndonesian(adhb_cell.data('adhb_q1'));
+            const adhb_y1 = parseNumberIndonesian(adhb_cell.data('adhb_y1'));
+
+            let adhb_q1_adj;
+            let adhb_y1_adj;
+            // ADHB Q1
+            let str_q1 = quarter === 1 ? (year - 1) + 'Q4' : year + 'Q' + (quarter - 1);
+            let input_adhb_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhb_adj');
+            if (input_adhb_q1.length > 0 && input_adhb_q1.is('input')) {
+                adhb_q1_adj = parseNumberIndonesian(input_adhb_q1.val());
+            } else {
+                adhb_q1_adj = parseNumberIndonesian(adhb_cell.data('adhb_q1_adj'));
+            }
+            // ADHB Y1
+            let input_adhb_y1 = $('#' + (year - 1) + 'Q' + quarter + '_' + kode_kab + '_adhb_adj')
+            if (input_adhb_y1.length > 0 && input_adhb_y1.is('input')) {
+                adhb_y1_adj = parseNumberIndonesian(input_adhb_y1.val());
+            } else {
+                adhb_y1_adj = parseNumberIndonesian(adhb_cell.data('adhb_y1_adj'));
+            }
+
+            // Nilai ADHK
+            const adhk = parseNumberIndonesian(adhk_cell.text()) || 0;
+            const adhk_y1 = parseNumberIndonesian(adhk_cell.data('adhk_y1'));
+            const adhk_q1 = parseNumberIndonesian(adhk_cell.data('adhk_q1'));
+            const adhk_c = parseNumberIndonesian(adhk_cell.data('adhk_c'));
+            const adhk_c1 = parseNumberIndonesian(adhk_cell.data('adhk_c1'));
+            // const adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
+            // const adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
+            // const adhk_c_adj = parseNumberIndonesian(adhk_cell.data('adhk_c_adj'));
+            // const adhk_c1_adj = parseNumberIndonesian(adhk_cell.data('adhk_c1_adj'));
+            let adhk_q1_adj;
+            let adhk_y1_adj;
+            let adhk_c_adj = 0;
+            let adhk_c1_adj = 0;
+            // cek apakah ada input periode sebelumnya di tampilan layar
+
+            // ADHK Q1
+            let input_adhk_q1 = $('#' + str_q1 + '_' + kode_kab + '_adhk_adj');
+            if (input_adhk_q1.length > 0 && input_adhk_q1.is('input')) {
+                adhk_q1_adj = parseNumberIndonesian(input_adhk_q1.val());
+            } else {
+                adhk_q1_adj = parseNumberIndonesian(adhk_cell.data('adhk_q1_adj'));
+            }
+
+            // ADHK Y1
+            let input_adhk_y1 = $('#' + (year - 1) + 'Q' + quarter + '_' + kode_kab + '_adhk_adj')
+            if (input_adhk_y1.length > 0 && input_adhk_y1.is('input')) {
+                adhk_y1_adj = parseNumberIndonesian(input_adhk_y1.val());
+            } else {
+                adhk_y1_adj = parseNumberIndonesian(adhk_cell.data('adhk_y1_adj'));
+            }
+
+            // ADHK C
+            for (var q_c = 1; q_c <= quarter; q_c++) {
+                var str_c = year + 'Q' + q_c;
+                var str_c1 = (year - 1) + 'Q' + q_c;
+                let input_adhk_c = $('#' + str_c + '_' + kode_kab + '_adhk_adj')
+                if (input_adhk_c.length > 0 && input_adhk_c.is('input')) {
+                    adhk_c_adj = adhk_c_adj + parseNumberIndonesian(input_adhk_c.val());
+                } else {
+                    adhk_c_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c_adj')) : 0;
+                }
+
+                let input_adhk_c1 = $('#' + str_c1 + '_' + kode_kab + '_adhk_adj')
+                if (input_adhk_c1.length > 0 && input_adhk_c1.is('input')) {
+                    adhk_c1_adj += parseNumberIndonesian(input_adhk_c1.val());
+                } else {
+                    adhk_c1_adj += adhk_cell.data('adhk_c_adj') ? parseNumberIndonesian(adhk_cell.data('adhk_c1_adj')) : 0;
+                }
+            }
+
+            adhk_adj_val = adhk + adhk_adj;
+            qtq_adj_val = adhk_q1 + adhk_q1_adj != 0 ?
+                ((adhk + adhk_adj) - (adhk_q1 + adhk_q1_adj)) / (adhk_q1 + adhk_q1_adj) * 100 : "";
+            yty_adj_val = adhk_y1 + adhk_y1_adj != 0 ?
+                ((adhk + adhk_adj) - (adhk_y1 + adhk_y1_adj)) / (adhk_y1 + adhk_y1_adj) * 100 : "";
+            ctc_adj_val = adhk_c1 + adhk_c1_adj != 0 ?
+                ((adhk_c + adhk_c_adj) - (adhk_c1 + adhk_c1_adj)) / (adhk_c1 + adhk_c1_adj) * 100 : "";
+            implisit_adj_val = adhk + adhk_adj != 0 ? (adhb + adhb_adj) / (adhk + adhk_adj) * 100 : "";
+            laju_implisit_qtq_adj_val = adhk + adhk_adj != 0 &&
+                adhk_q1 + adhk_q1_adj != 0 ?
+                ((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) /
+                    ((adhb_q1 + adhb_q1_adj) / (adhk_q1 + adhk_q1_adj) * 100) * 100) - 100) : "";
+            laju_implisit_yty_adj_val =
+                adhk + adhk_adj != 0 &&
+                adhk_y1 + adhk_y1_adj != 0 ?
+                ((((adhb + adhb_adj) / (adhk + adhk_adj) * 100) /
+                    ((adhb_y1 + adhb_y1_adj) / (adhk_y1 + adhk_y1_adj) * 100) * 100) - 100) : "";
+
+            adhk_adj_cell.text(formatNumber(adhk_adj_val));
+            qtq_adj_input.val(formatNumber(qtq_adj_val));
+            yty_adj_input.val(formatNumber(yty_adj_val));
+            ctc_adj_input.val(formatNumber(ctc_adj_val));
+            implisit_adj_cell.text(formatNumber(implisit_adj_val));
+            laju_implisit_qtq_adj_cell.text(formatNumber(laju_implisit_qtq_adj_val));
+            laju_implisit_yty_adj_cell.text(formatNumber(laju_implisit_yty_adj_val));
+
+            qtq_adj_cell.css('background', qtq_adj_val > 0 ? 'lightgreen' : qtq_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            qtq_adj_input.css('background', qtq_adj_val > 0 ? 'lightgreen' : qtq_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+
+            yty_adj_cell.css('background', yty_adj_val > 0 ? 'lightgreen' : yty_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            yty_adj_input.css('background', yty_adj_val > 0 ? 'lightgreen' : yty_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+
+            ctc_adj_cell.css('background', ctc_adj_val > 0 ? 'lightgreen' : ctc_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            ctc_adj_input.css('background', ctc_adj_val > 0 ? 'lightgreen' : ctc_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+
+            implisit_adj_cell.css('background', implisit_adj_val > 0 ? 'lightgreen' : implisit_adj_val < 0 ? 'lemonchiffon' :
+                'transparent');
+            laju_implisit_qtq_adj_cell.css('background', laju_implisit_qtq_adj_val > 0 ? 'lightgreen' :
+                laju_implisit_qtq_adj_val < 0 ? 'lemonchiffon' : 'transparent');
+            laju_implisit_yty_adj_cell.css('background', laju_implisit_yty_adj_val > 0 ? 'lightgreen' :
+                laju_implisit_yty_adj_val < 0 ? 'lemonchiffon' : 'transparent');
         }
     </script>
 @endsection

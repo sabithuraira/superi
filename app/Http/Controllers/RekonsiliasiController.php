@@ -186,6 +186,12 @@ class RekonsiliasiController extends Controller
                         ->where('adhb_or_adhk', 1)
                         ->groupBy('kode_prov', 'tahun', 'q', 'adhb_or_adhk')
                         ->first();
+                    $adhb = Rekon::select('id', 'kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                        ->where('kode_kab', $id_wil)
+                        ->where('tahun', $arr_periode[0])
+                        ->where('q', $arr_periode[1])
+                        ->where('adhb_or_adhk', 1)
+                        ->first();
 
                     $adhk = Rekon::select('kode_prov', 'tahun', 'q', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                         ->where('kode_kab', '!=', '00')

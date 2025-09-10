@@ -108,8 +108,8 @@ class PdrbObserver
             ->where('kode_prov', $pdrb->kode_prov)
             ->where('kode_kab', $pdrb->kode_kab)
             ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
-            ->where('upload_tahun', $upload_tahun)
-            ->where('upload_q', $upload_triwulan)
+            // ->where('upload_tahun', $upload_tahun)
+            // ->where('upload_q', $upload_triwulan)
             ->first();
 
         $rekon = Rekon::where('tahun', $pdrb->tahun)
@@ -117,8 +117,8 @@ class PdrbObserver
             ->where('kode_prov', $pdrb->kode_prov)
             ->where('kode_kab', $pdrb->kode_kab)
             ->where('adhb_or_adhk', $pdrb->adhb_or_adhk)
-            ->where('upload_tahun', $upload_tahun)
-            ->where('upload_q', $upload_triwulan)
+            // ->where('upload_tahun', $upload_tahun)
+            // ->where('upload_q', $upload_triwulan)
             ->first();
 
         if ($pdrb->status_data == 2) {

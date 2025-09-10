@@ -89,10 +89,12 @@ class UploadController extends Controller
                     if ($curData) {
                         if ($request->get('action') == 3) {
                             $curData->status_data = 2;
+                            $curData->time_approve_provinsi = now();
                         }
                         //approve by provinsi
                         else {
                             $curData->status_data = 1;
+                            $curData->updated_at = now();
                         }
                         $curData->save();
                     }
@@ -105,10 +107,12 @@ class UploadController extends Controller
                     if ($curData) {
                         if ($request->get('action') == 3) {
                             $curData->status_data = 2;
+                            $curData->time_approve_provinsi = now();
                         }
                         //approve by provinsi
                         else {
                             $curData->status_data = 1;
+                            $curData->updated_at = now();
                         }
                         $curData->save();
                     }
@@ -150,12 +154,15 @@ class UploadController extends Controller
                     if ($curData) {
                         if ($request->get('action') == 1) {
                             $curData->status_data = 3; //approve by admin
+                            $curData->time_approve_admin = now();
                             // $curData->putaran = $curData->putaran + 1;
                         } elseif ($request->get('action') == 3) {
                             $curData->status_data = 4; //reject by admin
+                            $curData->time_reject = now();
                             // $curData->putaran = $curData->putaran + 1;
                         } else {
                             $curData->status_data = 2; //back to approve provinsi
+                            $curData->time_approve_provinsi = now();
                             // $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
                         }
                         $curData->save();
@@ -169,12 +176,15 @@ class UploadController extends Controller
                     if ($curData) {
                         if ($request->get('action') == 1) {
                             $curData->status_data = 3; //approve by admin
+                            $curData->time_approve_admin = now();
                             // $curData->putaran = $curData->putaran + 1;
                         } elseif ($request->get('action') == 3) {
                             $curData->status_data = 4; //reject by admin
+                            $curData->time_reject = now();
                             // $curData->putaran = $curData->putaran + 1;
                         } else {
                             $curData->status_data = 2;
+                            $curData->time_approve_provinsi = now();
                             // $curData->putaran = ($curData->putaran>0) ? ($curData->putaran - 1) : 0;
                         }
                         $curData->save();

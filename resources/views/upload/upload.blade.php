@@ -105,6 +105,7 @@
                             <table class="table table-bordered table-sm m-b-0" style="min-width:100%">
                                 <tr class="text-center">
                                     <th>Komponen</th>
+                                    <th>Status Data</th>
                                     <template v-if="form_data.triwulan==4">
                                         <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1)]">
                                             <th v-for="n in 4">@{{ item }}Q@{{ n }}</th>
@@ -128,7 +129,9 @@
                                                 </span>
                                                 @{{ data.nama_komponen }}
                                             </td>
-
+                                            <td class="text-center">
+                                                <span v-html="getStatusHtml(datas.adhb[0]?.status_data)"></span>
+                                            </td>
                                             <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                                 <template v-for="n in 4">
                                                     <td class="text-right">
@@ -179,7 +182,10 @@
                                                 </span>
                                                 @{{ data.nama_komponen }}
                                             </td>
+                                            <td class="text-center">
+                                                <span v-html="getStatusHtml(datas.adhb[0]?.status_data)"></span>
 
+                                            </td>
                                             <td class="text-right">
                                                 <span v-if="datas['adhb'][0]!=null">
                                                     @{{ formatNumber(datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
@@ -248,6 +254,7 @@
                             <table class="table table-bordered m-b-0" style="min-width:100%">
                                 <tr class="text-center">
                                     <th>Komponen</th>
+                                    <th>Status Data</th>
                                     <template v-if="form_data.triwulan==4">
                                         <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1)]">
                                             <th v-for="n in 4">@{{ item }}Q@{{ n }}</th>
@@ -271,7 +278,10 @@
                                                 </span>
                                                 @{{ data.nama_komponen }}
                                             </td>
+                                            <td>
+                                                <span v-html="getStatusHtml(datas.adhk[0]?.status_data)"></span>
 
+                                            </td>
                                             <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                                 <template v-for="n in 4">
                                                     <td class="text-right">
@@ -319,6 +329,11 @@
                                                 @{{ data.nama_komponen }}
                                             </td>
 
+                                            </td>
+                                            <td>
+                                                <span v-html="getStatusHtml(datas.adhk[0]?.status_data)"></span>
+
+                                            </td>
                                             <td class="text-right">
                                                 <span v-if="datas['adhk'][0]!=null">
                                                     @{{ formatNumber(datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
@@ -461,7 +476,7 @@
                             'created_by': ''
                         });
                         ///
-                        // console.log(data)
+                        // console.log(self.datas)
                         let total_data = self.form_data.triwulan;
                         if (self.form_data.triwulan == 4) total_data = 12;
 
@@ -478,6 +493,7 @@
                             if (el_adhb == null || el_adhk == null || el_adhb['status_data'] != 4 ||
                                 el_adhk['status_data'] != 4) self.isDataReject = false;
                         }
+                        console.log(self)
                         // for (const el of self.datas['adhb']) {
                         //     if(el==null) self.isDataLengkap = false;
 
@@ -537,6 +553,23 @@
                         maximumFractionDigits: 2
                     }).format(value);
                 },
+
+                getStatusHtml(code) {
+                    switch (code) {
+                        case '1':
+                            return '<span class="badge badge-primary">Sudah Upload</span>';
+                        case '2':
+                            return '<span class="badge badge-info">Approve Admin SM</span>';
+                        case '3':
+                            return '<span class="badge badge-success">Approve Admin Prov</span>';
+                        case '4':
+                            return '<span class="badge badge-danger">Reject Admin</span>';
+                        default:
+                            return '<span class="badge badge-secondary">-</span>';
+                    }
+                }
+
+
             }
         });
 

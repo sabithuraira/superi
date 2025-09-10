@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Pdrb;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\Session; 
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\PdrbFinal;
+use App\SettingApp;
 
 class HomeController extends Controller
 {
@@ -16,15 +18,17 @@ class HomeController extends Controller
 
     protected $redirectTo = 'hai';
 
-    public function beranda(Request $request){
+    public function beranda(Request $request)
+    {
         $wilayah = '00';
         if (strlen($request->get('wilayah')) > 0) $wilayah = $request->get('wilayah');
 
-        $pdrb_final = new PdrbFinal;
-        $data_resume = $pdrb_final->getResumeBeranda($wilayah);
-        // dd($data_resume);die();
 
-        return view('home.beranda', compact('wilayah', 'data_resume'));
+        $pdrb_final = new PdrbFinal;
+        $pdrb = new Pdrb;
+        $data_resume = $pdrb_final->getResumeBeranda($wilayah);
+        $data_status = $pdrb->getStatusBeranda();
+        return view('home.beranda', compact('wilayah', 'data_resume', 'data_status'));
     }
 
     /**
@@ -46,17 +50,15 @@ class HomeController extends Controller
 
 
         //////////
-            $request->session()->put('oauth2state', $provider->getState());
+        $request->session()->put('oauth2state', $provider->getState());
         //////////
 
         if (!$request->has('code')) {
             // Untuk mendapatkan authorization code
             $authUrl = $provider->getAuthorizationUrl();
-            header('Location: '.$authUrl);
+            header('Location: ' . $authUrl);
             dd($request->session()->all());
             exit;
-        
-        
         } else {
             $token = "";
             try {
@@ -65,11 +67,11 @@ class HomeController extends Controller
                 ]);
                 $request->session()->put('token', $token);
             } catch (Exception $e) {
-                print_r('Gagal mendapatkan akses token : '.$e->getMessage());
+                print_r('Gagal mendapatkan akses token : ' . $e->getMessage());
                 die();
             }
-            
-        
+
+
             // Opsional: Setelah mendapatkan token, anda dapat melihat data profil pengguna
             // SETELAH LOGIN LANGSUNG SYNC DATA PEGAWAI DG SIMPEG (KALO SIMPEG DILUAR SUMSEL GA BISA AKSES)
             try {
@@ -81,35 +83,34 @@ class HomeController extends Controller
                 $curl           = curl_init($service_url);
                 $curl_post_data = array(
                     // "apiKey" => '4vl8i/WeNeRlRxM4KDk93VqdT0/LZ9g+GBITo+OiHVs=',
-                    "apiKey"    => "L2cvVWtDaE5sczVzTHFPaHBZT0Rzdz09.".$token,
-                    "kategori"=> 'view_pegawai',
+                    "apiKey"    => "L2cvVWtDaE5sczVzTHFPaHBZT0Rzdz09." . $token,
+                    "kategori" => 'view_pegawai',
                     "nip" => $c_nip,
                 );
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($curl, CURLOPT_POST, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
                 $curl_response = json_decode(curl_exec($curl));
-                
+
                 // print_r($curl_response);die();
-    
-                if(!isset($curl_response->error)){
-                    if($curl_response->total==0){
+
+                if (!isset($curl_response->error)) {
+                    if ($curl_response->total == 0) {
                         if (!$request->expectsJson()) {
                             return route('guest');
                         }
-                    }
-                    else{
-                        $model= \App\User::where('email','=', $c_nip)->first();
+                    } else {
+                        $model = \App\User::where('email', '=', $c_nip)->first();
                         $c_model = $curl_response->pegawai[0];
-        
-                        if($model==null){
+
+                        if ($model == null) {
                             $model = new \App\User;
                             $model->email = $c_model->niplama;
                             $model->nip_baru = $c_model->nipbaru;
                             $model->name = $c_model->namagelar;
                             $model->password = Hash::make($c_model->niplama);
                         }
-                        
+
                         $model->urutreog = $c_model->urutreog;
                         $model->kdorg = $c_model->kdorg;
                         $model->nmorg = $c_model->nmorg;
@@ -126,27 +127,27 @@ class HomeController extends Controller
                         $model->kdesl = $c_model->kdesl;
                         $model->foto = $c_model->foto;
                         $model->save();
-        
+
                         $data_request = array(
-                            $this->username()=>$model->email,
-                            'password'  =>$model->email
+                            $this->username() => $model->email,
+                            'password'  => $model->email
                         );
-                        
+
                         if ($this->attemptLogin($data_request)) {
                             return $this->sendLoginResponse($data_request);
                         }
                     }
                 }
             } catch (Exception $e) {
-                print_r('Gagal Mendapatkan Data Pengguna: '.$e->getMessage());
+                print_r('Gagal Mendapatkan Data Pengguna: ' . $e->getMessage());
                 die();
-                
+
                 if (!$request->expectsJson()) {
                     return route('guest');
                 }
             }
-            
-            
+
+
             //KALO MAU LOGIN TANPA SYNC SIMPEG PAKE INI
             // $user = $provider->getResourceOwner($token);
 
@@ -167,14 +168,17 @@ class HomeController extends Controller
     // public function hai(){
     //     return view('hai');
     // }
-    
-    protected function attemptLogin($params){
+
+    protected function attemptLogin($params)
+    {
         return $this->guard()->attempt(
-            $params, true
+            $params,
+            true
         );
     }
 
-    protected function sendLoginResponse($params){
+    protected function sendLoginResponse($params)
+    {
         return redirect('beranda');
     }
 }

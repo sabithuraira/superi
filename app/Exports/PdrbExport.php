@@ -10,33 +10,36 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use App\SettingApp;
 
-class PdrbExport implements WithMultipleSheets{
+class PdrbExport implements WithMultipleSheets
+{
     private static $wilayah;
     private static $tahun;
     private static $triwulan;
 
-    public function __construct($wilayah) {
+    public function __construct($wilayah)
+    {
         self::$wilayah = $wilayah;
 
         self::$tahun = date('Y');
         self::$triwulan = 1;
-        
+
         $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
-        if($tahun_berlaku!=null) self::$tahun = $tahun_berlaku->setting_value;
-        
+        if ($tahun_berlaku != null) self::$tahun = $tahun_berlaku->setting_value;
+
         $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
-        if($triwulan_berlaku!=null) self::$triwulan = $triwulan_berlaku->setting_value;
+        if ($triwulan_berlaku != null) self::$triwulan = $triwulan_berlaku->setting_value;
     }
 
-    public function sheets(): array{
+    public function sheets(): array
+    {
         $model = new \App\Pdrb();
-        $datas = $model->getPdrb(self::$wilayah, self::$tahun, self::$triwulan);
+        $datas = $model->getPdrb(self::$wilayah, self::$tahun, self::$triwulan, 0);
 
         $komponen = \App\Komponen::where('status_aktif', 1)->get();
 
         // return view('exports.pdrb', [
-        //     'datas'=>$datas, 
-        //     'komponen' => $komponen, 
+        //     'datas'=>$datas,
+        //     'komponen' => $komponen,
         //     'tahun' => self::$tahun,
         //     'wilayah' => self::$wilayah,
         // ]);
@@ -50,14 +53,16 @@ class PdrbExport implements WithMultipleSheets{
     }
 }
 
-class PdrbAdhbExport implements FromView, WithEvents, WithTitle{
+class PdrbAdhbExport implements FromView, WithEvents, WithTitle
+{
     private $wilayah;
     private $tahun;
     private $triwulan;
     private $komponen;
     private $datas;
 
-    public function __construct($wilayah, $tahun, $komponen, $datas, $triwulan) {
+    public function __construct($wilayah, $tahun, $komponen, $datas, $triwulan)
+    {
         $this->wilayah = $wilayah;
         $this->tahun = $tahun;
         $this->komponen = $komponen;
@@ -65,10 +70,11 @@ class PdrbAdhbExport implements FromView, WithEvents, WithTitle{
         $this->triwulan = $triwulan;
     }
 
-     /**
+    /**
      * @return array
      */
-    public function registerEvents(): array{
+    public function registerEvents(): array
+    {
         $cellSelected = 'A3:M25';
         switch ($this->triwulan) {
             case 1:
@@ -88,7 +94,7 @@ class PdrbAdhbExport implements FromView, WithEvents, WithTitle{
         };
 
         return [
-            AfterSheet::class    => function(AfterSheet $event) use ($cellSelected) {
+            AfterSheet::class    => function (AfterSheet $event) use ($cellSelected) {
                 $event->sheet->getStyle($cellSelected)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
@@ -101,29 +107,33 @@ class PdrbAdhbExport implements FromView, WithEvents, WithTitle{
         ];
     }
 
-    public function view(): View{
+    public function view(): View
+    {
         return view('exports.pdrb_adhb', [
-            'datas'=>$this->datas, 
-            'komponen' => $this->komponen, 
+            'datas' => $this->datas,
+            'komponen' => $this->komponen,
             'tahun' => $this->tahun,
             'triwulan' => $this->triwulan,
             'wilayah' => $this->wilayah,
         ]);
     }
 
-    public function title(): string{
+    public function title(): string
+    {
         return 'adhb';
     }
 }
 
-class PdrbAdhkExport implements FromView, WithEvents, WithTitle{
+class PdrbAdhkExport implements FromView, WithEvents, WithTitle
+{
     private $wilayah;
     private $tahun;
     private $triwulan;
     private $komponen;
     private $datas;
 
-    public function __construct($wilayah, $tahun, $komponen, $datas, $triwulan) {
+    public function __construct($wilayah, $tahun, $komponen, $datas, $triwulan)
+    {
         $this->wilayah = $wilayah;
         $this->tahun = $tahun;
         $this->komponen = $komponen;
@@ -131,10 +141,11 @@ class PdrbAdhkExport implements FromView, WithEvents, WithTitle{
         $this->triwulan = $triwulan;
     }
 
-     /**
+    /**
      * @return array
      */
-    public function registerEvents(): array{
+    public function registerEvents(): array
+    {
         $cellSelected = 'A3:M25';
         switch ($this->triwulan) {
             case 1:
@@ -150,7 +161,7 @@ class PdrbAdhkExport implements FromView, WithEvents, WithTitle{
                 $cellSelected = 'A3:M25';
         };
         return [
-            AfterSheet::class    => function(AfterSheet $event) use ($cellSelected){
+            AfterSheet::class    => function (AfterSheet $event) use ($cellSelected) {
                 $event->sheet->getStyle($cellSelected)->applyFromArray([
                     'borders' => [
                         'allBorders' => [
@@ -163,17 +174,19 @@ class PdrbAdhkExport implements FromView, WithEvents, WithTitle{
         ];
     }
 
-    public function view(): View{
+    public function view(): View
+    {
         return view('exports.pdrb_adhk', [
-            'datas'=>$this->datas, 
-            'komponen' => $this->komponen, 
+            'datas' => $this->datas,
+            'komponen' => $this->komponen,
             'tahun' => $this->tahun,
             'wilayah' => $this->wilayah,
             'triwulan' => $this->triwulan,
         ]);
     }
 
-    public function title(): string{
+    public function title(): string
+    {
         return 'adhk';
     }
 }

@@ -191,17 +191,19 @@
                                                     @{{ formatNumber(datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                 </span>
                                                 <br>
-                                                <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
-                                                    :class="{
-                                                        'text-success': parseNumber(hitungSelisih(
-                                                            datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                            datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
-                                                        'text-danger': parseNumber(hitungSelisih(
-                                                            datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                            datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
-                                                    }">
-                                                    @{{ hitungSelisih(datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
-                                                </sup>
+                                                <span v-if="datas['adhb'][0]!=null && datas_rilis['adhb'][0]!=null">
+                                                    <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                        :class="{
+                                                            'text-success': parseNumber(hitungSelisih(
+                                                                datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
+                                                            'text-danger': parseNumber(hitungSelisih(
+                                                                datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
+                                                        }">
+                                                        @{{ hitungSelisih(datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                    </sup>
+                                                </span>
                                             </td>
                                             {{-- tw 2 --}}
                                             <template v-if="form_data.triwulan>=2">
@@ -209,6 +211,8 @@
                                                     <span v-if="datas['adhb'][1]!=null">
                                                         @{{ formatNumber(datas['adhb'][1]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                         <br>
+                                                    </span>
+                                                    <span v-if="datas['adhb'][1]!=null && datas_rilis['adhb'][1]!=null">
                                                         <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhb'][1]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][1]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
                                                             :class="{
                                                                 'text-success': parseNumber(hitungSelisih(
@@ -220,6 +224,7 @@
                                                             }">
                                                             @{{ hitungSelisih(datas_rilis['adhb'][1]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][1]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                         </sup>
+                                                    </span>
                                                 </td>
                                             </template>
                                             {{-- tw 3 --}}
@@ -228,17 +233,19 @@
                                                     <span v-if="datas['adhb'][2]!=null">
                                                         @{{ formatNumber(datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')]) }}</span>
                                                     <br>
-                                                    <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
-                                                        :class="{
-                                                            'text-success': parseNumber(hitungSelisih(
-                                                                datas_rilis['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
-                                                            'text-danger': parseNumber(hitungSelisih(
-                                                                datas_rilis['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
-                                                        }">
-                                                        @{{ hitungSelisih(datas_rilis['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')]) }}
-                                                    </sup>
+                                                    <span v-if="datas['adhb'][2]!=null && datas_rilis['adhb'][2]!=null">
+                                                        <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][0]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                            :class="{
+                                                                'text-success': parseNumber(hitungSelisih(
+                                                                    datas_rilis['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                    datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
+                                                                'text-danger': parseNumber(hitungSelisih(
+                                                                    datas_rilis['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                    datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
+                                                            }">
+                                                            @{{ hitungSelisih(datas_rilis['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][2]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                        </sup>
+                                                    </span>
                                                 </td>
                                             </template>
                                         </tr>
@@ -339,17 +346,19 @@
                                                     @{{ formatNumber(datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                 </span>
                                                 <br>
-                                                <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
-                                                    :class="{
-                                                        'text-success': parseNumber(hitungSelisih(
-                                                            datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                            datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
-                                                        'text-danger': parseNumber(hitungSelisih(
-                                                            datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                            datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
-                                                    }">
-                                                    @{{ hitungSelisih(datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
-                                                </sup>
+                                                <span v-if="datas['adhk'][0]!=null && datas_rilis['adhk'][0]!=null">
+                                                    <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                        :class="{
+                                                            'text-success': parseNumber(hitungSelisih(
+                                                                datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
+                                                            'text-danger': parseNumber(hitungSelisih(
+                                                                datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
+                                                        }">
+                                                        @{{ hitungSelisih(datas_rilis['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][0]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                    </sup>
+                                                </span>
                                             </td>
 
                                             <template v-if="form_data.triwulan>=2">
@@ -358,17 +367,19 @@
                                                         @{{ formatNumber(datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                     </span>
                                                     <br>
-                                                    <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
-                                                        :class="{
-                                                            'text-success': parseNumber(hitungSelisih(
-                                                                datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
-                                                            'text-danger': parseNumber(hitungSelisih(
-                                                                datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
-                                                        }">
-                                                        @{{ hitungSelisih(datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')]) }}
-                                                    </sup>
+                                                    <span v-if="datas['adhk'][1]!=null && datas_rilis['adhk'][1]!=null">
+                                                        <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                            :class="{
+                                                                'text-success': parseNumber(hitungSelisih(
+                                                                    datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                    datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
+                                                                'text-danger': parseNumber(hitungSelisih(
+                                                                    datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                    datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
+                                                            }">
+                                                            @{{ hitungSelisih(datas_rilis['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][1]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                        </sup>
+                                                    </span>
                                                 </td>
                                             </template>
 
@@ -377,18 +388,19 @@
                                                     <span v-if="datas['adhk'][2]!=null">
                                                         @{{ formatNumber(datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                     </span>
-                                                    <br>
-                                                    <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
-                                                        :class="{
-                                                            'text-success': parseNumber(hitungSelisih(
-                                                                datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
-                                                            'text-danger': parseNumber(hitungSelisih(
-                                                                datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
-                                                        }">
-                                                        @{{ hitungSelisih(datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')]) }}
-                                                    </sup>
+                                                    <br> <span v-if="datas['adhk'][2]!=null && datas_rilis['adhk'][2]!=null">
+                                                        <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                            :class="{
+                                                                'text-success': parseNumber(hitungSelisih(
+                                                                    datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                    datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
+                                                                'text-danger': parseNumber(hitungSelisih(
+                                                                    datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                    datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
+                                                            }">
+                                                            @{{ hitungSelisih(datas_rilis['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][2]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                        </sup>
+                                                    </span>
                                                 </td>
                                             </template>
                                         </tr>

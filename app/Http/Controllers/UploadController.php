@@ -214,13 +214,13 @@ class UploadController extends Controller
         if (strlen($request->get('tahun')) > 0) {
             $tahun = $request->get('tahun');
         }
-
+        // dd($triwulan);
         $model = new \App\Pdrb();
         $datas = $model->getPdrb($wilayah, $tahun, $triwulan, 0);
         $data_rilis = $model->getPdrb($wilayah, $tahun, $triwulan, 2);
 
         $komponen = \App\Komponen::where('status_aktif', 1)->orderBy('no_komponen')->get();
-        // dd($komponen);
+        // dd($datas);
         return response()->json(['success' => '1', 'datas' => $datas, 'data_rilis' => $data_rilis, 'komponen' => $komponen]);
     }
 

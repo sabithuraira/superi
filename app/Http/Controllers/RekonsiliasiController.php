@@ -325,8 +325,11 @@ class RekonsiliasiController extends Controller
         foreach ($data as $dt) {
             $columnName = $dt['komp_id'] . '_adj';
             $model = Rekon::find($dt['id']);
+
             if ($model) {
-                $model->{$columnName} = $dt['value'];
+                // dd($columnName);
+                $model->{$columnName} = strval($dt['value']);
+                // var_dump($dt['value'], $model->{$columnName});
                 $c_1a_adj = $model->c_1a_adj ? $model->c_1a_adj : 0;
                 $c_1b_adj = $model->c_1b_adj ? $model->c_1b_adj : 0;
                 $c_1c_adj = $model->c_1c_adj ? $model->c_1c_adj : 0;

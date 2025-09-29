@@ -61,7 +61,7 @@ class Pdrb extends Model
                     tahun='$tahun' AND
                     adhb_or_adhk=$adhb_or_adhk AND
                     status_data>= $status
-                ORDER BY  q ASC, revisi_ke DESC";
+                ORDER BY  q ASC, id DESC";
 
             $datas = [null, null, null, null];
             $result = DB::select(DB::raw($sql));

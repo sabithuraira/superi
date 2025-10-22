@@ -21,12 +21,10 @@
 
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
-                                        <select name="tabel_filter" id="tabel_filter" class="form-control"
-                                            onchange="updateFormAction()">
+                                        <select id="tabel_filter" class="form-control" onchange="updateFormAction()">
                                             @foreach ($list_tabel as $key => $tbl)
-                                                <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}"
-                                                    data-id="{{ $tbl['id'] }}"
-                                                    @if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}" data-id="{{ $tbl['id'] }}"
+                                                    @if ($tbl['id'] == $id) selected @endif>
                                                     {{ $tbl['name'] }}
                                                 </option>
                                             @endforeach
@@ -34,8 +32,7 @@
                                     </div>
 
                                     <div class="form-group col-sm-12 col-md-2">
-                                        <select name="periode_filter" id="periode_filter" class="form-control"
-                                            onchange="updateFormActionperiode()">
+                                        <select name="periode_filter" id="periode_filter" class="form-control" onchange="updateFormActionperiode()">
                                             @foreach ($list_periode as $key => $qtl)
                                                 <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
                                                     @if ($qtl == $periode_filter) selected @endif>
@@ -44,8 +41,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success w-100" type="button"
-                                            onclick="exportToExcel()">Export Excel</button>
+                                        <button class="btn btn-success w-100" type="button" onclick="exportToExcel()">Export Excel</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
                                         <button class="btn btn-success w-100" type="button" onclick="export_all()">
@@ -59,7 +55,7 @@
                     <div class="row">
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
-                                @if ($tabel['id'] == $tabel_filter)
+                                @if ($tabel['id'] == $id)
                                     <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
@@ -113,8 +109,7 @@
                                                 @continue
                                             @else
                                             @endif
-                                            <tr
-                                                style="@if ($shouldBold) background-color:#f2f2f2;font-weight: bold; @endif">
+                                            <tr style="@if ($shouldBold) background-color:#f2f2f2;font-weight: bold; @endif">
                                                 <td style="@if ($shouldBold) font-weight: bold; @endif">
                                                     [16{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>

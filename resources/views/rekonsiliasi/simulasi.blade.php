@@ -154,11 +154,9 @@
                             </div>
                             <form method="GET" action="">
                                 <div class="modal-body mx-4">
-
                                     <div class="row">
-
                                         @foreach ($list_periode as $li_per)
-                                            <div class="form-check @if (strlen($li_per) > 4) col-2 @else col-3 @endif ">
+                                            <div class="form-check @if (strlen($li_per) > 4) col-3 @else col-3 @endif ">
                                                 <input class="form-check-input" type="checkbox" value="{{ $li_per }}" name="periode_filter[]"
                                                     id="{{ 'periode_filter_' . $li_per }}"
                                                     @foreach ($periode_filter as $per_fil)
@@ -371,7 +369,6 @@
         var tabel_filter = {!! json_encode($tabel_filter) !!};
         var simulasi_data = [];
 
-
         $(document).ready(function() {
             getDatas();
 
@@ -405,7 +402,6 @@
             $("#simulasi_btn").click(function() {
                 getDataSimulasi();
             })
-
             pilihan_button();
         });
 
@@ -425,9 +421,11 @@
                     komponen_filter: this.komponen_filter,
                     periode_filter: this.periode_filter,
                     tabel_filter: this.tabel_filter,
+
                     // wilayah_filter: this.wilayah_filter,
                 },
             }).done(function(data) {
+                console.log(periode_filter);
                 console.log(data)
                 $('#wait_progres').modal('toggle')
             }).fail(function(msg) {
@@ -458,8 +456,6 @@
                 if (data.success == 1) {
 
                     data.data.forEach(row => {
-
-
                         let rowHtml = '<tr class ="text-right">';
                         rowHtml +=
                             `<td class="text-left">${row['name'] ?? ''}</td>

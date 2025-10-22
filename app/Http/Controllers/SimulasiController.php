@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AssetData;
 use App\Pdrb;
 use App\PdrbFinal;
+use App\Rekon;
 use App\SettingApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,7 +85,7 @@ class SimulasiController extends Controller
             for ($i = 1; $i <= 4; $i++) {
                 array_push($this->list_periode, "{$t}Q{$i}");
             }
-            array_push($this->list_periode, "{$t}");
+            // array_push($this->list_periode, "{$t}");
         }
     }
 
@@ -108,8 +109,25 @@ class SimulasiController extends Controller
         foreach ($komponen_filter as $item) {
             $array_komp_filter = array_merge($array_komp_filter, array_map('trim', explode(',', $item)));
         }
+        // $komponens = [];
+        // $result = [];
+        // dd($periode_filter);
+        // foreach ($periode_filter as $periode) {
+        //     $arr_periode = explode('Q', $periode);
+        //     $data = Rekon::select($array_komp_filter)
+        //         ->where('tahun', $arr_periode[0])
+        //         ->where('q', $arr_periode[1])
+        //         ->first();
+        //     $row = [];
+        //     // if ($data) {
+        //     foreach ($array_komp_filter as $komp) {
+        //         $row[$komp] =  isset($data->$komp) ? $data->komp : null;
+        //     }
+        //     // }
+        //     $result[] = $row;
+        // }
 
-        $komponens = [];
+        // dd($result);
         return view('rekonsiliasi.simulasi', compact('list_komponen', 'list_periode', 'list_tabel', 'komponen_filter', 'periode_filter', 'tahun_berlaku', 'tabel_filter'));
     }
 
@@ -131,45 +149,33 @@ class SimulasiController extends Controller
         $datas = [];
 
         foreach ($list_tabel as $tabel) {
-            $data_periode = [];
-            $name = "";
-
+            // $name = "";
             foreach ($tabels as $tbl) {
                 if ($tbl['id'] == $tabel) {
                     $name = $tbl['name'];
                 }
             }
+            // $data = [];
+            // dd($komponen_filter);
+            $dt = $this->rumus($tabel, $auth->kdkab, $list_periode, $komponen_filter);
+            // dd($dt);
+            // foreach ($komponen_filter as $komponen) {
+            //     $nama_komponen = "";
+            //     $row = [];
+            //     foreach ($list_komponen as $kmp) {
+            //         if ($kmp['id'] === $komponen) {
+            //             $nama_komponen = $kmp['alias'];
+            //         }
+            //     }
+            //     $row['id'] = $komponen;
+            //     $row['name'] = $nama_komponen;
 
-
-            $data = [];
-            foreach ($komponen_filter as $komponen) {
-                $nama_komponen = "";
-                $row = [];
-                foreach ($list_komponen as $kmp) {
-                    if ($kmp['id'] === $komponen) {
-                        $nama_komponen = $kmp['alias'];
-                    }
-                }
-                $row['id'] = $komponen;
-                $row['name'] = $nama_komponen;
-                // foreach ($data_periode as $periode => $dt_periode) {
-                //     $row[$periode] = $dt_periode[$komponen];
-                // }
-
-                // foreach ($list_periode as $periode) {
-                $dt = $this->rumus($tabel, $auth->kdkab, $list_periode);
-
-
-                // if ($dt) {
-                //     $data_periode[$periode] = $dt;
-                // }
-                // }
-                $data[] = $row;
-            }
+            //     $data[] = $row;
+            // }
             $datas[] = [
                 'id' => $tabel,
                 'name' => $name,
-                'data' => $data
+                'data' => $dt
             ];
         }
 
@@ -180,43 +186,37 @@ class SimulasiController extends Controller
     }
 
 
-    public function rumus($id, $id_wil, $list_periode)
+    public function rumus($id, $id_wil, $list_periode, $list_komponen)
     {
-        $list_detail_komponen = AssetData::$list_detail_komponen_12_pkrt;
-        $str_sql_select = '';
-        foreach ($list_detail_komponen as $item) {
-            $str_sql_select .= 'SUM(' . $item['id'] . ') as ' . $item['id'] . ', ';
-        }
-        $str_sql_select = substr($str_sql_select, 0, -2);
-
         $data = [];
         foreach ($list_periode as $periode) {
-            $tahun = "";
-            $q = [1, 2, 3, 4];
             $arr_periode = explode('Q', $periode);
             $tahun = $arr_periode[0];
-            if (sizeof($arr_periode) > 1) {
-                $q = [$arr_periode[1]];
-            }
-
+            $q = $arr_periode[1];
             if ($id == 1) {
-                $dt =  PdrbFinal::select('kode_kab', DB::raw($str_sql_select))
+                $dt =  PdrbFinal::select("*")
                     ->where('kode_kab', $id_wil)
                     ->where('tahun', $tahun)
-                    ->wherein('q', $q)
+                    ->where('q', $q)
                     ->where('adhb_or_adhk', 1)
-                    ->groupBy('kode_kab')
                     ->first();
-                $data[] = $dt;
+                $row = [];
+                foreach ($list_komponen as $komp) {
+                    $row[$periode . '_' . $komp] = isset($dt->$komp) ? $dt->komp : null;
+                }
+                $data[] = $row;
             } elseif ($id == 2) {
-                $dt =  PdrbFinal::select('kode_kab', DB::raw($str_sql_select))
+                $dt =  PdrbFinal::select("*")
                     ->where('kode_kab', $id_wil)
                     ->where('tahun', $tahun)
-                    ->wherein('q', $q)
+                    ->where('q', $q)
                     ->where('adhb_or_adhk', 2)
-                    ->groupBy('kode_kab')
                     ->first();
-                $data[] = $dt;
+                $row = [];
+                foreach ($list_komponen as $komp) {
+                    $row[$periode . '_' . $komp] = isset($dt->$komp) ? $dt->komp : null;
+                }
+                $data[] = $row;
             }
         }
         return $data;

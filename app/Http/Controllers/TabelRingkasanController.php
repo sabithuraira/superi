@@ -183,7 +183,8 @@ class TabelRingkasanController extends Controller
             }
         }
         $data = $this->rumus_1($komponens, $periode_filter, $id);
-        return view('pdrb_ringkasan.ringkasan1', compact('list_tabel', 'list_periode', 'tahun_berlaku', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
+        // dd($request->all());
+        return view('pdrb_ringkasan.ringkasan1', compact('id', 'list_tabel', 'list_periode', 'tahun_berlaku', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
     }
 
     public function ringkasan2(Request $request, $id)
@@ -202,7 +203,7 @@ class TabelRingkasanController extends Controller
 
         // $data_total_kabkot = $this->get_data_cumulative(1, '00', $arr_periode[0], [$arr_periode[1]], 2, 1);
         $data = $this->rumus_2($list_wilayah, $periode_filter);
-        return view('pdrb_ringkasan.ringkasan2', compact('list_tabel', 'list_periode', 'periode_filter', 'tabel_filter', 'data'));
+        return view('pdrb_ringkasan.ringkasan2', compact('id', 'list_tabel', 'list_periode', 'periode_filter', 'tabel_filter', 'data'));
     }
 
     public function ringkasan3(Request $request, $id)
@@ -219,6 +220,7 @@ class TabelRingkasanController extends Controller
         $periode_filter = $request->periode_filter ? $request->periode_filter : $tahun_berlaku . 'Q' . $triwulan_berlaku;
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : ['c_1', 'c_1a', 'c_1b', 'c_1c', 'c_1d', 'c_1e', 'c_1f', 'c_1g', 'c_2', 'c_3', 'c_4', 'c_4a', 'c_4b', 'c_5', 'c_6', 'c_7', 'c_pdrb'];
         $komponens = [];
+        // dd($komponen_filter);
         foreach ($komponen_filter as $komp_filter) {
             foreach ($list_detail_komponen as $dtl_komp) {
                 if ($dtl_komp['id'] == $komp_filter) {
@@ -232,7 +234,7 @@ class TabelRingkasanController extends Controller
         }
 
         $data = $this->rumus_3($list_wilayah, $komponens, $periode_filter, $id);
-        return view('pdrb_ringkasan.ringkasan3', compact('list_tabel', 'list_periode', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+        return view('pdrb_ringkasan.ringkasan3', compact('id', 'list_tabel', 'list_periode', 'list_detail_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
     }
 
     public function ringkasan4(Request $request, $id)
@@ -269,7 +271,7 @@ class TabelRingkasanController extends Controller
         }
 
         $data = $this->rumus_4($komponens, $periode_filter, $id);
-        return view('pdrb_ringkasan.ringkasan4', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_detail_komponen', 'list_group_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
+        return view('pdrb_ringkasan.ringkasan4', compact('id', 'list_tabel', 'tahun_berlaku', 'list_periode', 'list_detail_komponen', 'list_group_komponen', 'komponen_filter', 'komponens', 'tabel_filter', 'periode_filter', 'data'));
     }
 
     public function ringkasan5(Request $request, $id)
@@ -287,7 +289,7 @@ class TabelRingkasanController extends Controller
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
         $data = $this->rumus_5($list_detail_komponen, $wilayah_filter, $periode_filter);
-        return view('pdrb_ringkasan.ringkasan5', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
+        return view('pdrb_ringkasan.ringkasan5', compact('id', 'list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
     }
 
     public function ringkasan6(Request $request, $id)
@@ -305,7 +307,7 @@ class TabelRingkasanController extends Controller
         $wilayah_filter = $request->wilayah_filter ? $request->wilayah_filter : '00';
 
         $data = $this->rumus_6($list_detail_komponen, $wilayah_filter, $periode_filter);
-        return view('pdrb_ringkasan.ringkasan6', compact('list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
+        return view('pdrb_ringkasan.ringkasan6', compact('id', 'list_tabel', 'list_periode', 'list_wilayah', 'wilayah_filter', 'tabel_filter', 'periode_filter', 'data'));
     }
 
     public function export_all(Request $request)

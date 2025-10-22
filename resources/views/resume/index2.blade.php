@@ -17,20 +17,20 @@
                 <div class="body">
                     <div class="row">
                         <div class="col">
-                            <form id="form_filter" method="get" action="{{ url('revisi_total') }}">
-                                @csrf
+                            <form id="form_filter">
+
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-4">
-                                        <select name="tabel_filter" id="tabel_filter" class="form-control"
-                                            onchange="updateFormAction(this)">
+                                        <select name="tabel_filter" id="tabel_filter" class="form-control" onchange="updateFormAction(this)">
                                             @foreach ($list_tabel as $key => $tbl)
                                                 <option value="{{ $tbl['id'] }}" data-id="{{ $tbl['id'] }}"
-                                                    @if ($tbl['id'] === $tabel_filter) selected @endif>
+                                                    @if ($tbl['id'] === $id) selected @endif>
                                                     {{ $tbl['name'] }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
+                                    <input class="form-check-input" type="checkbox" name="periode_filter[]" hidden>
                                     <div class="form-group col-sm-6 col-md-2 d-grid ">
                                         <button class="btn btn-success w-100" type="button"onclick="exportToExcel()">
                                             Export Excel
@@ -51,8 +51,8 @@
 
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 ">
-                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal"
-                                            data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
+                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal" data-toggle="modal"
+                                            data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                 </div>
                             </form>
@@ -85,8 +85,7 @@
                                             @php
                                                 $shouldBold = $dt['id'] == '00';
                                             @endphp
-                                            <tr
-                                                style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
+                                            <tr style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td>
                                                     [16{{ $dt['id'] }}] {{ $dt['name'] }}
                                                 </td>
@@ -104,7 +103,6 @@
                     </div>
                 </div>
 
-
                 <div class="modal fade" id="periodeModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -115,18 +113,17 @@
                                 <div class="modal-body mx-4">
                                     <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
                                         @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] === $tabel_filter) selected @endif>
+                                            <option value="{{ $tbl['id'] }} "@if ($tbl['id'] === $tabel_filter) selected @endif>
                                                 {{ $tbl['name'] }}
                                             </option>
                                         @endforeach
                                     </select>
+                                    <input type="text" name="komponen_filter" hidden value="{{ $komponen_filter }}">
                                     <div class="row">
                                         @foreach ($list_periode as $li_per)
-                                            <div
-                                                class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
-                                                <input class="form-check-input" type="checkbox" value="{{ $li_per }}"
-                                                    name="periode_filter[]" id="{{ 'periode_filter_' . $li_per }}"
+                                            <div class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
+                                                <input class="form-check-input" type="checkbox" value="{{ $li_per }}" name="periode_filter[]"
+                                                    id="{{ 'periode_filter_' . $li_per }}"
                                                     @foreach ($periode_filter as $per_fil)
                                                     @if ($per_fil === $li_per)
                                                     checked
@@ -140,8 +137,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            data-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                             Pilihan
                                         </button>
                                         <div class="dropdown-menu">
@@ -169,8 +165,7 @@
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     @for ($i = 3; $i >= 0; $i--)
-                                                        <button class="dropdown-item tahun-selector"
-                                                            id="{{ 'modal_tahun_' . ($tahun_berlaku - $i) }}"
+                                                        <button class="dropdown-item tahun-selector" id="{{ 'modal_tahun_' . ($tahun_berlaku - $i) }}"
                                                             type="button">{{ $tahun_berlaku - $i }}</button>
                                                     @endfor
                                                 </div>
@@ -196,47 +191,33 @@
         var APP_URL = {!! json_encode(url('/')) !!}
 
         function updateFormAction(selectElement) {
-            var form = document.getElementById('form_filter');
-            var selectedOption = selectElement.options[selectElement.selectedIndex];
-            var data_id = selectedOption.getAttribute('data-id');
-            form.action = APP_URL + '/pdrb_resume' + '/' + data_id;
-            form.submit();
+            const baseUrl = "{{ url('/pdrb_resume') }}";
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const data_id = selectedOption.getAttribute('data-id');
+            const params = new URLSearchParams(window.location.search);
+
+            const komponen_list = params.getAll('komponen_filter');
+            const periode_list = params.getAll('periode_filter[]');
+
+            let newUrl = `${baseUrl}/${data_id}?tabel_filter=${data_id}`;
+            komponen_list.forEach(k => newUrl += `&komponen_filter=${encodeURIComponent(k)}`);
+            periode_list.forEach(p => newUrl += `&periode_filter[]=${encodeURIComponent(p)}`);
+
+            window.location.href = newUrl; // ✅ langsung pindah tanpa submit
         }
 
-        function updateFormActionWilayah() {
-            var url = "{{ url('/pdrb_resume') }}";
+        function updateKomponenFormAction(selectElement) {
+            const baseUrl = "{{ url('/pdrb_resume') }}";
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const data_id = selectedOption.getAttribute('data-id');
+            const pathParts = window.location.pathname.split('/');
+            const table_id = pathParts[pathParts.length - 1];
+            const params = new URLSearchParams(window.location.search);
+            const periode_list = params.getAll('periode_filter[]');
+            let newUrl = `${baseUrl}/${table_id}?komponen_filter=${data_id}`;
+            periode_list.forEach(p => newUrl += `&periode_filter[]=${encodeURIComponent(p)}`);
 
-            var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var data_id = tabel_option.getAttribute('data-id');
-
-            var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
-                .selectedIndex];
-            var wilayah = wilayah_option.getAttribute('data-id');
-
-            form.action = url + '/' + data_id + '?wilayah_filter=' +
-                wilayah; //APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
-            console.log(form.action)
-            form.submit();
-        }
-
-        function updateKomponenFormAction() {
-            var url = "{{ url('/pdrb_resume') }}";
-
-            var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var data_id = tabel_option.getAttribute('data-id');
-
-            var komponen_option = document.getElementById('komponen_filter').options[document.getElementById(
-                    'komponen_filter')
-                .selectedIndex];
-            var komponen_id = komponen_option.getAttribute('data-id');
-
-            form.action = url + '/' + data_id + '?komponen_filter=' + komponen_id;
-            console.log(form.action)
-            form.submit();
+            window.location.href = newUrl; // ✅ langsung pindah tanpa submit
         }
 
         function exportToExcel() {

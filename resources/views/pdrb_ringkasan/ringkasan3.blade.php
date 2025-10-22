@@ -21,12 +21,10 @@
 
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
-                                        <select name="tabel_filter" id="tabel_filter" class="form-control"
-                                            onchange="updateFormAction()">
+                                        <select id="tabel_filter" class="form-control" onchange="updateFormAction(this)">
                                             @foreach ($list_tabel as $key => $tbl)
-                                                <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}"
-                                                    data-id="{{ $tbl['id'] }}"
-                                                    @if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}" data-id="{{ $tbl['id'] }}"
+                                                    @if ($tbl['id'] == $id) selected @endif>
                                                     {{ $tbl['name'] }}
                                                 </option>
                                             @endforeach
@@ -34,8 +32,7 @@
                                     </div>
 
                                     <div class="form-group col-sm-12 col-md-2">
-                                        <select name="periode_filter" id="periode_filter" class="form-control"
-                                            onchange="updateFormActionperiode()">
+                                        <select name="periode_filter" id="periode_filter" class="form-control" onchange="updateFormActionperiode(this)">
                                             @foreach ($list_periode as $key => $qtl)
                                                 <option value="{{ $qtl }}" data-periode="{{ $qtl }}"
                                                     @if ($qtl == $periode_filter) selected @endif>
@@ -44,12 +41,11 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-sm-12 col-md-2">
-                                        <button class="btn btn-primary w-100" type="button" href="#komponenModal"
-                                            data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                        <button class="btn btn-primary w-100" type="button" href="#komponenModal" data-toggle="modal"
+                                            data-target="#komponenModal">Pilih Komponen</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 col-lg-2  d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success w-100 mb-2" type="button"
-                                            onclick="exportToExcel()">Export Excel</button>
+                                        <button class="btn btn-success w-100 mb-2" type="button" onclick="exportToExcel()">Export Excel</button>
                                         <button class="btn btn-success w-100" type="button" onclick="export_all()">
                                             Export All
                                         </button>
@@ -61,7 +57,7 @@
                     <div class="row">
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
-                                @if ($tabel['id'] === $tabel_filter)
+                                @if ($tabel['id'] === $id)
                                     <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
@@ -92,14 +88,10 @@
                                                     [16{{ $dt['id'] }}] {{ $dt['alias'] }}
                                                 </td>
                                                 @foreach ($komponens as $key => $komp)
-                                                    <td style="@if ($shouldBold) font-weight: bold; @endif"
-                                                        class="text-right">
-                                                        {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']]
-                                                            ? number_format(round($dt[$komp['id']], 2), 2, ',', '.')
-                                                            : '' }}
+                                                    <td style="@if ($shouldBold) font-weight: bold; @endif" class="text-right">
+                                                        {{ array_key_exists($komp['id'], $dt) && $dt[$komp['id']] ? number_format(round($dt[$komp['id']], 2), 2, ',', '.') : '' }}
                                                     </td>
                                                 @endforeach
-
 
                                             </tr>
                                             @if ($dt['id'] == '00')
@@ -108,8 +100,7 @@
                                                         [1600] Total 17 Kabkot
                                                     </td>
                                                     @foreach ($komponens as $key => $komp)
-                                                        <td style="@if ($shouldBold) font-weight: bold; @endif"
-                                                            class="text-right">
+                                                        <td style="@if ($shouldBold) font-weight: bold; @endif" class="text-right">
                                                             {{ array_key_exists($komp['id'], $dt) && $data['total_kabkot'][$komp['id']]
                                                                 ? number_format(round($data['total_kabkot'][$komp['id']], 2), 2, ',', '.')
                                                                 : '' }}
@@ -124,6 +115,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="modal fade" id="komponenModal" tabindex="-1" role="dialog">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -132,18 +124,18 @@
                             </div>
                             <form method="GET" action="">
                                 <div class="modal-body">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
+                                    {{-- <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
                                         @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
+                                            <option value="{{ $tbl['id'] }} "@if ($tbl['id'] == $id) selected @endif>
                                                 {{ $tbl['name'] }}
                                             </option>
                                         @endforeach
-                                    </select>
+                                    </select> --}}
+                                    <input type="text" name="periode_filter" value="{{ $periode_filter }}" hidden>
                                     @foreach ($list_detail_komponen as $i => $kmp)
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['id'] }}"
-                                                name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
+                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['id'] }}" name="komponen_filter[]"
+                                                id="{{ 'komponen_filter' . $i }}"
                                                 @foreach ($komponen_filter as $kom_fil)
                                                     @if ($kom_fil == $kmp['id'])
                                                     checked
@@ -156,8 +148,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            data-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                             Pilihan
                                         </button>
                                         <div class="dropdown-menu">
@@ -196,17 +187,21 @@
             form.submit();
         }
 
-        function updateFormActionperiode() {
-            var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var url = tabel_option.getAttribute('data-url');
-            var data_id = tabel_option.getAttribute('data-id');
-            var periode_option = document.getElementById('periode_filter').options[document.getElementById('periode_filter')
-                .selectedIndex];
-            var periode = periode_option.getAttribute('data-periode')
-            form.action = APP_URL + '/' + url + '/' + data_id + '?periode_filter=' + periode;
-            form.submit();
+        function updateFormActionperiode(selectElement) {
+            const pathParts = window.location.pathname.split('/').filter(Boolean);
+            const routeName = pathParts[pathParts.length - 2];
+            const table_id = pathParts[pathParts.length - 1];
+            const appBase = "{{ url('/') }}";
+            const baseUrl = `${appBase}/${routeName}/${table_id}`;
+
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const data_id = selectedOption.value;
+
+            let newUrl = `${baseUrl}?periode_filter=${data_id}`;
+            const params = new URLSearchParams(window.location.search);
+            const komponen_list = params.getAll('komponen_filter[]');
+            komponen_list.forEach(k => newUrl += `&komponen_filter[]=${encodeURIComponent(k)}`);
+            window.location.href = newUrl;
         }
 
         document.getElementById('modal_komp_pilih').addEventListener('click', () => {

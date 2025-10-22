@@ -21,12 +21,10 @@
 
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-6">
-                                        <select name="tabel_filter" id="tabel_filter" class="form-control"
-                                            onchange="updateFormAction(this)">
+                                        <select id="tabel_filter" class="form-control" onchange="updateFormAction(this)">
                                             @foreach ($list_tabel as $key => $tbl)
-                                                <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}"
-                                                    data-id="{{ $tbl['id'] }}"
-                                                    @if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                <option data-url="{{ $tbl['url'] }}" value="{{ $tbl['id'] }}" data-id="{{ $tbl['id'] }}"
+                                                    @if ($tbl['id'] == $id) selected @endif>
                                                     {{ $tbl['name'] }}
                                                 </option>
                                             @endforeach
@@ -34,16 +32,15 @@
                                     </div>
 
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-primary w-100" type="button" href="#komponenModal"
-                                            data-toggle="modal" data-target="#komponenModal">Pilih Komponen</button>
+                                        <button class="btn btn-primary w-100" type="button" href="#komponenModal" data-toggle="modal"
+                                            data-target="#komponenModal">Pilih Komponen</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal"
-                                            data-toggle="modal" data-target="#periodeModal">Pilih Periode</button>
+                                        <button class="btn btn-primary w-100" type="button" href="#periodeModal" data-toggle="modal"
+                                            data-target="#periodeModal">Pilih Periode</button>
                                     </div>
                                     <div class="form-group col-sm-6 col-md-2 d-grid gap-2 mx-auto">
-                                        <button class="btn btn-success w-100 mb-2" type="button"
-                                            onclick="exportToExcel()">Export Excel</button>
+                                        <button class="btn btn-success w-100 mb-2" type="button" onclick="exportToExcel()">Export Excel</button>
                                         <button class="btn btn-success w-100" type="button" onclick="export_all()">
                                             Export All
                                         </button>
@@ -55,7 +52,7 @@
                     <div class="row">
                         <div class="col">
                             @foreach ($list_tabel as $tabel)
-                                @if ($tabel['id'] == $tabel_filter)
+                                @if ($tabel['id'] == $id)
                                     <p>{{ $tabel['name'] }} <span class="text-muted font-italic"> (dalam persen)</span></p>
                                 @endif
                             @endforeach
@@ -89,23 +86,19 @@
                                     <tbody>
                                         @foreach ($data as $dt)
                                             @php
-                                                $shouldBold =
-                                                    strlen($dt['komponen']) < 4 || $dt['komponen'] == 'c_pdrb';
+                                                $shouldBold = strlen($dt['komponen']) < 4 || $dt['komponen'] == 'c_pdrb';
                                             @endphp
-                                            <tr
-                                                style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
+                                            <tr style="@if ($shouldBold) background-color:#f2f2f2; font-weight: bold; @endif">
                                                 <td>{{ $dt['komponen_name'] }}</td>
                                                 @foreach ($periode_filter as $periode)
                                                     @php
                                                         $hb = $dt[$periode . 'adhb'];
                                                         $hk = $dt[$periode . 'adhk'];
                                                     @endphp
-                                                    <td class="text-right"
-                                                        style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                    <td class="text-right" style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
                                                         {{ array_key_exists($periode . 'adhb', $dt) && $dt[$periode . 'adhb'] ? number_format(round($dt[$periode . 'adhb'], 2), 2, ',', '.') : '' }}
                                                     </td>
-                                                    <td class="text-right"
-                                                        style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                    <td class="text-right" style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
                                                         {{ array_key_exists($periode . 'adhk', $dt) && $dt[$periode . 'adhb'] ? number_format(round($dt[$periode . 'adhk'], 2), 2, ',', '.') : '' }}
                                                     </td>
                                                 @endforeach
@@ -114,22 +107,19 @@
                                         <tr>
                                             <td><b>Net Eksim</b></td>
                                             @foreach ($periode_filter as $periode)
-                                                <td class="text-right"
-                                                    style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
-                                                    {{ array_key_exists($periode . 'adhb', $data[15]) &&
-                                                    $data[15][$periode . 'adhb'] &&
-                                                    array_key_exists($periode . 'adhb', $data[16]) &&
-                                                    $data[16][$periode . 'adhb']
-                                                        ? number_format(round($data[15][$periode . 'adhb'] - $data[16][$periode . 'adhb'], 2), 2, ',', '.')
+                                                <td class="text-right" style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                    @php
+                                                        $komp_ekspor = collect($data)->firstWhere('komponen', 'c_6');
+                                                        $komp_impor = collect($data)->firstWhere('komponen', 'c_7');
+                                                    @endphp
+
+                                                    {{ $komp_ekspor && $komp_impor && array_key_exists($periode . 'adhb', $komp_ekspor) && array_key_exists($periode . 'adhb', $komp_impor)
+                                                        ? number_format(round($komp_ekspor[$periode . 'adhb'] - $komp_impor[$periode . 'adhb'], 2), 2, ',', '.')
                                                         : '' }}
                                                 </td>
-                                                <td class="text-right"
-                                                    style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
-                                                    {{ array_key_exists($periode . 'adhk', $data[15]) &&
-                                                    $data[15][$periode . 'adhk'] &&
-                                                    array_key_exists($periode . 'adhk', $data[16]) &&
-                                                    $data[16][$periode . 'adhk']
-                                                        ? number_format(round($data[15][$periode . 'adhk'] - $data[16][$periode . 'adhk'], 2), 2, ',', '.')
+                                                <td class="text-right" style="@if (abs($hb - $hk) > 5) background-color : yellow; @endif">
+                                                    {{ $komp_ekspor && $komp_impor && array_key_exists($periode . 'adhk', $komp_ekspor) && array_key_exists($periode . 'adhk', $komp_impor)
+                                                        ? number_format(round($komp_ekspor[$periode . 'adhk'] - $komp_impor[$periode . 'adhk'], 2), 2, ',', '.')
                                                         : '' }}
                                                 </td>
                                             @endforeach
@@ -149,18 +139,14 @@
                             </div>
                             <form method="GET" action="">
                                 <div class="modal-body">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
-                                        @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
-                                                {{ $tbl['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+
+                                    @foreach ($periode_filter as $p)
+                                        <input type="hidden" name="periode_filter[]" value="{{ $p }}">
+                                    @endforeach
                                     @foreach ($list_group_komponen as $i => $kmp)
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['column'] }}"
-                                                name="komponen_filter[]" id="{{ 'komponen_filter' . $i }}"
+                                            <input class="form-check-input" type="checkbox" value="{{ $kmp['column'] }}" name="komponen_filter[]"
+                                                id="{{ 'komponen_filter' . $i }}"
                                                 @foreach ($komponen_filter as $kom_fil)
                                                     @if ($kom_fil == $kmp['column'])
                                                     checked
@@ -173,8 +159,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            data-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                             Pilihan
                                         </button>
                                         <div class="dropdown-menu">
@@ -201,43 +186,34 @@
                             </div>
                             <form method="GET" action="">
                                 <div class="modal-body mx-4">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
-                                        @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
-                                                {{ $tbl['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+
+                                    @foreach ($komponen_filter as $k)
+                                        <input type="hidden" name="komponen_filter[]" value="{{ $k }}">
+                                    @endforeach
                                     <div class="row">
                                         @foreach ($list_periode as $li_per)
                                             @if ($li_per < 2018)
                                                 <div class="col-8"></div>
                                                 <div class="form-check col-4">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $li_per }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                    <input class="form-check-input" type="checkbox" value="{{ $li_per }}"
+                                                        name="periode_filter[]" id="{{ 'periode_filter_' . $li_per }}"
                                                         @foreach ($periode_filter as $per_fil)
                                                 @if ($per_fil === $li_per)
                                                 checked
                                                 @endif @endforeach>
-                                                    <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                    <label class="form-check-label" for="{{ 'periode_filter_' . $li_per }}">
                                                         {{ $li_per }}
                                                     </label>
                                                 </div>
                                             @else
-                                                <div
-                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
-                                                    <input class="form-check-input" type="checkbox"
-                                                        value="{{ $li_per }}" name="periode_filter[]"
-                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                <div class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
+                                                    <input class="form-check-input" type="checkbox" value="{{ $li_per }}"
+                                                        name="periode_filter[]" id="{{ 'periode_filter_' . $li_per }}"
                                                         @foreach ($periode_filter as $per_fil)
                                                     @if ($per_fil === $li_per)
                                                     checked
                                                     @endif @endforeach>
-                                                    <label class="form-check-label"
-                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                    <label class="form-check-label" for="{{ 'periode_filter_' . $li_per }}">
                                                         {{ $li_per }}
                                                     </label>
                                                 </div>
@@ -247,8 +223,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            data-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                             Pilihan
                                         </button>
                                         <div class="dropdown-menu">
@@ -276,8 +251,7 @@
                                                 </button>
                                                 <div class="dropdown-menu">
                                                     @for ($i = 3; $i >= 0; $i--)
-                                                        <button class="dropdown-item tahun-selector"
-                                                            id="{{ 'modal_tahun_' . ($tahun_berlaku - $i) }}"
+                                                        <button class="dropdown-item tahun-selector" id="{{ 'modal_tahun_' . ($tahun_berlaku - $i) }}"
                                                             type="button">{{ $tahun_berlaku - $i }}</button>
                                                     @endfor
                                                 </div>

@@ -40,32 +40,33 @@ class TabelKabkotController extends Controller
         $this->setSelectVariable();
     }
 
-    private function setSelectVariable(){
+    private function setSelectVariable()
+    {
         $str_sql_select = "";
         $list_komp = AssetData::getDetailKomponen();
-        foreach($list_komp as $item){
-            $str_sql_select .= "SUM(".$item['select_id'].") as ".$item['id'].",";
+        foreach ($list_komp as $item) {
+            $str_sql_select .= "SUM(" . $item['select_id'] . ") as " . $item['id'] . ",";
         }
-        $this->select_7pkrt = ['kode_kab', DB::raw(substr($str_sql_select,0, -1))];
+        $this->select_7pkrt = ['kode_kab', DB::raw(substr($str_sql_select, 0, -1))];
 
         //////////////////////
 
         $str_sql_select12 = "";
         $list_komp_12 = AssetData::$list_detail_komponen_12_pkrt;
-        foreach($list_komp_12 as $item){
-            $str_sql_select12 .= "SUM(".$item['id'].") as ".$item['id'].",";
+        foreach ($list_komp_12 as $item) {
+            $str_sql_select12 .= "SUM(" . $item['id'] . ") as " . $item['id'] . ",";
         }
 
-        $this->select_12pkrt =  ['kode_kab', DB::raw(substr($str_sql_select12,0, -1))];
+        $this->select_12pkrt =  ['kode_kab', DB::raw(substr($str_sql_select12, 0, -1))];
 
         ///////////////////
         $str_sql_select_rilis = "";
         $list_komp_rilis = AssetData::$list_detail_komponen_rilis;
-        foreach($list_komp_rilis as $item){
-            $str_sql_select_rilis .= "SUM(".$item['select_id'].") as ".$item['id'].",";
+        foreach ($list_komp_rilis as $item) {
+            $str_sql_select_rilis .= "SUM(" . $item['select_id'] . ") as " . $item['id'] . ",";
         }
 
-        $this->select_rilis =  ['kode_kab', DB::raw(substr($str_sql_select_rilis,0, -1))];
+        $this->select_rilis =  ['kode_kab', DB::raw(substr($str_sql_select_rilis, 0, -1))];
     }
 
     public $list_tabel = [
@@ -213,8 +214,8 @@ class TabelKabkotController extends Controller
                     } else {
                         // $rev_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
                         // $rev_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select);//, $rev_y, $select);
-                        $pdrb_q_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select);//, $rev_y_1, $select);
+                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_y, $select);
+                        $pdrb_q_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select); //, $rev_y_1, $select);
                     }
                     $row[$periode] = $pdrb_y && $pdrb_q_1 && isset($pdrb_q_1->$komp_id) && $pdrb_q_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_q_1->$komp_id) / $pdrb_q_1->$komp_id * 100 : null;
                 } else if ($id === '3.4') {
@@ -224,8 +225,8 @@ class TabelKabkotController extends Controller
                     } else {
                         // $rev_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
                         // $rev_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select);//, $rev_y, $select);
-                        $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select);//, $rev_y_1, $select);
+                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_y, $select);
+                        $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select); //, $rev_y_1, $select);
                     }
                     $row[$periode] = $pdrb_y && $pdrb_y_1 && isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id * 100 : null;
                 } else if ($id === '3.5') {
@@ -240,8 +241,8 @@ class TabelKabkotController extends Controller
                     }
                     // $rev_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
                     // $rev_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                    $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $select);//, $rev_y, $select);
-                    $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $select);//, $rev_y_1, $select);
+                    $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $select); //, $rev_y, $select);
+                    $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $select); //, $rev_y_1, $select);
                     $row[$periode] = $pdrb_y && $pdrb_y_1 && isset($pdrb_y_1->$komp_id) && $pdrb_y_1->$komp_id != 0 ? ($pdrb_y->$komp_id - $pdrb_y_1->$komp_id) / $pdrb_y_1->$komp_id * 100 : null;
                 } else if ($id === '3.6') {
                     if (sizeof($arr_periode) > 1) {
@@ -250,8 +251,8 @@ class TabelKabkotController extends Controller
                     } else {
                         // $rev_hb = $this->get_rev($wilayah_filter, $arr_periode[0], null, 1, 1);
                         // $rev_hk = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
-                        $pdrb_hb = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $select);//, $rev_hb, $select);
-                        $pdrb_hk = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select);//, $rev_hk, $select);
+                        $pdrb_hb = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $select); //, $rev_hb, $select);
+                        $pdrb_hk = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_hk, $select);
                     }
                     $row[$periode] = $pdrb_hb && $pdrb_hk && isset($pdrb_hk->$komp_id) && $pdrb_hk->$komp_id != 0 ? $pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100 : null;
                 } else if ($id === '3.7') {
@@ -260,16 +261,16 @@ class TabelKabkotController extends Controller
                         $pdrb_hk = $this->get_data($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, 1, $select);
                         $pdrb_hb_1 = $this->get_data($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 1, 1, $select);
                         $pdrb_hk_1 = $this->get_data($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, 1, $select);
-                    // } else {
-                    //     $rev_hb = $this->get_rev($wilayah_filter, $arr_periode[0], null, 1, 1);
-                    //     $rev_hk = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
-                    //     $rev_hb_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
-                    //     $rev_hk_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                        // } else {
+                        //     $rev_hb = $this->get_rev($wilayah_filter, $arr_periode[0], null, 1, 1);
+                        //     $rev_hk = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
+                        //     $rev_hb_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
+                        //     $rev_hk_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
 
-                        $pdrb_hb = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $select);//, $rev_hb, $select);
-                        $pdrb_hk = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select);//, $rev_hk, $select);
-                        $pdrb_hb_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $select);//, $rev_hb_1, $select);
-                        $pdrb_hk_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select);//, $rev_hk_1, $select);
+                        $pdrb_hb = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $select); //, $rev_hb, $select);
+                        $pdrb_hk = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_hk, $select);
+                        $pdrb_hb_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $select); //, $rev_hb_1, $select);
+                        $pdrb_hk_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select); //, $rev_hk_1, $select);
                     }
                     $implisit_y = $pdrb_hb && $pdrb_hk && isset($pdrb_hk->$komp_id) && $pdrb_hk->$komp_id != 0
                         ? $pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100
@@ -287,8 +288,8 @@ class TabelKabkotController extends Controller
                     } else {
                         // $rev_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
                         // $rev_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select);//, $rev_y, $select);
-                        $pdrb_q_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select);//, $rev_y_1, $select);
+                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_y, $select);
+                        $pdrb_q_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select); //, $rev_y_1, $select);
                     }
                     $laju_pertumbuhan =  $pdrb_y && $pdrb_q_1 && isset($pdrb_q_1->c_pdrb) && $pdrb_q_1->c_pdrb != 0
                         ? ($pdrb_y->c_pdrb - $pdrb_q_1->c_pdrb) / $pdrb_q_1->c_pdrb * 100
@@ -304,8 +305,8 @@ class TabelKabkotController extends Controller
                     } else {
                         // $rev_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
                         // $rev_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select);//, $rev_y, $select);
-                        $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select);//, $rev_y_1, $select);
+                        $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_y, $select);
+                        $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select); //, $rev_y_1, $select);
                     }
                     $laju_pertumbuhan =  $pdrb_y && $pdrb_y_1 && isset($pdrb_y_1->c_pdrb) && $pdrb_y_1->c_pdrb != 0
                         ? ($pdrb_y->c_pdrb - $pdrb_y_1->c_pdrb) / $pdrb_y_1->c_pdrb * 100
@@ -325,8 +326,8 @@ class TabelKabkotController extends Controller
                     }
                     // $rev_y = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
                     // $rev_y_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
-                    $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $select);//, $rev_y, $select);
-                    $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $select);//, $rev_y_1, $select);
+                    $pdrb_y = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], $q, 2, 1, $select); //, $rev_y, $select);
+                    $pdrb_y_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, $q, 2, 1, $select); //, $rev_y_1, $select);
 
                     $laju_pertumbuhan =  $pdrb_y && $pdrb_y_1 && isset($pdrb_y_1->c_pdrb) && $pdrb_y_1->c_pdrb != 0 ? ($pdrb_y->c_pdrb - $pdrb_y_1->c_pdrb) / $pdrb_y_1->c_pdrb * 100 : null;
                     $row[$periode] = $pdrb_y && $pdrb_y_1 && $laju_pertumbuhan && isset($pdrb_y->$komp_id) && isset($pdrb_y_1->$komp_id)
@@ -371,7 +372,7 @@ class TabelKabkotController extends Controller
             }
         }
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponens, $select);
-        return view('pdrb_kabkot.index', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.index', compact('id', 'list_tabel', 'tahun_berlaku', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 
     public function kabkot_7pkrt(Request $request, $id)
@@ -379,7 +380,7 @@ class TabelKabkotController extends Controller
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
         $list_group_komponen = AssetData::getGroupKomponen(); //$this->list_group_7_pkrt;
-        $list_detail_komponen = AssetData::getDetailKomponen();//$this->list_detail_komponen_7pkrt;
+        $list_detail_komponen = AssetData::getDetailKomponen(); //$this->list_detail_komponen_7pkrt;
         $list_wilayah = $this->list_wilayah;
         $tahun_berlaku = $this->tahun_berlaku;
         $select = $this->select_7pkrt;
@@ -406,7 +407,7 @@ class TabelKabkotController extends Controller
             }
         }
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponens, $select);
-        return view('pdrb_kabkot.index', compact('list_tabel', 'tahun_berlaku',  'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.index', compact('id', 'list_tabel', 'tahun_berlaku',  'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 
     public function kabkot_rilis(Request $request, $id)
@@ -440,14 +441,14 @@ class TabelKabkotController extends Controller
             }
         }
         $data = $this->rumus($id, $wilayah_filter, $periode_filter, $komponens, $select);
-        return view('pdrb_kabkot.index', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.index', compact('id', 'list_tabel', 'tahun_berlaku', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 
     public function kabkot_brs(Request $request, $id)
     {
         $list_tabel = $this->list_tabel;
         $list_periode = $this->list_periode;
-        $list_group_komponen = AssetData:: getGroupKomponen(); //$this->list_group_7_pkrt;
+        $list_group_komponen = AssetData::getGroupKomponen(); //$this->list_group_7_pkrt;
         $list_detail_komponen = $this->list_detail_komponen_brs;
         $list_wilayah = $this->list_wilayah;
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '1.1';
@@ -471,6 +472,6 @@ class TabelKabkotController extends Controller
             }
         }
         $data = [];
-        return view('pdrb_kabkot.kabkot_brs', compact('list_tabel', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
+        return view('pdrb_kabkot.kabkot_brs', compact('id', 'list_tabel', 'list_periode', 'list_group_komponen', 'list_wilayah', 'tabel_filter', 'periode_filter', 'komponen_filter', 'wilayah_filter', 'data'));
     }
 }

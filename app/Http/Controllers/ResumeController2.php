@@ -97,13 +97,13 @@ class ResumeController2 extends Controller
         $list_group_komponen = AssetData::getDetailKomponen();
         $list_wilayah = $this->list_wilayah;
         $tahun_berlaku = $this->tahun_berlaku;
-
+        // dd($request->periode_filter);
         $tabel_filter = $request->tabel_filter ? $request->tabel_filter : '2.1';
         $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q1', $tahun_berlaku . 'Q2', $tahun_berlaku . 'Q3', $tahun_berlaku . 'Q4', $tahun_berlaku];
         $komponen_filter = $request->komponen_filter ? $request->komponen_filter : 'c_pdrb';
 
         $data = $this->rumus($id, $list_wilayah, $periode_filter, $komponen_filter);
-        return view('resume.index2', compact('list_tabel', 'tahun_berlaku', 'list_periode', 'list_wilayah', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
+        return view('resume.index2', compact('id', 'list_tabel', 'tahun_berlaku', 'list_periode', 'list_wilayah', 'list_group_komponen', 'tabel_filter', 'periode_filter', 'komponen_filter', 'data'));
     }
 
     public function get_data($kd_kab, $thn, $q, $adhk)

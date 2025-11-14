@@ -310,9 +310,9 @@
             const pathParts = window.location.pathname.split('/').filter(Boolean);
             const routeName = pathParts[pathParts.length - 2];
             const appBase = "{{ url('/') }}";
+            const baseUrl = `${appBase}/${routeName}`;
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             const data_id = selectedOption.getAttribute('data-id');
-            const pathParts = window.location.pathname.split('/');
             const table_id = pathParts[pathParts.length - 1];
 
             const params = new URLSearchParams(window.location.search);

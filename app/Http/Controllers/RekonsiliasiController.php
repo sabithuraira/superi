@@ -112,19 +112,22 @@ class RekonsiliasiController extends Controller
                 for ($i = 1; $i <= $arr_periode[1]; $i++) {
                     $q_c[] = $i;
 
-                    $adhk_c_q[$i] = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                    $adhk_c_q[$i] = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                         ->where('kode_kab', $id_wil)
                         ->where('tahun', $arr_periode[0])
                         ->wherein('q', [$i])
                         ->where('adhb_or_adhk', 2)
+                        ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
                         ->first();
 
-                    $adhk_c1_q[$i] = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                    $adhk_c1_q[$i] = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                         ->where('kode_kab', $id_wil)
                         ->where('tahun', $arr_periode[0] - 1)
                         ->wherein('q', [$i])
                         ->where('adhb_or_adhk', 2)
+                        ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
                         ->first();
+
                     // dd($adhk_c1_q);
                     $row[$periode . '_adhk_c_q'][$i] = $adhk_c_q[$i] ? $adhk_c_q[$i]->$kolom : null;
                     $row[$periode . '_adhk_c_q_adj'][$i] = $adhk_c_q[$i] ? $adhk_c_q[$i]->$kolom_adj : null;
@@ -132,20 +135,22 @@ class RekonsiliasiController extends Controller
                     $row[$periode . '_adhk_c1_q_adj'][$i] = $adhk_c1_q[$i] ? $adhk_c1_q[$i]->$kolom_adj : null;
                 }
 
-                $adhk_c = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+
+                $adhk_c = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                     ->where('kode_kab', $id_wil)
                     ->where('tahun', $arr_periode[0])
                     ->wherein('q', $q_c)
                     ->where('adhb_or_adhk', 2)
+                    ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
                     ->first();
-
-                $adhk_c1 = Rekon::select('kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
+                $adhk_c1 = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                     ->where('kode_kab', $id_wil)
                     ->where('tahun', $arr_periode[0] - 1)
                     ->wherein('q', $q_c)
                     ->where('adhb_or_adhk', 2)
+                    ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
                     ->first();
-                // dd($adhk_c1);
+
                 // adhb
                 $row[$periode . '_adhb_id'] = $adhb ? $adhb->id : null;
                 $row[$periode . '_adhb'] = $adhb ? $adhb->$kolom : null;
@@ -185,12 +190,6 @@ class RekonsiliasiController extends Controller
                         ->where('q', $arr_periode[1])
                         ->where('adhb_or_adhk', 1)
                         ->groupBy('kode_prov', 'tahun', 'q', 'adhb_or_adhk')
-                        ->first();
-                    $adhb = Rekon::select('id', 'kode_kab', 'tahun', 'q', 'adhb_or_adhk', $kolom, $kolom_adj)
-                        ->where('kode_kab', $id_wil)
-                        ->where('tahun', $arr_periode[0])
-                        ->where('q', $arr_periode[1])
-                        ->where('adhb_or_adhk', 1)
                         ->first();
 
                     $adhk = Rekon::select('kode_prov', 'tahun', 'q', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
@@ -307,14 +306,74 @@ class RekonsiliasiController extends Controller
                     $row[$periode . '_adhk_c1'] = $adhk_c1 ? $adhk_c1->$kolom : null;
                     $row[$periode . '_adhk_c1_adj'] = $adhk_c1 ? $adhk_c1->$kolom_adj : null;
                 }
-
                 $datas[] = $row;
+
+                $row = [];
+                $row['kode_kab'] = "d%";
+                $row['nama_kab'] = "Diskrepansi(%)";
+                foreach ($periode_filter as $periode) {
+
+                    // dd($datas[1][$periode . '_adhb'] - $datas[0][$periode . '_adhb']);
+                    $row[$periode . '_adhb_id'] = $adhb ? $adhb->id : null;
+
+                    $row[$periode . '_adhb'] =
+                        ($datas[1][$periode . '_adhb'] ?? 0) && ($datas[0][$periode . '_adhb'] ?? 0) != 0
+                        ? ($datas[1][$periode . '_adhb'] / $datas[0][$periode . '_adhb'] * 100) - 100
+                        : null;
+
+                    $row[$periode . '_adhb_adj'] =
+                        ($datas[1][$periode . '_adhb_adj'] ?? 0) &&
+                        ($datas[0][$periode . '_adhb_adj'] ?? 0) &&
+                        (($datas[0][$periode . '_adhb'] + $datas[0][$periode . '_adhb_adj']) != 0)
+                        ? (($datas[1][$periode . '_adhb'] + $datas[1][$periode . '_adhb_adj'])
+                            / ($datas[0][$periode . '_adhb'] + $datas[0][$periode . '_adhb_adj'])
+                            * 100) - 100
+                        : null;
+
+                    $row[$periode . '_adhk_id'] = $adhk ? $adhk->id : null;
+
+                    $row[$periode . '_adhk'] =
+                        ($datas[1][$periode . '_adhk'] ?? 0) && ($datas[0][$periode . '_adhk'] ?? 0) != 0
+                        ? ($datas[1][$periode . '_adhk'] / $datas[0][$periode . '_adhk'] * 100) - 100
+                        : null;
+
+                    $row[$periode . '_adhk_adj'] =
+                        ($datas[1][$periode . '_adhk_adj'] ?? 0) &&
+                        ($datas[0][$periode . '_adhk_adj'] ?? 0) &&
+                        (($datas[0][$periode . '_adhk'] + $datas[0][$periode . '_adhk_adj']) != 0)
+                        ? (($datas[1][$periode . '_adhk'] + $datas[1][$periode . '_adhk_adj'])
+                            / ($datas[0][$periode . '_adhk'] + $datas[0][$periode . '_adhk_adj'])
+                            * 100) - 100
+                        : null;
+                }
+                $datas[] = $row;
+
+                $row = [];
+                $row['kode_kab'] = "d";
+                $row['nama_kab'] = "Diskrepansi";
+                foreach ($periode_filter as $periode) {
+
+                    // dd($datas[1][$periode . '_adhb'] - $datas[0][$periode . '_adhb']);
+                    $row[$periode . '_adhb_id'] = $adhb ? $adhb->id : null;
+                    $row[$periode . '_adhb'] = $datas[1][$periode . '_adhb'] && $datas[0][$periode . '_adhb'] ? $datas[1][$periode . '_adhb'] - $datas[0][$periode . '_adhb'] : null;
+                    $row[$periode . '_adhb_adj'] = $datas[1][$periode . '_adhb_adj'] && $datas[0][$periode . '_adhb_adj'] ? $datas[1][$periode . '_adhb_adj'] - $datas[0][$periode . '_adhb_adj'] : null;
+                    $row[$periode . '_adhk_id'] = $adhk ? $adhk->id : null;
+                    $row[$periode . '_adhk'] = $datas[1][$periode . '_adhk'] && $datas[0][$periode . '_adhk'] ? $datas[1][$periode . '_adhk'] - $datas[0][$periode . '_adhk'] : null;
+                    $row[$periode . '_adhk_adj'] = $datas[1][$periode . '_adhk_adj'] && $datas[0][$periode . '_adhk_adj'] ? $datas[1][$periode . '_adhk_adj'] - $datas[0][$periode . '_adhk_adj'] : null;
+                }
+                $datas[] = $row;
+                // dd($datas);
             }
         }
+        $moved = [$datas[2], $datas[3]];
+        $remaining = array_filter($datas, function ($v, $i) {
+            return !in_array($i, [2, 3]);
+        }, ARRAY_FILTER_USE_BOTH);
 
+        $newData = array_values(array_merge($moved, $remaining));
         return response()->json([
             'success' => '1',
-            'data' => $datas,
+            'data' => $newData,
         ]);
     }
 
@@ -448,5 +507,11 @@ class RekonsiliasiController extends Controller
             'success' => true,
             'message' => 'Data tahun ' . $arr_periode[0] . ' berhasil disimpan (' . $successCount . ' record)',
         ]);
+    }
+
+    public function create_hasil_rekon(Request $request)
+    {
+
+        dd($request->all());
     }
 }

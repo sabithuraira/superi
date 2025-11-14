@@ -106,6 +106,7 @@ Route::group(['middleware' => ['permission:rekonsiliasi']], function () {
     Route::get('rekonsiliasi/get_data', 'RekonsiliasiController@get_data');
     Route::post('rekonsiliasi/save_data', 'RekonsiliasiController@save_data');
     Route::get('rekonsiliasi/sync_data', 'RekonsiliasiController@sync_data');
+    Route::get('rekonsiliasi/create_hasil_rekon', 'RekonsiliasiController@create_hasil_rekon');
 });
 
 Route::group(['middleware' => ['permission:simulasi']], function () {

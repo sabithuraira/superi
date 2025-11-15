@@ -1601,9 +1601,13 @@
             link.click();
             document.body.removeChild(link);
         }
-         function createhasilrekon() {
-            alert('ini prank, kamu kena prank, maaf ini masih pengembangan')
-         }
+
+        function createhasilrekon() {
+            let params = vm.periode_filter
+                .map(p => "periode_filter[]=" + encodeURIComponent(p))
+                .join("&");
+            window.open("{{ route('rekon.create_hasil') }}?" + params, "_blank");
+        }
 
         function totalkabkotadhb(periode) {
             let sum = 0;

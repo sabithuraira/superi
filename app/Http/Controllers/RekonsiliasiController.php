@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CreateHasilRekonExport;
 use App\Helpers\AssetData;
 use App\PdrbFinal;
 use App\Rekon;
 use App\SettingApp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use ZipArchive;
 
 class RekonsiliasiController extends Controller
 {
@@ -511,7 +514,47 @@ class RekonsiliasiController extends Controller
 
     public function create_hasil_rekon(Request $request)
     {
+        $tahun_berlaku = $this->tahun_berlaku;
+        $triwulan_berlaku = $this->triwulan_berlaku;
+        $periode_filter = $request->periode_filter ? $request->periode_filter : [$tahun_berlaku . 'Q' . $triwulan_berlaku];
+        $kabkots = config("app.wilayah");
 
-        dd($request->all());
+        $zipFile = storage_path('app/rekon_all_kabkot.zip');
+        $zip = new ZipArchive;
+        $zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        // dd($periode_filter);
+        foreach ($kabkots as $kode => $kabkot) {
+
+            foreach ($periode_filter as $periode) {
+                $arr_periode = explode("Q", $periode);
+
+                $adhb = Rekon::where('kode_kab', $kode)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 1)
+                    ->first();
+                $adhk = Rekon::where('kode_kab', $kode)
+                    ->where('tahun', $arr_periode[0])
+                    ->where('q', $arr_periode[1])
+                    ->where('adhb_or_adhk', 2)
+                    ->first();
+
+                $periode_data[$periode] = [
+                    'adhb' => $adhb,
+                    'adhk' => $adhk
+                ];
+            }
+
+            $tempFileName = "rekon_temp_{$kode}.xlsx";
+            $tempFilePath = storage_path("app/{$tempFileName}");
+
+            // ✔ Generate file Excel ke storage/app/
+            Excel::store(new CreateHasilRekonExport($periode_data), $tempFileName, null, \Maatwebsite\Excel\Excel::XLSX);
+
+            // ✔ Masukkan ke ZIP
+            $zip->addFile($tempFilePath, "16{$kode}_hasil_rekon.xlsx");
+        }
+        $zip->close();
+        return response()->download($zipFile)->deleteFileAfterSend(true);
     }
 }

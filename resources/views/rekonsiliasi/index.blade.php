@@ -18,6 +18,9 @@
             opacity: 1 !important;
             z-index: 1060 !important;
         }
+        td input{
+            max-width: 100px;
+        }
 
         .modal-backdrop.fade.show {
             z-index: 1050 !important;
@@ -34,7 +37,7 @@
         }
 
         .table-container {
-            max-height: 750px;
+            max-height: 1300px;
             overflow: auto;
             position: relative;
             border: 1px solid #ddd;

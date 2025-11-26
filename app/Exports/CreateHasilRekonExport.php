@@ -105,8 +105,8 @@ class CreateHasilRekonExport implements FromArray, WithEvents
             $komp_2[] =  $data['adhk']['c_2'] + $data['adhk']['c_2_adj'];
             $komp_3[] =  $data['adhb']['c_3'] + $data['adhb']['c_3_adj'];
             $komp_3[] =  $data['adhk']['c_3'] + $data['adhk']['c_3_adj'];
-            $komp_4[] =  $data['adhb']['c_4'] + $data['adhb']['c_4_adj'];
-            $komp_4[] =  $data['adhk']['c_4'] + $data['adhk']['c_4_adj'];
+            $komp_4[] = $data['adhb']['c_4a'] + $data['adhb']['c_4a_adj'] + $data['adhb']['c_4b'] + $data['adhb']['c_4b_adj'];
+            $komp_4[] =  $data['adhk']['c_4a'] + $data['adhk']['c_4a_adj'] + $data['adhk']['c_4b'] + $data['adhk']['c_4b_adj'];
             $komp_4a[] =  $data['adhb']['c_4a'] + $data['adhb']['c_4a_adj'];
             $komp_4a[] =  $data['adhk']['c_4a'] + $data['adhk']['c_4a_adj'];
             $komp_4b[] =  $data['adhb']['c_4b'] + $data['adhb']['c_4b_adj'];
@@ -122,6 +122,7 @@ class CreateHasilRekonExport implements FromArray, WithEvents
         $rows[] = $header2;
         $rows[] = $komp_1;
         $rows[] = $komp_1a;
+        $rows[] = $komp_1b;
         $rows[] = $komp_1c;
         $rows[] = $komp_1d;
         $rows[] = $komp_1e;

@@ -541,19 +541,18 @@
                                           ${formatNumber(qtq)}
                                         </td>
                                         <td style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}">
-
                                             <input class = "text_edit_qtq_adj text-right" value="${formatNumber(qtq_adj)}"   data-periode="${periode}"
-                                            style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}">
+                                            style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}"   ${row[periode+'_adhk_id'] == null?'disabled':''}>
                                         </td>
                                         <td style="${yty > 0 ? 'background:lightgreen' : yty < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(yty)}</td>
                                         <td style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}">
                                             <input class = "text_edit_yty_adj text-right" value="${formatNumber(yty_adj)}"   data-periode="${periode}"
-                                            style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}">
+                                            style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}"   ${row[periode+'_adhk_id'] == null?'disabled':''}>
                                         </td>
                                         <td style="${ctc > 0 ? 'background:lightgreen' : ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(ctc)}</td>
-                                        <td style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}">
+                                        <td style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}" >
                                             <input  class = "text_edit_ctc_adj text-right" value="${formatNumber(ctc_adj)}"   data-periode="${periode}"
-                                             style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}">
+                                             style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}"    ${row[periode+'_adhk_id'] == null?'disabled':''}>
                                         </td>
                                         <td style="${implisit > 0 ? 'background:lightgreen' : implisit < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit)}</td>
                                         <td style="${implisit_adj > 0 ? 'background:lightgreen' : implisit_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit_adj)}</td>

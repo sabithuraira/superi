@@ -250,20 +250,20 @@ class RekonsiliasiController extends Controller
                     for ($i = 1; $i <= $arr_periode[1]; $i++) {
                         $q_c[] = $i;
 
-                        $adhk_c_q[$i] = Rekon::select('kode_prov', 'tahun', 'q', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
+                        $adhk_c_q[$i] = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                             ->where('kode_kab', '!=', '00')
                             ->where('tahun', $arr_periode[0])
                             ->wherein('q', [$i])
                             ->where('adhb_or_adhk', 2)
-                            ->groupBy('kode_prov', 'tahun', 'q', 'adhb_or_adhk')
+                            ->groupBy('kode_prov', 'tahun', 'adhb_or_adhk')
                             ->first();
 
-                        $adhk_c1_q[$i] = Rekon::select('kode_prov', 'tahun', 'q', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
+                        $adhk_c1_q[$i] = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                             ->where('kode_kab', '!=', '00')
                             ->where('tahun', $arr_periode[0] - 1)
                             ->wherein('q', [$i])
                             ->where('adhb_or_adhk', 2)
-                            ->groupBy('kode_prov', 'tahun', 'q', 'adhb_or_adhk')
+                            ->groupBy('kode_prov', 'tahun', 'adhb_or_adhk')
                             ->first();
                         // dd($adhk_c1_q);
                         $row[$periode . '_adhk_c_q'][$i] = $adhk_c_q[$i] ? $adhk_c_q[$i]->$kolom : null;
@@ -272,20 +272,20 @@ class RekonsiliasiController extends Controller
                         $row[$periode . '_adhk_c1_q_adj'][$i] = $adhk_c1_q[$i] ? $adhk_c1_q[$i]->$kolom_adj : null;
                     }
 
-                    $adhk_c = Rekon::select('kode_prov', 'tahun', 'q', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
+                    $adhk_c = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                         ->where('kode_kab', '!=', '00')
                         ->where('tahun', $arr_periode[0])
                         ->wherein('q', $q_c)
                         ->where('adhb_or_adhk', 2)
-                        ->groupBy('kode_prov', 'tahun', 'q', 'adhb_or_adhk')
+                        ->groupBy('kode_prov', 'tahun', 'adhb_or_adhk')
                         ->first();
 
-                    $adhk_c1 = Rekon::select('kode_prov', 'tahun', 'q', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
+                    $adhk_c1 = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk', DB::raw('SUM(' . $kolom . ') as ' . $kolom . ', SUM(' . $kolom_adj . ') as ' . $kolom_adj))
                         ->where('kode_kab', '!=', '00')
                         ->where('tahun', $arr_periode[0] - 1)
                         ->wherein('q', $q_c)
                         ->where('adhb_or_adhk', 2)
-                        ->groupBy('kode_prov', 'tahun', 'q', 'adhb_or_adhk')
+                        ->groupBy('kode_prov', 'tahun', 'adhb_or_adhk')
                         ->first();
                     // dd($adhk_c1);
                     // adhb

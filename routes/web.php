@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 /*
@@ -131,4 +132,11 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => ['role:approval_admin']], function () {
     Route::post('upload/approve_admin', 'UploadController@approve_admin');
+});
+
+Route::get('time-check', function () {
+    return [
+        'server_time' => date('Y-m-d H:i:s'),
+        'laravel_time' => now()->toDateTimeString(),
+    ];
 });

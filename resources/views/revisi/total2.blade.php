@@ -107,21 +107,25 @@
                                                     <td class="text-right">
                                                         {{ $kabkot_revisi != null ? number_format(round($kabkot_revisi, 2), 2, ',', '.') : '' }}
                                                     </td>
-                                                    <td class="text-center">
-                                                        @if (
-                                                            $kabkot_rilis &&
-                                                                $kabkot_revisi &&
-                                                                number_format(round($kabkot_rilis, 2), 2, ',', '.') > number_format(round($kabkot_revisi, 2), 2, ',', '.'))
-                                                            <div class="text-danger">▼</div>
-                                                        @elseif (
-                                                            $kabkot_rilis &&
-                                                                $kabkot_revisi &&
-                                                                number_format(round($kabkot_rilis, 2), 2, ',', '.') < number_format(round($kabkot_revisi, 2), 2, ',', '.'))
-                                                            <div class="text-success">▲</div>
-                                                        @else
-                                                            <div class="text-warning">═</div>
-                                                        @endif
-                                                    </td>
+                                                    @if(
+                                                        $kabkot_rilis !== null &&
+                                                        $kabkot_revisi !== null &&
+                                                        ($kabkot_rilis * $kabkot_revisi) < 0
+                                                    )
+                                                        <td class="text-center bg-danger">!</td>
+                                                    @elseif (
+                                                        $kabkot_rilis &&
+                                                            $kabkot_revisi &&
+                                                            number_format(round($kabkot_rilis, 2), 2, ',', '.') > number_format(round($kabkot_revisi, 2), 2, ',', '.'))
+                                                        <td class="text-danger text-center">▼</td>
+                                                    @elseif (
+                                                        $kabkot_rilis &&
+                                                            $kabkot_revisi &&
+                                                            number_format(round($kabkot_rilis, 2), 2, ',', '.') < number_format(round($kabkot_revisi, 2), 2, ',', '.'))
+                                                        <td class="text-success text-center">▲</td>
+                                                    @else
+                                                        <td class="text-warning text-center">═</td>
+                                                    @endif
                                                 @endforeach
                                             </tr>
                                             <tr>

@@ -139,9 +139,9 @@
                                                         {{ $prov_revisi != null ? number_format(round($prov_revisi, 2), 2, ',', '.') : '' }}
                                                     </td>
                                                     <td class="text-center">
-                                                        @if ($prov_rilis && $prov_revisi && $prov_rilis > $prov_revisi)
+                                                        @if ($prov_rilis && $prov_revisi &&     number_format(round($prov_rilis, 2), 2, ',', '.') > number_format(round($prov_revisi, 2), 2, ',', '.'))
                                                             <div class="text-danger">▼</div>
-                                                        @elseif ($prov_rilis && $prov_revisi && $prov_rilis < $prov_revisi)
+                                                        @elseif ($prov_rilis && $prov_revisi &&   number_format(round($prov_rilis, 2), 2, ',', '.') < number_format(round($prov_revisi, 2), 2, ',', '.'))
                                                             <div class="text-success">▲</div>
                                                         @else
                                                             <div class="text-warning">═</div>

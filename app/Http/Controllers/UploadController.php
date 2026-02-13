@@ -196,6 +196,8 @@ class UploadController extends Controller
         return redirect('beranda')->with('success', 'Proses Approve Admin Berhasil');
     }
 
+
+    // ambil data
     public function pdrb(Request $request)
     {
         $datas = [];
@@ -224,6 +226,7 @@ class UploadController extends Controller
         return response()->json(['success' => '1', 'datas' => $datas, 'data_rilis' => $data_rilis, 'komponen' => $komponen]);
     }
 
+    // admin approve
     public function isAllApprove(Request $request)
     {
         $resultProvinsi = true;

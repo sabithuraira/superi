@@ -195,6 +195,7 @@ class AssetData
         ['id' => 'c_1d+c_1e',  'alias' => '1de. PKRT-Rumah Perabot',    'name' => '1.de. Perabot, Peralatan rumahtangga dan Pemeliharaan Rutin Rumah'],
         ['id' => 'c_1f+c_1j',  'alias' => '1g. PKRT-Kes Pend', 'name' => '1.fj. Kesehatan Pendidikan'],
         ['id' => 'c_1g+c_1h+c_1i',  'alias' => '1ghi. TransKomRekre', 'name' => '1.ghi. Transportasi Komunitasi Rekreasi'],
+        ['id' => 'c_1a+c_1b+c_1c+c_1d+c_1e+c_1f+c_1g+c_1h+c_1i+_c1j+c_1k+c_1l',  'alias' => '1. PKRT', 'name' => '1. PKRT'],
         ['id' => 'c_2',   'alias' => '2. PKLNPRT',          'name' => '2. Pengeluaran Konsumsi LNPRT'],
         ['id' => 'c_3',   'alias' => '3.PKP',               'name' => '3. Pengeluaran Konsumsi Pemerintah'],
         ['id' => 'c_4a',  'alias' => '4a. PMTB-Bang',       'name' => '4.a. Bangunan'],

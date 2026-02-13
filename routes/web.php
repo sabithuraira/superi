@@ -21,9 +21,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('home', 'HomeController@index');
+Route::get('authorization/set_my_role', 'AuthorizationController@set_my_role');
 // Route::group(['middleware' => ['role:superadmin']], function () {
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('authorization/set_my_role', 'AuthorizationController@set_my_role');
     Route::get('beranda', 'HomeController@beranda');
 });
 
@@ -42,6 +42,9 @@ Route::group(['middleware' => ['role:superadmin']], function () {
 
     Route::get('setting_app', 'SettingAppController@index');
     Route::post('setting_app', 'SettingAppController@store');
+
+
+    Route::get('cleaning_data','SettingAppController@cleaning_data');
 });
 
 // Route::group(['middleware' => ['role:superadmin','permission:import_pdrb']], function () {

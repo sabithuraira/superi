@@ -57,16 +57,29 @@ class RekonsiliasiController extends Controller
                 $arr_periode = explode("Q", $periode);
 
                 $komponen_filter = trim($komponen_filter); // "c_1a + c_1b"
+                preg_match_all('/[+-]?c_[a-z0-9]+/i', $komponen_filter, $matches);
 
-                $komponen = array_map('trim', explode('+', $komponen_filter));
-                // dd($komponen_filter);
-                $expr     = implode(' + ', $komponen);
+                $komponen = $matches[0];
+                // dd($komponen);
+                $expr = implode(' ', $komponen);
+
                 $expr_adj = implode(
-                    ' + ',
-                    array_map(fn($c) => $c . '_adj', $komponen)
+                    ' ',
+                    array_map(function ($c) {
+                        // pisahkan operator dan nama kolom
+                        preg_match('/([+-]?)(c_[a-z0-9]+)/i', $c, $m);
+                        return $m[1] . $m[2] . '_adj';
+                    }, $komponen)
                 );
+                // $komponen = array_map('trim', explode('+', $komponen_filter));
+                // // dd($komponen_filter);
+                // $expr     = implode(' + ', $komponen);
+                // $expr_adj = implode(
+                //     ' + ',
+                //     array_map(fn($c) => $c . '_adj', $komponen)
+                // );
 
-
+                // dd($expr_adj);
                 $kolom     = DB::raw("($expr) as nilai");
                 $kolom_adj = DB::raw("($expr_adj) as nilai_adj");
 
@@ -164,11 +177,25 @@ class RekonsiliasiController extends Controller
                 }
 
 
+                $adhb_c = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk',  $sumkolom, $sumkolom_adj)
+                    ->where('kode_kab', $id_wil)
+                    ->where('tahun', $arr_periode[0])
+                    ->wherein('q', $q_c)
+                    ->where('adhb_or_adhk', 1)
+                    ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
+                    ->first();
                 $adhk_c = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk',  $sumkolom, $sumkolom_adj)
                     ->where('kode_kab', $id_wil)
                     ->where('tahun', $arr_periode[0])
                     ->wherein('q', $q_c)
                     ->where('adhb_or_adhk', 2)
+                    ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
+                    ->first();
+                $adhb_c1 = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk',  $sumkolom, $sumkolom_adj)
+                    ->where('kode_kab', $id_wil)
+                    ->where('tahun', $arr_periode[0] - 1)
+                    ->wherein('q', $q_c)
+                    ->where('adhb_or_adhk', 1)
                     ->groupBy('kode_kab', 'tahun', 'adhb_or_adhk')
                     ->first();
                 $adhk_c1 = Rekon::select('kode_kab', 'tahun', 'adhb_or_adhk',  $sumkolom, $sumkolom_adj)
@@ -187,6 +214,10 @@ class RekonsiliasiController extends Controller
                 $row[$periode . '_adhb_q1_adj'] = $adhb_q1 ? $adhb_q1->nilai_adj : null;
                 $row[$periode . '_adhb_y1'] = $adhb_y1 ? $adhb_y1->nilai : null;
                 $row[$periode . '_adhb_y1_adj'] = $adhb_y1 ? $adhb_y1->nilai_adj : null;
+                $row[$periode . '_adhb_c'] = $adhb_c ? $adhb_c->nilai : null;
+                $row[$periode . '_adhb_c_adj'] = $adhb_c ? $adhb_c->nilai_adj : null;
+                $row[$periode . '_adhb_c1'] = $adhb_c1 ? $adhb_c1->nilai : null;
+                $row[$periode . '_adhb_c1_adj'] = $adhb_c1 ? $adhb_c1->nilai_adj : null;
                 // adhk
                 $row[$periode . '_adhk_id'] = $adhk ? $adhk->id : null;
                 $row[$periode . '_adhk'] = $adhk ? $adhk->nilai : null;
@@ -199,6 +230,7 @@ class RekonsiliasiController extends Controller
                 $row[$periode . '_adhk_c_adj'] = $adhk_c ? $adhk_c->nilai_adj : null;
                 $row[$periode . '_adhk_c1'] = $adhk_c1 ? $adhk_c1->nilai : null;
                 $row[$periode . '_adhk_c1_adj'] = $adhk_c1 ? $adhk_c1->nilai_adj : null;
+                // dd($row);
             }
 
             $datas[] = $row;
@@ -297,6 +329,22 @@ class RekonsiliasiController extends Controller
                         $row[$periode . '_adhk_c1_q_adj'][$i] = $adhk_c1_q[$i] ? $adhk_c1_q[$i]->nilai_adj : null;
                     }
 
+                    $adhb_c = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk', $sumkolom, $sumkolom_adj)
+                        ->where('kode_kab', '!=', '00')
+                        ->where('tahun', $arr_periode[0])
+                        ->wherein('q', $q_c)
+                        ->where('adhb_or_adhk', 1)
+                        ->groupBy('kode_prov', 'tahun', 'adhb_or_adhk')
+                        ->first();
+
+                    $adhb_c1 = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk',  $sumkolom, $sumkolom_adj)
+                        ->where('kode_kab', '!=', '00')
+                        ->where('tahun', $arr_periode[0] - 1)
+                        ->wherein('q', $q_c)
+                        ->where('adhb_or_adhk', 1)
+                        ->groupBy('kode_prov', 'tahun', 'adhb_or_adhk')
+                        ->first();
+
                     $adhk_c = Rekon::select('kode_prov', 'tahun', 'adhb_or_adhk', $sumkolom, $sumkolom_adj)
                         ->where('kode_kab', '!=', '00')
                         ->where('tahun', $arr_periode[0])
@@ -321,6 +369,10 @@ class RekonsiliasiController extends Controller
                     $row[$periode . '_adhb_q1_adj'] = $adhb_q1 ? $adhb_q1->nilai_adj : null;
                     $row[$periode . '_adhb_y1'] = $adhb_y1 ? $adhb_y1->nilai : null;
                     $row[$periode . '_adhb_y1_adj'] = $adhb_y1 ? $adhb_y1->nilai_adj : null;
+                    $row[$periode . '_adhb_c'] = $adhb_c ? $adhb_c->nilai : null;
+                    $row[$periode . '_adhb_c_adj'] = $adhb_c ? $adhb_c->nilai_adj : null;
+                    $row[$periode . '_adhb_c1'] = $adhb_c1 ? $adhb_c1->nilai : null;
+                    $row[$periode . '_adhb_c1_adj'] = $adhb_c1 ? $adhb_c1->nilai_adj : null;
                     // adhk
                     $row[$periode . '_adhk_id'] = $adhk ? $adhk->id : null;
                     $row[$periode . '_adhk'] = $adhk ? $adhk->nilai : null;
@@ -371,6 +423,38 @@ class RekonsiliasiController extends Controller
                             / ($datas[0][$periode . '_adhk'] + $datas[0][$periode . '_adhk_adj'])
                             * 100) - 100
                         : null;
+
+                    $row[$periode . '_adhb_c_id'] = null;
+
+                    $row[$periode . '_adhb_c'] =
+                        ($datas[1][$periode . '_adhb_c'] ?? 0) && ($datas[0][$periode . '_adhb_c'] ?? 0) != 0
+                        ? ($datas[1][$periode . '_adhb_c'] / $datas[0][$periode . '_adhb_c'] * 100) - 100
+                        : null;
+
+                    $row[$periode . '_adhb_c_adj'] =
+                        ($datas[1][$periode . '_adhb_c_adj'] ?? 0) &&
+                        ($datas[0][$periode . '_adhb_c_adj'] ?? 0) &&
+                        (($datas[0][$periode . '_adhb_c'] + $datas[0][$periode . '_adhb_c_adj']) != 0)
+                        ? (($datas[1][$periode . '_adhb_c'] + $datas[1][$periode . '_adhb_c_adj'])
+                            / ($datas[0][$periode . '_adhb_c'] + $datas[0][$periode . '_adhb_c_adj'])
+                            * 100) - 100
+                        : null;
+
+                    $row[$periode . '_adhk_c_id'] =  null;
+
+                    $row[$periode . '_adhk_c'] =
+                        ($datas[1][$periode . '_adhk_c'] ?? 0) && ($datas[0][$periode . '_adhk_c'] ?? 0) != 0
+                        ? ($datas[1][$periode . '_adhk_c'] / $datas[0][$periode . '_adhk_c'] * 100) - 100
+                        : null;
+
+                    $row[$periode . '_adhk_c_adj'] =
+                        ($datas[1][$periode . '_adhk_c_adj'] ?? 0) &&
+                        ($datas[0][$periode . '_adhk_c_adj'] ?? 0) &&
+                        (($datas[0][$periode . '_adhk_c'] + $datas[0][$periode . '_adhk_c_adj']) != 0)
+                        ? (($datas[1][$periode . '_adhk_c'] + $datas[1][$periode . '_adhk_c_adj'])
+                            / ($datas[0][$periode . '_adhk_c'] + $datas[0][$periode . '_adhk_c_adj'])
+                            * 100) - 100
+                        : null;
                 }
                 $datas[] = $row;
 
@@ -384,6 +468,13 @@ class RekonsiliasiController extends Controller
                     $row[$periode . '_adhk_id'] = $adhk ? $adhk->id : null;
                     $row[$periode . '_adhk'] = $datas[1][$periode . '_adhk'] && $datas[0][$periode . '_adhk'] ? $datas[1][$periode . '_adhk'] - $datas[0][$periode . '_adhk'] : null;
                     $row[$periode . '_adhk_adj'] = $datas[1][$periode . '_adhk_adj'] && $datas[0][$periode . '_adhk_adj'] ? $datas[1][$periode . '_adhk_adj'] - $datas[0][$periode . '_adhk_adj'] : null;
+
+                    $row[$periode . '_adhb_c_id'] =  null;
+                    $row[$periode . '_adhb_c'] = $datas[1][$periode . '_adhb_c'] && $datas[0][$periode . '_adhb_c'] ? $datas[1][$periode . '_adhb_c'] - $datas[0][$periode . '_adhb_c'] : null;
+                    $row[$periode . '_adhb_c_adj'] = $datas[1][$periode . '_adhb_c_adj'] && $datas[0][$periode . '_adhb_c_adj'] ? $datas[1][$periode . '_adhb_c_adj'] - $datas[0][$periode . '_adhb_c_adj'] : null;
+                    $row[$periode . '_adhk_c_id'] = null;
+                    $row[$periode . '_adhk_c'] = $datas[1][$periode . '_adhk_c'] && $datas[0][$periode . '_adhk_c'] ? $datas[1][$periode . '_adhk_c'] - $datas[0][$periode . '_adhk_c'] : null;
+                    $row[$periode . '_adhk_c_adj'] = $datas[1][$periode . '_adhk_c_adj'] && $datas[0][$periode . '_adhk_c_adj'] ? $datas[1][$periode . '_adhk_c_adj'] - $datas[0][$periode . '_adhk_c_adj'] : null;
                 }
                 $datas[] = $row;
             }
@@ -477,44 +568,44 @@ class RekonsiliasiController extends Controller
                 'status_data' => $pdrb_final->status_data,
                 'c_1' => $pdrb_final->c_1,
                 'c_1a' => $pdrb_final->c_1a,
-                'c_1a_adj' => null,
+                'c_1a_adj' => 0,
                 'c_1b' => $pdrb_final->c_1b,
-                'c_1b_adj' => null,
+                'c_1b_adj' => 0,
                 'c_1c' => $pdrb_final->c_1c,
-                'c_1c_adj' => null,
+                'c_1c_adj' => 0,
                 'c_1d' => $pdrb_final->c_1d,
-                'c_1d_adj' => null,
+                'c_1d_adj' => 0,
                 'c_1e' => $pdrb_final->c_1e,
-                'c_1e_adj' => null,
+                'c_1e_adj' => 0,
                 'c_1f' => $pdrb_final->c_1f,
-                'c_1f_adj' => null,
+                'c_1f_adj' => 0,
                 'c_1g' => $pdrb_final->c_1g,
-                'c_1g_adj' => null,
+                'c_1g_adj' => 0,
                 'c_1h' => $pdrb_final->c_1h,
-                'c_1h_adj' => null,
+                'c_1h_adj' => 0,
                 'c_1i' => $pdrb_final->c_1i,
-                'c_1i_adj' => null,
+                'c_1i_adj' => 0,
                 'c_1j' => $pdrb_final->c_1j,
-                'c_1j_adj' => null,
+                'c_1j_adj' => 0,
                 'c_1k' => $pdrb_final->c_1k,
-                'c_1k_adj' => null,
+                'c_1k_adj' => 0,
                 'c_1l' => $pdrb_final->c_1l,
-                'c_1l_adj' => null,
+                'c_1l_adj' => 0,
                 'c_2' => $pdrb_final->c_2,
-                'c_2_adj' => null,
+                'c_2_adj' => 0,
                 'c_3' => $pdrb_final->c_3,
-                'c_3_adj' => null,
+                'c_3_adj' => 0,
                 'c_4' => $pdrb_final->c_4,
                 'c_4a' => $pdrb_final->c_4a,
-                'c_4a_adj' => null,
+                'c_4a_adj' => 0,
                 'c_4b' => $pdrb_final->c_4b,
-                'c_4b_adj' => null,
+                'c_4b_adj' => 0,
                 'c_5' => $pdrb_final->c_5,
-                'c_5_adj' => null,
+                'c_5_adj' => 0,
                 'c_6' => $pdrb_final->c_6,
-                'c_6_adj' => null,
+                'c_6_adj' => 0,
                 'c_7' => $pdrb_final->c_7,
-                'c_7_adj' => null,
+                'c_7_adj' => 0,
                 'c_pdrb' => $pdrb_final->c_pdrb,
                 'ketua_tim_id' => $pdrb_final->ketua_tim_id,
                 'pimpinan_id' => $pdrb_final->pimpinan_id,

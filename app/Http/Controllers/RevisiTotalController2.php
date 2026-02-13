@@ -101,9 +101,12 @@ class RevisiTotalController2 extends Controller
             })
             ->where('tahun', $thn)
             ->where('adhb_or_adhk', $adhk)
-            ->where('status_data', "LIKE", '%' . $status_rilis . '%')
+            ->when($status_rilis, function ($query) use ($status_rilis){
+                return $query->where('status_data', $status_rilis);
+            })
             ->groupBy('kode_kab', 'q')
             ->get();
+        // dd($total_or_prov, $thn, $adhk, $status_rilis, $rev);
         return $rev;
     }
 
@@ -174,7 +177,7 @@ class RevisiTotalController2 extends Controller
                     $q_kabkot_revisi = $this->get_q(1, $arr_periode[0], 1, "");
                     $q_prov_rilis = $this->get_q(0, $arr_periode[0], 1, 3);
                     $q_prov_revisi = $this->get_q(0, $arr_periode[0], 1, "");
-
+                    // dd($q_kabkot_rilis, $q_kabkot_revisi);
                     $kabkot_rilis = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_kabkot_rilis);
                     $kabkot_revisi = $this->get_data_cum(1, $arr_periode[0], [$arr_periode[1]], 1, "", $q_kabkot_revisi);
                     $prov_rilis = $this->get_data_cum(0, $arr_periode[0], [$arr_periode[1]], 1, 3, $q_prov_rilis);

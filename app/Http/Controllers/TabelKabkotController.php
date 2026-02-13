@@ -261,17 +261,20 @@ class TabelKabkotController extends Controller
                         $pdrb_hk = $this->get_data($wilayah_filter, $arr_periode[0], $arr_periode[1], 2, 1, $select);
                         $pdrb_hb_1 = $this->get_data($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 1, 1, $select);
                         $pdrb_hk_1 = $this->get_data($wilayah_filter, $arr_periode[0] - 1, $arr_periode[1], 2, 1, $select);
-                        // } else {
-                        //     $rev_hb = $this->get_rev($wilayah_filter, $arr_periode[0], null, 1, 1);
-                        //     $rev_hk = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
-                        //     $rev_hb_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
-                        //     $rev_hk_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
+                        } else {
+                            // $rev_hb = $this->get_rev($wilayah_filter, $arr_periode[0], null, 1, 1);
+                            // $rev_hk = $this->get_rev($wilayah_filter, $arr_periode[0], null, 2, 1);
+                            // $rev_hb_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 1, 1);
+                            // $rev_hk_1 = $this->get_rev($wilayah_filter, $arr_periode[0] - 1, null, 2, 1);
 
                         $pdrb_hb = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 1, 1, $select); //, $rev_hb, $select);
                         $pdrb_hk = $this->get_data_cumulative($wilayah_filter, $arr_periode[0], [1, 2, 3, 4], 2, 1, $select); //, $rev_hk, $select);
                         $pdrb_hb_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 1, 1, $select); //, $rev_hb_1, $select);
                         $pdrb_hk_1 = $this->get_data_cumulative($wilayah_filter, $arr_periode[0] - 1, [1, 2, 3, 4], 2, 1, $select); //, $rev_hk_1, $select);
                     }
+                    // else{
+
+                    // }
                     $implisit_y = $pdrb_hb && $pdrb_hk && isset($pdrb_hk->$komp_id) && $pdrb_hk->$komp_id != 0
                         ? $pdrb_hb->$komp_id / $pdrb_hk->$komp_id * 100
                         : null;

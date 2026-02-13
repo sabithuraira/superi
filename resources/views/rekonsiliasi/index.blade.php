@@ -342,7 +342,14 @@
                         self.periode_filter.forEach(periode => {
                             color_header = getHeaderColor(periode);
                             periode_header += '<th colspan=18 class="fixed-row-1 ' + color_header + '">' + periode + '</th>';
+
+                               triwulan = periode.substring(5, 6)
+                               if(triwulan==4){
+                                periode_header+='<th colspan=12 class="fixed-row-1 ' + color_header + '">' + periode.substring(0,4) + '</th>';
+                               }
+
                         })
+
 
                         str_header = periode_header += '</tr>'
                         str_header = str_header += `<tr>`
@@ -358,6 +365,17 @@
                             <th colspan = 2 class="fixed-row-2 ` + color_header + `">Laju Implisit QtoQ</th>
                             <th colspan = 2 class="fixed-row-2 ` + color_header + `">Laju Implisit YtoY</th>
                             `;
+                             triwulan = periode.substring(5, 6)
+                               if(triwulan==4){
+                                str_header = str_header += `
+                                <th colspan = 3 class="fixed-row-2">Berlaku</th>
+                                <th colspan = 3 class="fixed-row-2">Konstan</th>
+                                <th colspan = 2 class="fixed-row-2">Pertumbuhan YtoY</th>
+                                <th colspan = 2 class="fixed-row-2">Indeks Implisit</th>
+                                <th colspan = 2 class="fixed-row-2">Laju implisit</th>
+                                `
+                               }
+
                         })
                         str_header = str_header += `</tr>`
                         str_header = str_header += `<tr>`
@@ -382,8 +400,30 @@
                             <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>
                             <th class="fixed-row-3 ` + color_header + `">PDRB </th>
                             <th class="fixed-row-3 ` + color_header + `">PDRB+Adj</th>`;
+
+                             triwulan = periode.substring(5, 6)
+                               if(triwulan==4){
+                               str_header = str_header += `
+                                    <th class="fixed-row-3 ">PDRB</th>
+                                    <th class="fixed-row-3 ">Adj</th>
+                                    <th class="fixed-row-3 ">PDRB+Adj</th>
+                                    <th class="fixed-row-3 ">PDRB</th>
+                                    <th class="fixed-row-3 ">Adj</th>
+                                    <th class="fixed-row-3 ">PDRB+Adj</th>
+                                    <th class="fixed-row-3 ">PDRB</th>
+                                    <th class="fixed-row-3 ">PDRB+Adj</th>
+                                    <th class="fixed-row-3 ">PDRB</th>
+                                    <th class="fixed-row-3 ">PDRB+Adj</th>
+                                    <th class="fixed-row-3 ">PDRB</th>
+                                    <th class="fixed-row-3 ">PDRB+Adj</th>
+                                `;
+                            }
                         })
+
+
                         str_header = str_header += `</tr>`
+
+
                         $('#thead-row').append(str_header);
 
 
@@ -408,6 +448,9 @@
                                     undefined ? parseFloat(row[periode + '_adhb_y1']) : "";
                                 const adhb_y1_adj = row[periode + '_adhb_y1_adj'] !== null && row[periode +
                                     '_adhb_y1_adj'] !== undefined ? parseFloat(row[periode + '_adhb_y1_adj']) : "";
+
+
+
                                 // ADHK
                                 const adhk = row[periode + '_adhk'] !== null && row[periode + '_adhk'] !==
                                     undefined ? parseFloat(row[periode + '_adhk']) : "";
@@ -475,6 +518,7 @@
                                     (((adhb + adhb_adj) / (adhk + adhk_adj) * 100) /
                                         ((adhb_y1 + adhb_y1_adj) / (adhk_y1 + adhk_y1_adj) * 100) * 100) - 100 : "";
 
+
                                 rowHtml += `
                                     <td data-adhb="${adhb}"
                                         data-adhb_adj="${adhb_adj}"
@@ -485,18 +529,18 @@
                                         ${formatNumber(adhb)}
                                     </td>${(String(row['kode_kab'] || '')).startsWith('d') ? '<td></td>'
                                     :  `<td>
-                                                                                                                            <input id="${periode + '_'+ row['kode_kab'] + '_adhb_adj'}"
-                                                                                                                            value="${formatNumber(adhb_adj)}"
-                                                                                                                            data-id="${row[periode + '_adhb_id']}"
-                                                                                                                            data-kode_kab="${row['kode_kab']}"
-                                                                                                                            data-periode="${periode}"
-                                                                                                                            class="text_edit_adhb ${row['kode_kab']} text-right"
-                                                                                                                            type="text" inputmode="decimal"
-                                                                                                                            pattern="^\d+(\.\d{0,2})?$"
-                                                                                                                            ${row[periode+'_adhb_id'] == null?'disabled':''}
-                                                                                                                            >
-                                                                                                                        </td>
-                                                                                                                        `}
+                                        <input id="${periode + '_'+ row['kode_kab'] + '_adhb_adj'}"
+                                        value="${formatNumber(adhb_adj)}"
+                                        data-id="${row[periode + '_adhb_id']}"
+                                        data-kode_kab="${row['kode_kab']}"
+                                        data-periode="${periode}"
+                                        class="text_edit_adhb ${row['kode_kab']} text-right"
+                                        type="text" inputmode="decimal"
+                                        pattern="^\d+(\.\d{0,2})?$"
+                                        ${row[periode+'_adhb_id'] == null?'disabled':''}
+                                        >
+                                    </td>
+                                        `}
                                     ${(String(row['kode_kab'] || '')).startsWith('d%')
                                         ? `<td id="cell_adhb_adj_${periode}" data-kode_kab="${row['kode_kab']}" style="${adhb_adj > 2 ? 'background:orangered' : adhb_adj < -2 ? 'background:orangered' : ''}"> ${formatNumber(adhb_adj)} </td>`
                                         : `<td id="cell_adhb_adj_${periode}" data-kode_kab="${row['kode_kab']}"> ${formatNumber(adhb + adhb_adj)} </td>`
@@ -520,17 +564,17 @@
                                     </td>
                                     ${(String(row['kode_kab'] || '')).startsWith('d') ? '<td></td>'
                                     :  `
-                                                                                                                        <td>
-                                                                                                                            <input id="${periode+ '_'+ row['kode_kab'] + '_adhk_adj'}"
-                                                                                                                            value="${formatNumber(adhk_adj)}"
-                                                                                                                            data-id="${row[periode + '_adhk_id']}"
-                                                                                                                            data-kode_kab="${row['kode_kab']}"
-                                                                                                                            data-periode="${periode}"
-                                                                                                                            class="text_edit_adhk text-right" type="text"
-                                                                                                                            inputmode="decimal" pattern="^\d+(\.\d{0,2})?$"
-                                                                                                                            ${row[periode+'_adhk_id'] == null?'disabled':''}
-                                                                                                                            >
-                                                                                                                        </td>`}
+                                        <td>
+                                            <input id="${periode+ '_'+ row['kode_kab'] + '_adhk_adj'}"
+                                            value="${formatNumber(adhk_adj)}"
+                                            data-id="${row[periode + '_adhk_id']}"
+                                            data-kode_kab="${row['kode_kab']}"
+                                            data-periode="${periode}"
+                                            class="text_edit_adhk text-right" type="text"
+                                            inputmode="decimal" pattern="^\d+(\.\d{0,2})?$"
+                                            ${row[periode+'_adhk_id'] == null?'disabled':''}
+                                            >
+                                        </td>`}
                                     ${(String(row['kode_kab'] || '')).startsWith('d%')
                                         ? `<td id="cell_adhk_adj_${periode}" data-kode_kab="${row['kode_kab']}" style="${adhk_adj > 2 ? 'background:orangered' : adhk_adj < -2 ? 'background:orangered' : ''}"> ${formatNumber(adhk_adj)} </td>`
                                         : `<td id="cell_adhk_adj_${periode}" data-kode_kab="${row['kode_kab']}"> ${formatNumber(adhk + adhk_adj)} </td>`
@@ -538,30 +582,119 @@
 
                                     ${(String(row['kode_kab'] || '')).startsWith('d') ? '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>'
                                     :  `<td style="${qtq > 0 ? 'background:lightgreen' : qtq < 0 ? 'background:lemonchiffon' : ''}">
-                                                                                                                              ${formatNumber(qtq)}
-                                                                                                                            </td>
-                                                                                                                            <td style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}">
-                                                                                                                                <input class = "text_edit_qtq_adj text-right" value="${formatNumber(qtq_adj)}"   data-periode="${periode}"
-                                                                                                                                style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}"   ${row[periode+'_adhk_id'] == null?'disabled':''}>
-                                                                                                                            </td>
-                                                                                                                            <td style="${yty > 0 ? 'background:lightgreen' : yty < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(yty)}</td>
-                                                                                                                            <td style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}">
-                                                                                                                                <input class = "text_edit_yty_adj text-right" value="${formatNumber(yty_adj)}"   data-periode="${periode}"
-                                                                                                                                style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}"   ${row[periode+'_adhk_id'] == null?'disabled':''}>
-                                                                                                                            </td>
-                                                                                                                            <td style="${ctc > 0 ? 'background:lightgreen' : ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(ctc)}</td>
-                                                                                                                            <td style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}" >
-                                                                                                                                <input  class = "text_edit_ctc_adj text-right" value="${formatNumber(ctc_adj)}"   data-periode="${periode}"
-                                                                                                                                 style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}"    ${row[periode+'_adhk_id'] == null?'disabled':''}>
-                                                                                                                            </td>
-                                                                                                                            <td style="${implisit > 0 ? 'background:lightgreen' : implisit < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit)}</td>
-                                                                                                                            <td style="${implisit_adj > 0 ? 'background:lightgreen' : implisit_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit_adj)}</td>
-                                                                                                                            <td style="${laju_implisit_qtq > 0 ? 'background:lightgreen' : laju_implisit_qtq < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_qtq)}</td>
-                                                                                                                            <td style="${laju_implisit_qtq_adj > 0 ? 'background:lightgreen' : laju_implisit_qtq_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_qtq_adj)}</td>
-                                                                                                                            <td style="${laju_implisit_yty > 0 ? 'background:lightgreen' : laju_implisit_yty < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_yty)}</td>
-                                                                                                                            <td style="${laju_implisit_yty_adj > 0 ? 'background:lightgreen' : laju_implisit_yty_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_yty_adj)}</td>
-                                                                                                                            `}
+                                            ${formatNumber(qtq)}
+                                        </td>
+                                        <td style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}">
+                                            <input class = "text_edit_qtq_adj text-right" value="${formatNumber(qtq_adj)}"   data-periode="${periode}"
+                                            style="${qtq_adj > 0 ? 'background:lightgreen' : qtq_adj < 0 ? 'background:lemonchiffon' : ''}"   ${row[periode+'_adhk_id'] == null?'disabled':''}>
+                                        </td>
+                                        <td style="${yty > 0 ? 'background:lightgreen' : yty < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(yty)}</td>
+                                        <td style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}">
+                                            <input class = "text_edit_yty_adj text-right" value="${formatNumber(yty_adj)}"   data-periode="${periode}"
+                                            style="${yty_adj > 0 ? 'background:lightgreen' : yty_adj < 0 ? 'background:lemonchiffon' : ''}"   ${row[periode+'_adhk_id'] == null?'disabled':''}>
+                                        </td>
+                                        <td style="${ctc > 0 ? 'background:lightgreen' : ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(ctc)}</td>
+                                        <td style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}" >
+                                            <input  class = "text_edit_ctc_adj text-right" value="${formatNumber(ctc_adj)}"   data-periode="${periode}"
+                                                style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}"    ${row[periode+'_adhk_id'] == null?'disabled':''}>
+                                        </td>
+                                        <td style="${implisit > 0 ? 'background:lightgreen' : implisit < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit)}</td>
+                                        <td style="${implisit_adj > 0 ? 'background:lightgreen' : implisit_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit_adj)}</td>
+                                        <td style="${laju_implisit_qtq > 0 ? 'background:lightgreen' : laju_implisit_qtq < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_qtq)}</td>
+                                        <td style="${laju_implisit_qtq_adj > 0 ? 'background:lightgreen' : laju_implisit_qtq_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_qtq_adj)}</td>
+                                        <td style="${laju_implisit_yty > 0 ? 'background:lightgreen' : laju_implisit_yty < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_yty)}</td>
+                                        <td style="${laju_implisit_yty_adj > 0 ? 'background:lightgreen' : laju_implisit_yty_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_yty_adj)}</td>
+                                        `}
                                 `;
+
+                                triwulan = periode.substring(5, 6)
+                                if(triwulan==4){
+                                    const adhb_c = row[periode + '_adhb_c'] !== null && row[periode + '_adhb_c'] !== undefined ?
+                                        parseFloat(row[periode + '_adhb_c']) : "";
+                                    const adhb_c_adj = row[periode + '_adhb_c_adj'] !== null && row[periode + '_adhb_c_adj'] !==
+                                        undefined ? parseFloat(row[periode + '_adhb_c_adj']) : 0;
+
+                                    const adhb_c1 = row[periode + '_adhb_c1'] !== null && row[periode + '_adhb_c1'] !==
+                                        undefined ? parseFloat(row[periode + '_adhb_c1']) : "";
+                                    const adhb_c1_adj = row[periode + '_adhb_c1_adj'] !== null && row[periode +
+                                        '_adhb_c1_adj'] !== undefined ? parseFloat(row[periode + '_adhb_c1_adj']) : "";
+
+                                    const implisit_ctc = adhb_c != "" && adhk_c != "" ? (adhb_c / adhk_c * 100) : "";
+                                    const implisit_ctc_adj = adhk_c + adhk_c_adj != "" ?
+                                        ((adhb_c + adhb_c_adj) / (adhk_c + adhk_c_adj) * 100) : "";
+                                    const laju_implisit_ctc = adhb_c != "" && adhk_c != "" && adhb_c1 != "" && adhk_c1 != "" ?
+                                        ((adhb_c / adhk_c * 100) / (adhb_c1 / adhk_c1 * 100) * 100 - 100) : "";
+                                    const laju_implisit_ctc_adj =
+                                        adhk_c + adhk_c_adj != "" &&
+                                        adhk_c1 + adhk_c1_adj != "" ?
+                                        (((adhb_c + adhb_c_adj) / (adhk_c + adhk_c_adj) * 100) /
+                                        ((adhb_c1 + adhb_c1_adj) / (adhk_c1 + adhk_c1_adj) * 100) * 100) - 100 : "";
+                                    rowHtml += `
+                                    <td data-adhb_c="${adhb_c}"
+                                        data-adhb_c_adj="${adhb_c_adj}"
+
+                                        data-adhb_c1="${adhb_c1}"
+                                        data-adhb_c1_adj="${adhb_c1_adj}">
+                                        ${formatNumber(adhb_c)}
+                                    </td>
+                                    ${(String(row['kode_kab'] || '')).startsWith('d') ? '<td></td>'
+                                    :  `<td>
+                                        <input id="${periode + '_'+ row['kode_kab'] + '_adhb_c_adj'}"
+                                        value="${formatNumber(adhb_c_adj)}"
+                                        data-id="${row[periode + '_adhb_c_id']}"
+                                        data-kode_kab="${row['kode_kab']}"
+                                        data-periode="${periode}"
+                                        class="text_edit_adhb ${row['kode_kab']} text-right"
+                                        type="text" inputmode="decimal"
+                                        pattern="^\d+(\.\d{0,2})?$"
+                                        ${row[periode+'_adhb_c_id'] == null?'disabled':''}
+                                        >
+                                    </td>
+                                        `}
+                                    ${(String(row['kode_kab'] || '')).startsWith('d%')
+                                        ? `<td id="cell_adhb_adj_${periode}" data-kode_kab="${row['kode_kab']}" style="${adhb_c_adj > 2 ? 'background:orangered' : adhb_c_adj < -2 ? 'background:orangered' : ''}"> ${formatNumber(adhb_c_adj)} </td>`
+                                        : `<td id="cell_adhb_adj_${periode}" data-kode_kab="${row['kode_kab']}"> ${formatNumber(adhb_c + adhb_c_adj)} </td>`
+                                    }
+                                    <td
+                                        data-adhk_c="${adhk_c}"
+                                        data-adhk_c_adj="${adhk_c_adj}"
+                                        data-adhk_c1="${adhk_c1}"
+                                        data-adhk_c1_adj="${adhk_c1_adj}"
+                                        >
+                                        ${formatNumber(adhk_c)}
+                                    </td>
+                                    ${(String(row['kode_kab'] || '')).startsWith('d') ? '<td></td>'
+                                    :`
+                                        <td>
+                                            <input id="${periode+ '_'+ row['kode_kab'] + '_adhk_c_adj'}"
+                                            value="${formatNumber(adhk_c_adj)}"
+                                            data-id="${row[periode + '_adhk_c_id']}"
+                                            data-kode_kab="${row['kode_kab']}"
+                                            data-periode="${periode}"
+                                            class="text_edit_adhk text-right" type="text"
+                                            inputmode="decimal" pattern="^\d+(\.\d{0,2})?$"
+                                            ${row[periode+'_adhk_c_id'] == null?'disabled':''}
+                                            >
+                                        </td>`
+                                    }
+                                    ${(String(row['kode_kab'] || '')).startsWith('d%')
+                                        ? `<td id="cell_adhk_adj_${periode}" data-kode_kab="${row['kode_kab']}" style="${adhk_c_adj > 2 ? 'background:orangered' : adhk_c_adj < -2 ? 'background:orangered' : ''}"> ${formatNumber(adhk_c_adj)} </td>`
+                                        : `<td id="cell_adhk_adj_${periode}" data-kode_kab="${row['kode_kab']}"> ${formatNumber(adhk_c + adhk_c_adj)} </td>`
+                                    }
+
+
+                                    ${(String(row['kode_kab'] || '')).startsWith('d') ? '<td></td><td></td><td></td><td></td><td></td><td></td>'
+                                    :  `<td style="${ctc > 0 ? 'background:lightgreen' : ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(ctc)}</td>
+                                        <td style="${ctc_adj > 0 ? 'background:lightgreen' : ctc_adj < 0 ? 'background:lemonchiffon' : ''}" >${formatNumber(ctc_adj)}</td>
+                                        <td style="${implisit_ctc > 0 ? 'background:lightgreen' : implisit_ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit_ctc)}</td>
+                                        <td style="${implisit_ctc_adj > 0 ? 'background:lightgreen' : implisit_ctc_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(implisit_ctc_adj)}</td>
+                                        <td style="${laju_implisit_ctc > 0 ? 'background:lightgreen' : laju_implisit_ctc < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_ctc)}</td>
+                                        <td style="${laju_implisit_ctc_adj > 0 ? 'background:lightgreen' : laju_implisit_ctc_adj < 0 ? 'background:lemonchiffon' : ''}">${formatNumber(laju_implisit_ctc_adj)}</td>
+                                        `}
+                                `;
+                                }
+
+
                             });
 
                             rowHtml += '</tr>';

@@ -130,35 +130,42 @@
                                                 @{{ data.nama_komponen }}
                                             </td>
                                             <td class="text-center">
-                                                <span v-html="getStatusHtml(datas.adhb[0]?.status_data)"></span>
+                                                <span v-html="getStatusHtml(datas.adhb[11]?.status_data)"></span>
                                             </td>
                                             <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                                 <template v-for="n in 4">
                                                     <td class="text-right">
-                                                        <span v-if="datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">
-
+                                                          <span v-if="datas['adhb'][idx = ((item - (form_data.tahun-2)) * 4) + (n - 1)]">
+                                                        {{-- <span v-if="datas['adhb'][((item - (form_data.tahun-2))*4)+(n-1)]!=null"> --}}
                                                             @{{ formatNumber(datas['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) }}
                                                             <br>
-                                                            <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                            <sup
+                                                                v-if="
+                                                                    datas_rilis?.adhb?.[idx]?.['c_' + data.no_komponen.replaceAll('.', '')]?.isexist === true &&
+                                                                    datas?.adhb?.[idx]?.['c_' + data.no_komponen.replaceAll('.', '')]?.isexist === true &&
+                                                                    parseNumber(
+                                                                    hitungSelisih(
+                                                                        datas_rilis['adhb'][idx]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                        datas['adhb'][idx]['c_' + data.no_komponen.replaceAll('.', '')]
+                                                                    )
+                                                                    ) !== 0
+                                                                "
                                                                 :class="{
-                                                                    'text-success': parseNumber(hitungSelisih(
-                                                                        datas_rilis['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)][
-                                                                            'c_' +
-                                                                            data.no_komponen.replaceAll('.', '')
-                                                                        ],
-                                                                        datas['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' +
-                                                                            data.no_komponen.replaceAll('.', '')
-                                                                        ])) > 0,
-                                                                    'text-danger': parseNumber(hitungSelisih(
-                                                                        datas_rilis['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)][
-                                                                            'c_' +
-                                                                            data.no_komponen.replaceAll('.', '')
-                                                                        ],
-                                                                        datas['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' +
-                                                                            data.no_komponen.replaceAll('.', '')
-                                                                        ])) < 0
-                                                                }">
-                                                                @{{ hitungSelisih(datas_rilis['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                                    'text-success': parseNumber(
+                                                                    hitungSelisih(
+                                                                        datas_rilis['adhb'][idx]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                        datas['adhb'][idx]['c_' + data.no_komponen.replaceAll('.', '')]
+                                                                    )
+                                                                    ) > 0,
+                                                                    'text-danger': parseNumber(
+                                                                    hitungSelisih(
+                                                                        datas_rilis['adhb'][idx]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                        datas['adhb'][idx]['c_' + data.no_komponen.replaceAll('.', '')]
+                                                                    )
+                                                                    ) < 0
+                                                                }"
+                                                                >
+                                                                {{-- @{{ hitungSelisih(datas_rilis['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhb'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) }} --}}
                                                             </sup>
                                                         </span>
                                                     </td>
@@ -285,30 +292,35 @@
                                                 @{{ data.nama_komponen }}
                                             </td>
                                             <td>
-                                                <span v-html="getStatusHtml(datas.adhk[0]?.status_data)"></span>
+                                                <span v-html="getStatusHtml(datas.adhk[11]?.status_data)"></span>
 
                                             </td>
                                             <template v-for="item in [(form_data.tahun-2), (form_data.tahun-1), form_data.tahun]">
                                                 <template v-for="n in 4">
                                                     <td class="text-right">
-                                                        <span v-if="datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]!=null">
+                                                          <span v-if="datas['adhk'][idx = ((item - (form_data.tahun-2)) * 4) + (n - 1)]">
+                                                        {{-- <span v-if="datas['adhk'][((item - (form_data.tahun-2))*4)+(n-1)]!=null"> --}}
                                                             @{{ formatNumber(datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) }}
 
                                                         <br>
 
-                                                        <sup v-if="parseNumber(hitungSelisih(datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
-                                                            :class="{
-                                                                'text-success': parseNumber(hitungSelisih(
-                                                                    datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                    datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
-                                                                'text-danger': parseNumber(hitungSelisih(
-                                                                    datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                                    datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
-                                                            }"
-                                                            >
-                                                            @{{ hitungSelisih(datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')],
-                                                            datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) }}
-                                                        </sup>
+                                                            <sup v-if="
+                                                              datas_rilis?.adhk?.[idx]?.['c_' + data.no_komponen.replaceAll('.', '')]?.isexist === true &&
+                                                                    datas?.adhk?.[idx]?.['c_' + data.no_komponen.replaceAll('.', '')]?.isexist === true &&
+
+                                                            parseNumber(hitungSelisih(datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')], datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) )!== 0"
+                                                                :class="{
+                                                                    'text-success': parseNumber(hitungSelisih(
+                                                                        datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                        datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')])) > 0,
+                                                                    'text-danger': parseNumber(hitungSelisih(
+                                                                        datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                        datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')])) < 0
+                                                                }"
+                                                                >
+                                                                @{{ hitungSelisih(datas_rilis['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')],
+                                                                datas['adhk'][((item - (form_data.tahun - 2)) * 4) + (n - 1)]['c_' + data.no_komponen.replaceAll('.', '')]) }}
+                                                            </sup>
                                                           </span>
                                                     </td>
                                                 </template>
@@ -483,8 +495,10 @@
                             'created_by': ''
                         });
                         ///
-                        // console.log(self.datas)
                         let total_data = self.form_data.triwulan;
+
+                        console.log(self.datas)
+                        console.log(total_data)
                         if (self.form_data.triwulan == 4) total_data = 12;
 
                         for (let i = 0; i < total_data; ++i) {
@@ -567,9 +581,9 @@
                         case '1':
                             return '<span class="badge badge-primary">Sudah Upload</span>';
                         case '2':
-                            return '<span class="badge badge-info">Approve Admin SM</span>';
+                            return '<span class="badge badge-info">Approve Provinsi</span>';
                         case '3':
-                            return '<span class="badge badge-success">Approve Admin Prov</span>';
+                            return '<span class="badge badge-success">Approve Admin</span>';
                         case '4':
                             return '<span class="badge badge-danger">Reject Admin</span>';
                         default:

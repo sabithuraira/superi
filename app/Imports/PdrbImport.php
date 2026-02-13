@@ -40,17 +40,28 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $q = $split_header[1];
 
             $putaran = 0;
-                
+
             $upload_tahun = date('Y');
             $upload_triwulan = 1;
-            
+
             $tahun_berlaku = SettingApp::where('setting_name', 'tahun_berlaku')->first();
             if($tahun_berlaku!=null) $upload_tahun = $tahun_berlaku->setting_value;
 
             $triwulan_berlaku = SettingApp::where('setting_name', 'triwulan_berlaku')->first();
             if($triwulan_berlaku!=null) $upload_triwulan = $triwulan_berlaku->setting_value;
 
+            // cari data sebelumnya
             $model = Pdrb::where('tahun', $year) //self::$tahun)
+                ->where('q', $q)
+                ->where('adhb_or_adhk', $is_adhb)
+                ->where('kode_prov', '16')
+                ->where('kode_kab', self::$wilayah)
+                // ->where('upload_tahun', $upload_tahun)
+                // ->where('upload_q', $upload_triwulan)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $model2 = Pdrb::where('tahun', $year) //self::$tahun)
                 ->where('q', $q)
                 ->where('adhb_or_adhk', $is_adhb)
                 ->where('kode_prov', '16')
@@ -63,8 +74,8 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             $new_model = new Pdrb;
             $new_model->tahun = $year; //self::$tahun;
             $new_model->q = $q;
-            
-            $new_model->upload_tahun = $upload_tahun; 
+
+            $new_model->upload_tahun = $upload_tahun;
             $new_model->upload_q = $upload_triwulan;
 
             $new_model->adhb_or_adhk = $is_adhb;
@@ -79,16 +90,19 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
 
             if($model==null){
                 $new_model->revisi_ke = 0;
+                // $new_model->putaran = ;
             }
             else{
                 $new_model->revisi_ke = $model->revisi_ke + 1;
-                
-                if($model->status_data==4 || $model->status_data==3) $putaran = $model->putaran + 1;
-                else $putaran = $model->putaran;
+
+                if($model2->status_data==4 || $model2->status_data==3)
+                    $putaran = $model2->putaran + 1;
+                else
+                    $putaran = $model2->putaran;
             }
 
             $new_model->putaran = $putaran;
-            
+
             // dd($rows[3]);die();
 
             $new_model->c_1a     = strval($rows[4][$col_no]);
@@ -133,7 +147,7 @@ class PdrbImport implements  WithMultipleSheets //ToCollection
             try {
                 $new_model->save();
             } catch (\Exception $e) {
-              
+
                 return $e->getMessage();
             }
         }
@@ -157,7 +171,7 @@ class AdhbSheetImport implements ToCollection
         if($this->triwulan<4){
             $max = $this->triwulan;
         }
-        
+
         for($i=1;$i<=$max;++$i){
             if(count($rows[2])>$i) (new PdrbImport($this->wilayah,  $this->tahun,  $this->triwulan))->importColumn($rows, $i, 1);
         }

@@ -142,17 +142,29 @@
                                                     <td class="text-right">
                                                         {{ $prov_revisi != null ? number_format(round($prov_revisi, 2), 2, ',', '.') : '' }}
                                                     </td>
-                                                    <td class="text-center">
-                                                        @if ($prov_rilis && $prov_revisi &&     number_format(round($prov_rilis, 2), 2, ',', '.') > number_format(round($prov_revisi, 2), 2, ',', '.'))
-                                                            <div class="text-danger">▼</div>
-                                                        @elseif ($prov_rilis && $prov_revisi &&   number_format(round($prov_rilis, 2), 2, ',', '.') < number_format(round($prov_revisi, 2), 2, ',', '.'))
-                                                            <div class="text-success">▲</div>
-                                                        @else
-                                                            <div class="text-warning">═</div>
-                                                        @endif
-                                                    </td>
-                                                @endforeach
 
+                                                     @if(
+                                                        $prov_rilis !== null &&
+                                                        $prov_revisi !== null &&
+                                                        ($prov_rilis * $prov_revisi) < 0
+                                                    )
+                                                        <td class="text-center bg-danger">!</td>
+                                                    @elseif (
+                                                        $prov_rilis &&
+                                                            $prov_revisi &&
+                                                            number_format(round($prov_rilis, 2), 2, ',', '.') > number_format(round($prov_revisi, 2), 2, ',', '.'))
+                                                        <td class="text-danger text-center">▼</td>
+                                                    @elseif (
+                                                        $prov_rilis &&
+                                                            $prov_revisi &&
+                                                            number_format(round($prov_rilis, 2), 2, ',', '.') < number_format(round($prov_revisi, 2), 2, ',', '.'))
+                                                        <td class="text-success text-center">▲</td>
+                                                    @else
+                                                        <td class="text-warning text-center">═</td>
+                                                    @endif
+
+
+                                                @endforeach
                                             </tr>
                                         @endforeach
                                     </tbody>

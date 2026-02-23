@@ -238,25 +238,44 @@
                                     <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
                                         @foreach ($list_tabel as $key => $tbl)
                                             <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
+                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] === $tabel_filter) selected @endif>
                                                 {{ $tbl['name'] }}
                                             </option>
                                         @endforeach
                                     </select>
                                     <div class="row">
                                         @foreach ($list_periode as $li_per)
-                                            <div class="form-check  col-3 ">
-                                                <input class="form-check-input" type="checkbox"
-                                                    value="{{ $li_per }}" name="periode_filter[]"
-                                                    id="{{ 'periode_filter_' . $li_per }}"
-                                                    @foreach ($periode_filter as $per_fil)
+                                           @if ($li_per < 2018)
+                                                <div class="col-8"></div>
+                                                <div class="form-check col-2">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                        @foreach ($periode_filter as $per_fil)
+                                                @if ($per_fil === $li_per)
+                                                checked
+                                                @endif @endforeach>
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                        {{ $li_per }}
+                                                    </label>
+                                                </div>
+                                            @else
+                                                <div
+                                                    class="form-check @if (strlen($li_per) > 4) col-2 @else col-4 @endif ">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        value="{{ $li_per }}" name="periode_filter[]"
+                                                        id="{{ 'periode_filter_' . $li_per }}"
+                                                        @foreach ($periode_filter as $per_fil)
                                                     @if ($per_fil === $li_per)
                                                     checked
                                                     @endif @endforeach>
-                                                <label class="form-check-label" for="{{ 'periode_filter_' . $li_per }}">
-                                                    {{ $li_per }}
-                                                </label>
-                                            </div>
+                                                    <label class="form-check-label"
+                                                        for="{{ 'periode_filter_' . $li_per }}">
+                                                        {{ $li_per }}
+                                                    </label>
+                                                </div>
+                                            @endif
                                         @endforeach
                                     </div>
                                 </div>
@@ -318,30 +337,16 @@
         var APP_URL = {!! json_encode(url('/')) !!}
 
         function updateFormAction(selectElement) {
-            var form = document.getElementById('form_filter');
-            var selectedOption = selectElement.options[selectElement.selectedIndex];
-            var data_id = selectedOption.getAttribute('data-id');
-            form.action = APP_URL + '/revisi_total' + '/' + data_id;
-            form.submit();
+            const baseUrl = "{{ url('/revisi_total') }}";
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const data_id = selectedOption.getAttribute('data-id');
+            const params = new URLSearchParams(window.location.search);
+            const periode_list = params.getAll('periode_filter[]');
+            let newUrl = `${baseUrl}/${data_id}?tabel_filter=${data_id}`;
+            periode_list.forEach(p => newUrl += `&periode_filter[]=${encodeURIComponent(p)}`);
+            window.location.href = newUrl;
         }
 
-        function updateFormActionWilayah() {
-            var url = "{{ url('/revisi_total') }}";
-
-            var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var data_id = tabel_option.getAttribute('data-id');
-
-            var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
-                .selectedIndex];
-            var wilayah = wilayah_option.getAttribute('data-id');
-
-            form.action = url + '/' + data_id + '?wilayah_filter=' +
-                wilayah; //APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
-            console.log(form.action)
-            form.submit();
-        }
 
         function exportToExcel() {
             var location = 'data:application/vnd.ms-excel;base64,';

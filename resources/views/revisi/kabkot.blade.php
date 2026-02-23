@@ -60,7 +60,7 @@
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-4">
                                         <select name="wilayah_filter" id="wilayah_filter" class="form-control"
-                                            onchange="updateFormActionWilayah()">
+                                            onchange="updateFormActionWilayah(this)">
                                             @foreach ($list_wilayah as $key => $wil)
                                                 @if (Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
                                                     <option value="{{ $key }}" data-id="{{ $key }}"
@@ -188,14 +188,16 @@
                             </div>
                             <form method="GET" action="">
                                 <div class="modal-body">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
-                                        @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
-                                                {{ $tbl['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <select name="wilayah_filter" id="wilayah_filter" class="form-control" hidden
+                                            onchange="updateFormActionWilayah(this)">
+                                            @foreach ($list_wilayah as $key => $wil)
+                                                @if (Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
+                                                    <option value="{{ $key }}" data-id="{{ $key }}"
+                                                        @if ($key == $wilayah_filter) selected @endif>
+                                                        16{{ $key }} - {{ $wil }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
                                     @foreach ($list_group_komponen as $i => $kmp)
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox"
@@ -241,19 +243,21 @@
                             </div>
                             <form method="GET" action="">
                                 <div class="modal-body mx-4">
-                                    <select name="tabel_filter" id="tabel_filter" class="form-control" hidden>
-                                        @foreach ($list_tabel as $key => $tbl)
-                                            <option
-                                                value="{{ $tbl['id'] }} "@if ($tbl['id'] == $tabel_filter) selected @endif>
-                                                {{ $tbl['name'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                     <select name="wilayah_filter" id="wilayah_filter" class="form-control" hidden
+                                            onchange="updateFormActionWilayah(this)">
+                                            @foreach ($list_wilayah as $key => $wil)
+                                                @if (Auth::user()->kdkab == '00' || Auth::user()->kdkab == $key)
+                                                    <option value="{{ $key }}" data-id="{{ $key }}"
+                                                        @if ($key == $wilayah_filter) selected @endif>
+                                                        16{{ $key }} - {{ $wil }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
                                     <div class="row">
                                         @foreach ($list_periode as $li_per)
                                             @if ($li_per < 2018)
                                                 <div class="col-8"></div>
-                                                <div class="form-check col-4">
+                                                <div class="form-check col-2">
                                                     <input class="form-check-input" type="checkbox"
                                                         value="{{ $li_per }}" name="periode_filter[]"
                                                         id="{{ 'periode_filter_' . $li_per }}"
@@ -344,29 +348,28 @@
         var URL_SEGMENT = "{{ Request::segment(1) }}";
 
         function updateFormAction(selectElement) {
-            var form = document.getElementById('form_filter');
-            var selectedOption = selectElement.options[selectElement.selectedIndex];
-            var data_id = selectedOption.getAttribute('data-id');
-            form.action = APP_URL + '/' + URL_SEGMENT + '/' + data_id;
-            form.submit();
+            const baseUrl = "{{ url('/revisi_kabkot') }}";
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const data_id = selectedOption.getAttribute('data-id');
+            const params = new URLSearchParams(window.location.search);
+            const periode_list = params.getAll('periode_filter[]');
+            const wilayah_filter = params.getAll('wilayah_filter');
+            let newUrl = `${baseUrl}/${data_id}?wilayah_filter=${wilayah_filter}`;
+            periode_list.forEach(p => newUrl += `&periode_filter[]=${encodeURIComponent(p)}`);
+            window.location.href = newUrl;
         }
 
-        function updateFormActionWilayah() {
-            var url = "{{ url('/revisi_kabkot') }}";
-
-            var form = document.getElementById('form_filter');
-            var tabel_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter')
-                .selectedIndex];
-            var data_id = tabel_option.getAttribute('data-id');
-
-            var wilayah_option = document.getElementById('wilayah_filter').options[document.getElementById('wilayah_filter')
-                .selectedIndex];
-            var wilayah = wilayah_option.getAttribute('data-id');
-
-            form.action = url + '/' + data_id + '?wilayah_filter=' +
-                wilayah; //APP_URL + 'revisi_kabkot' + '/' + data_id + '?wilayah_filter=' + wilayah;
-            console.log(form.action)
-            form.submit();
+        function updateFormActionWilayah(selectElement) {
+            const baseUrl = "{{ url('/revisi_kabkot') }}";
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const wilayah_id = selectedOption.getAttribute('data-id');
+            const params = new URLSearchParams(window.location.search);
+            const periode_list = params.getAll('periode_filter[]');
+            var table_option = document.getElementById('tabel_filter').options[document.getElementById('tabel_filter').selectedIndex];
+            var tabel_id = table_option.getAttribute('data-id');
+            let newUrl = `${baseUrl}/${tabel_id}?wilayah_filter=${wilayah_id}`;
+            periode_list.forEach(p => newUrl += `&periode_filter[]=${encodeURIComponent(p)}`);
+            window.location.href = newUrl;
         }
 
         function exportToExcel() {
